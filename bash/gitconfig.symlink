@@ -1,0 +1,9 @@
+[user]
+	email = github.striven@aleeas.com
+	name = gary-host-laptop
+[core]
+	editor = nano
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
