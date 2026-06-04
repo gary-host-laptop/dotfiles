@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Storage topology — maps physical drives into strata
+# Edit these to match your actual mount points and hdd paths.
+# Run manually or via bootstrap when setting up a new machine.
+
+STRATA="$HOME/strata"
+
+info()    { echo "  [ .. ] $1"; }
+success() { echo "  [ ok ] $1"; }
+
+link_storage() {
+    local src="$1"
+    local dst="$2"
+
+    if [ ! -e "$src" ]; then
+        echo "  [warn] source not found, skipping: $src"
+        return
+    fi
+
+    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+        info "already linked: $dst"
+        return
+    fi
+
+    mkdir -p "$(dirname "$dst")"
+    ln -sf "$src" "$dst"
+    success "linked $dst → $src"
+}
+
+# valus
+link_storage "/mnt/valus/31_text"              "$STRATA/30-39_media/31_text"
+link_storage "/mnt/valus/32_audio"             "$STRATA/30-39_media/32_audio"
+link_storage "/mnt/valus/33_images"            "$STRATA/30-39_media/33_images"
+link_storage "/mnt/valus/35_video-games/games-library" "$STRATA/30-39_media/35_video-games/games-library"
+
+# phaedra
+link_storage "/mnt/phaedra/34_video"           "$STRATA/30-39_media/34_video"
+link_storage "/mnt/phaedra/35_video-games/SteamLibrary" "$STRATA/30-39_media/35_video-games/steam"

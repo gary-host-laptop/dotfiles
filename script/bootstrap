@@ -1,0 +1,109 @@
+#!/bin/bash
+
+set -e
+
+DOTFILES="$(cd "$(dirname "$0")" && pwd)"
+BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d_%H%M%S)"
+
+info()    { echo "  [ .. ] $1"; }
+success() { echo "  [ ok ] $1"; }
+warn()    { echo "  [warn] $1"; }
+fail()    { echo "  [FAIL] $1"; exit 1; }
+
+# ── symlink a single file ────────────────────────────────────────────────────
+link_file() {
+    local src="$1"
+    local dst="$2"
+
+    # if dst already exists and is the correct symlink, skip
+    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+        info "already linked: $dst"
+        return
+    fi
+
+    # if something else is at dst, back it up
+    if [ -e "$dst" ]; then
+        mkdir -p "$BACKUP_DIR"
+        mv "$dst" "$BACKUP_DIR/"
+        warn "backed up existing $dst → $BACKUP_DIR/"
+    fi
+
+    mkdir -p "$(dirname "$dst")"
+    ln -sf "$src" "$dst"
+    success "linked $dst → $src"
+}
+
+# ── .symlink files → $HOME ───────────────────────────────────────────────────
+link_dotfiles() {
+    info "linking dotfiles..."
+    find "$DOTFILES" -name "*.symlink" | while read -r src; do
+        # strip .symlink extension, get filename, prepend $HOME
+        filename="$(basename "$src" .symlink)"
+        link_file "$src" "$HOME/.$filename"
+    done
+}
+
+# ── systemd user units → ~/.config/systemd/user/ ────────────────────────────
+link_systemd() {
+    info "linking systemd units..."
+    local systemd_src="$DOTFILES/systemd"
+    local systemd_dst="$HOME/.config/systemd/user"
+
+    if [ ! -d "$systemd_src" ]; then
+        info "no systemd/ directory found, skipping"
+        return
+    fi
+
+    mkdir -p "$systemd_dst"
+    find "$systemd_src" -maxdepth 1 -type f | while read -r src; do
+        filename="$(basename "$src")"
+        link_file "$src" "$systemd_dst/$filename"
+    done
+
+    systemctl --user daemon-reload
+    success "systemd units reloaded"
+}
+
+# ── bin/ scripts → ~/bin/ ───────────────────────────────────────────────────
+link_bin() {
+    info "linking bin scripts..."
+    local bin_src="$DOTFILES/bin"
+
+    if [ ! -d "$bin_src" ]; then
+        info "no bin/ directory found, skipping"
+        return
+    fi
+
+    mkdir -p "$HOME/bin"
+    find "$bin_src" -maxdepth 1 -type f | while read -r src; do
+        filename="$(basename "$src")"
+        link_file "$src" "$HOME/bin/$filename"
+        chmod +x "$src"
+    done
+}
+
+# ── storage symlinks (hdd topology) ─────────────────────────────────────────
+setup_links() {
+    local links_script="$DOTFILES/script/links"
+    if [ -f "$links_script" ]; then
+        info "running storage links..."
+        bash "$links_script"
+        success "storage links done"
+    else
+        info "no script/links found, skipping"
+    fi
+}
+
+# ── main ─────────────────────────────────────────────────────────────────────
+echo ""
+echo "  bootstrapping dotfiles from $DOTFILES"
+echo ""
+
+link_dotfiles
+link_bin
+link_systemd
+setup_links
+
+echo ""
+success "done. backups (if any) are in $BACKUP_DIR"
+echo ""

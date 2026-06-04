@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch inbox for images
+
+[Path]
+PathChanged=%h/strata/10-19_system/16_inbox
+MakeDirectory=true
+
+[Install]
+WantedBy=default.target
