@@ -2,7 +2,7 @@
 
 set -e
 
-DOTFILES="$(cd "$(dirname "$0")" && pwd)"
+DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d_%H%M%S)"
 
 info()    { echo "  [ .. ] $1"; }
@@ -82,6 +82,23 @@ link_bin() {
     done
 }
 
+# ── .config.symlink files → ~/.config/ ──────────────────────────────────────
+link_config() {
+    info "linking .config files..."
+    local config_src="$DOTFILES/config"
+
+    if [ ! -d "$config_src" ]; then
+        info "no config/ directory found, skipping"
+        return
+    fi
+
+    mkdir -p "$HOME/.config"
+    find "$config_src" -maxdepth 1 -type f | while read -r src; do
+        filename="$(basename "$src")"
+        link_file "$src" "$HOME/.config/$filename"
+    done
+}
+
 # ── storage symlinks (hdd topology) ─────────────────────────────────────────
 setup_links() {
     local links_script="$DOTFILES/script/links"
@@ -100,6 +117,7 @@ echo "  bootstrapping dotfiles from $DOTFILES"
 echo ""
 
 link_dotfiles
+link_config
 link_bin
 link_systemd
 setup_links
