@@ -1,6 +1,0 @@
-[Unit]
-Description=Move screenshots to strata
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash %h/bin/move-screenshots.sh

@@ -26,6 +26,8 @@ DNF_PACKAGES=(
     qbittorrent
     bottom
     starship
+    eza
+    inotify-tools
 )
 
 sudo dnf install -y "${DNF_PACKAGES[@]}"

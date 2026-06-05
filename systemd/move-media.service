@@ -1,0 +1,12 @@
+[Unit]
+Description=Watch inbox and screenshots for images
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=%h/bin/move-media.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
