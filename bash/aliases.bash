@@ -1,0 +1,5 @@
+alias ls='eza'
+alias ll='eza -lah'
+alias lt='eza --tree'
+alias la='eza -a'
+alias lg='eza -l --git'
