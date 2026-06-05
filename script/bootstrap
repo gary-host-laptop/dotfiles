@@ -99,6 +99,16 @@ link_config() {
     done
 }
 
+# ── enable systemd path units ────────────────────────────────────────────────
+enable_path_units() {
+    info "enabling path units..."
+    find "$DOTFILES/systemd" -maxdepth 1 -name "*.path" | while read -r unit; do
+        unitname="$(basename "$unit")"
+        systemctl --user enable --now "$unitname"
+        success "enabled $unitname"
+    done
+}
+
 # ── storage symlinks (hdd topology) ─────────────────────────────────────────
 setup_links() {
     local links_script="$DOTFILES/script/links"
@@ -120,6 +130,7 @@ link_dotfiles
 link_config
 link_bin
 link_systemd
+enable_path_units
 setup_links
 
 echo ""

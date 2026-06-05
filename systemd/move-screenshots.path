@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for new gnome screenshots
+
+[Path]
+PathChanged=%h/Pictures/Screenshots
+MakeDirectory=true
+
+[Install]
+WantedBy=default.target
