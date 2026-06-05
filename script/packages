@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# =============================================================================
+# package installation for a fresh fedora install
+# run after bootstrap — installs essential apps only
+# manual installs and probationary apps are documented in docs/apps.md
+# =============================================================================
+
+info()    { echo "  [ .. ] $1"; }
+success() { echo "  [ ok ] $1"; }
+warn()    { echo "  [warn] $1"; }
+
+# ── dnf ──────────────────────────────────────────────────────────────────────
+info "installing dnf packages..."
+
+DNF_PACKAGES=(
+    calibre
+    flameshot
+    keepassxc
+    qbittorrent
+    nicotine+
+)
+
+sudo dnf install -y "${DNF_PACKAGES[@]}"
+success "dnf packages installed"
+
+# ── flatpak ──────────────────────────────────────────────────────────────────
+info "installing flatpak packages..."
+
+# ensure flathub is added
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+FLATPAK_PACKAGES=(
+    net.ankiweb.Anki
+    com.rafaelmardojai.Blanket
+    org.chromium.Chromium
+    io.github.dgsasha.Damask
+    im.riot.Riot
+    org.mozilla.firefox
+    org.gimp.GIMP
+    org.kde.kdenlive
+    org.musicbrainz.Picard
+    md.obsidian.Obsidian
+    com.github.jeromerobert.pdfarranger
+    org.libretro.RetroArch
+    com.github.tchx84.Flatseal
+    io.github.shonubot.Spruce
+    com.stremio.Stremio
+    org.tenacityaudio.Tenacity
+    org.mozilla.Thunderbird
+    org.videolan.VLC
+    org.nicotine_plus.Nicotine
+)
+
+flatpak install -y flathub "${FLATPAK_PACKAGES[@]}"
+success "flatpak packages installed"
+
+# ── rpm (copr or direct) ─────────────────────────────────────────────────────
+info "installing rpm packages..."
+
+# steam
+sudo dnf install -y \
+    https://repo.steampowered.com/steam/archive/stable/steam-repo-1-0.x86_64.rpm \
+    || warn "steam rpm failed — install manually from steampowered.com"
+sudo dnf install -y steam || warn "steam install failed"
+
+# veracrypt
+warn "veracrypt: download rpm from https://www.veracrypt.fr/en/Downloads.html and install manually"
+
+# zed
+warn "zed: install via 'curl -f https://zed.dev/install.sh | sh' or rpm from zed.dev"
+
+success "rpm section done"
+
+# ── done ─────────────────────────────────────────────────────────────────────
+echo ""
+success "packages done. check warnings above for any manual steps needed."
+echo ""
