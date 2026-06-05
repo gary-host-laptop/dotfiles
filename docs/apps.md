@@ -9,23 +9,25 @@ for automated installation of essentials, run `script/packages`.
 |-----|-----------------|----------|--------------------|
 | anki | flatpak | productivity | net.ankiweb.Anki |
 | blanket | flatpak | media | com.rafaelmardojai.Blanket |
+| bottom | dnf (atim/bottom copr) | utilities | |
 | calibre | dnf | productivity | |
 | chromium | flatpak | internet | org.chromium.Chromium |
 | damask | flatpak | utilities | io.github.dgsasha.Damask |
 | element | flatpak | internet | im.riot.Riot |
 | firefox | flatpak | internet | org.mozilla.firefox |
 | flameshot | dnf | utilities | |
-| flatseal | flatpak | utilities | com.github.jeromerobert.pdfarranger |
+| flatseal | flatpak | utilities | com.github.tchx84.Flatseal |
 | gimp | flatpak | creative | org.gimp.GIMP |
 | kdenlive | flatpak | creative | org.kde.kdenlive |
 | keepassxc | dnf | utilities | |
 | musicbrainz picard | flatpak | media | org.musicbrainz.Picard |
-| nicotine+ | dnf | internet | |
+| nicotine+ | flatpak | internet | org.nicotine_plus.Nicotine |
 | obsidian | flatpak | productivity | md.obsidian.Obsidian |
 | pdf arranger | flatpak | productivity | com.github.jeromerobert.pdfarranger |
 | qbittorrent | dnf | internet | |
 | retroarch | flatpak | games | org.libretro.RetroArch |
-| spruce | flatpak | utilities | org.gnome.Spruce |
+| spruce | flatpak | utilities | io.github.shonubot.Spruce |
+| starship | dnf (atim/starship copr) | utilities | |
 | steam | rpm | games | steampowered.com |
 | stremio | flatpak | internet | com.stremio.Stremio |
 | tenacity | flatpak | media | org.tenacityaudio.Tenacity |

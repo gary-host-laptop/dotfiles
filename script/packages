@@ -10,6 +10,12 @@ info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
 warn()    { echo "  [warn] $1"; }
 
+# ── copr repos ───────────────────────────────────────────────────────────────
+info "enabling copr repos..."
+sudo dnf copr enable -y atim/starship
+sudo dnf copr enable -y atim/bottom
+success "copr repos enabled"
+
 # ── dnf ──────────────────────────────────────────────────────────────────────
 info "installing dnf packages..."
 
@@ -18,7 +24,8 @@ DNF_PACKAGES=(
     flameshot
     keepassxc
     qbittorrent
-    nicotine+
+    bottom
+    starship
 )
 
 sudo dnf install -y "${DNF_PACKAGES[@]}"
@@ -55,7 +62,7 @@ FLATPAK_PACKAGES=(
 flatpak install -y flathub "${FLATPAK_PACKAGES[@]}"
 success "flatpak packages installed"
 
-# ── rpm (copr or direct) ─────────────────────────────────────────────────────
+# ── rpm (direct) ─────────────────────────────────────────────────────────────
 info "installing rpm packages..."
 
 # steam

@@ -1,9 +1,24 @@
 #!/bin/bash
-#Copy file to /usr/local/bin
-#Make it executable with 'chmod +x /full/path/to/apugure'
-sudo dnf upgrade -y && \
-sudo dnf autoremove -y && \
-sudo dnf clean all && \
-flatpak update -y && \
-flatpak uninstall --unused -y && \
+
+BOLD='\033[1m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+YELLOW='\033[0;33m'
+RESET='\033[0m'
+
+section() { echo -e "\n${CYAN}${BOLD}── $1 ──${RESET}"; }
+done_msg() { echo -e "${GREEN}✓ $1${RESET}"; }
+
+section "dnf"
+sudo dnf upgrade -y
+sudo dnf autoremove -y
+sudo dnf clean all
+done_msg "dnf done"
+
+section "flatpak"
+flatpak update -y
+flatpak uninstall --unused -y
 flatpak repair
+done_msg "flatpak done"
+
+echo -e "\n${GREEN}${BOLD}アップグレード完了${RESET}\n"
