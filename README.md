@@ -1,8 +1,8 @@
-# dotfiles
+# ｄｏｔｆｉｌｅｓ
 
 personal system configuration for a fedora linux setup, organized within a johnny decimal inspired [strata](https://johnnydecimal.com/) file system.
 
-## structure
+## ｓｔｒｕｃｔｕｒｅ
 
 ```
 dotfiles/
@@ -27,12 +27,12 @@ dotfiles/
     └── xdg         # sets xdg user dirs and gnome screenshot path
 ```
 
-## machines
+## ｍａｃｈｉｎｅｓ
 
 - **ghost-desktop** — main fedora workstation
 - two hdds: **valus** (`/mnt/valus`) and **phaedra** (`/mnt/phaedra`)
 
-## strata layout
+## ｓｔｒａｔａ　ｌａｙｏｕｔ
 
 ```
 ~/strata/
@@ -53,7 +53,7 @@ dotfiles/
 
 strata lives on its own partition and survives os reinstalls.
 
-## fresh install
+## ｆｒｅｓｈ　ｉｎｓｔａｌｌ
 
 clone the repo into its place within strata:
 
@@ -82,7 +82,7 @@ set xdg user dirs (once strata is in place):
 ./script/xdg
 ```
 
-## what bootstrap does
+## ｗｈａｔ　ｂｏｏｔｓｔｒａｐ　ｄｏｅｓ
 
 - installs `inotify-tools` if missing
 - `*.symlink` files in `bash/` → symlinked to `~/.<name>`
@@ -93,7 +93,7 @@ set xdg user dirs (once strata is in place):
 - runs `script/links` to recreate hdd symlinks inside strata
 - backs up anything it would overwrite to `~/.dotfiles-backup/`
 
-## automation
+## ａｕｔｏｍａｔｉｏｎ
 
 `move-media.service` watches two directories using inotifywait and moves images automatically:
 
