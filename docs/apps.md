@@ -1,9 +1,9 @@
-# apps
+# ａｐｐｓ
 
 reference doc for all installed and evaluated applications.
 for automated installation of essentials, run `script/packages`.
 
-## essential
+## ｅｓｓｅｎｔｉａｌ
 
 | app | package manager | category | flatpak id / notes |
 |-----|-----------------|----------|--------------------|
@@ -12,14 +12,17 @@ for automated installation of essentials, run `script/packages`.
 | bottom | dnf (atim/bottom copr) | utilities | |
 | calibre | dnf | productivity | |
 | chromium | flatpak | internet | org.chromium.Chromium |
-| damask | flatpak | utilities | io.github.dgsasha.Damask |
 | element | flatpak | internet | im.riot.Riot |
+| euphonica | flatpak | media | io.github.htkhiem.Euphonica |
 | firefox | flatpak | internet | org.mozilla.firefox |
 | flameshot | dnf | utilities | |
 | flatseal | flatpak | utilities | com.github.tchx84.Flatseal |
 | gimp | flatpak | creative | org.gimp.GIMP |
+| ghostty | dnf (scottames/ghostty copr) | utilities | |
+| inkscape | flatpak | creative | org.inkscape.Inkscape |
 | kdenlive | flatpak | creative | org.kde.kdenlive |
 | keepassxc | dnf | utilities | |
+| localsend | flatpak | utilities | org.localsend.localsend_app |
 | musicbrainz picard | flatpak | media | org.musicbrainz.Picard |
 | nicotine+ | flatpak | internet | org.nicotine_plus.Nicotine |
 | obsidian | flatpak | productivity | md.obsidian.Obsidian |
@@ -32,11 +35,12 @@ for automated installation of essentials, run `script/packages`.
 | stremio | flatpak | internet | com.stremio.Stremio |
 | tenacity | flatpak | media | org.tenacityaudio.Tenacity |
 | thunderbird | flatpak | internet | org.mozilla.Thunderbird |
+| tor browser | flatpak | internet | org.torproject.torbrowser-launcher |
 | veracrypt | rpm | utilities | veracrypt.fr/en/Downloads.html |
 | vlc | flatpak | media | org.videolan.VLC |
 | zed | rpm | dev | zed.dev |
 
-## manual installs
+## ｍａｎｕａｌ　ｉｎｓｔａｌｌｓ
 
 these require manual download/setup — not automated in `script/packages`.
 
@@ -46,29 +50,28 @@ these require manual download/setup — not automated in `script/packages`.
 | pokemmo | https://pokemmo.com | manual installer |
 | readest | https://readest.com | appimage |
 | shijima-qt | https://github.com/hv-chat/shijima-qt | ukagaka/shimeji runner |
-| tokri | — | tbd |
 | fightcade | https://www.fightcade.com | games |
 | itch.io | https://itch.io/app | games |
-| kando | https://kando.menu | pie menu — evaluating |
 | portmaster | https://safing.io/portmaster | network monitor |
 
-## probationary
+## ｐｒｏｂａｔｉｏｎａｒｙ
 
 currently evaluating — not in install script.
 
 | app | package manager | category | notes |
 |-----|-----------------|----------|-------|
 | clapper | flatpak | media | no-titlebar video player |
-| elisa | flatpak | media | music player candidate |
-| lollypop | flatpak | media | music player candidate |
+| gopeed | flatpak | internet | fast download manager |
+| imageflow | flatpak | media | image batch processing |
+| mission center | flatpak | utilities | system monitor |
 | qview | flatpak | utilities | lightweight image viewer |
+| zen browser | flatpak | internet | firefox-based, evaluating |
 
-## notes
+## ｎｏｔｅｓ
 
-### music players
-currently evaluating — none fully satisfactory yet.
-trying: elisa, lollypop.
-looking for: good library management, scrobbling, clean ui.
+### music
+settled on euphonica + mpd. requires music library cleanup before full use.
+mpd config tracked in dotfiles at `config/mpd/mpd.conf`.
 
 ### video players
 vlc is the reliable fallback but prefer no-titlebar style players.
@@ -76,3 +79,9 @@ trying: clapper.
 
 ### image viewers
 evaluating qview as a lightweight option.
+
+### removed
+- damask — unused
+- elisa, lollypop — replaced by euphonica
+- kando — not using
+- zed — too heavy for daily use, kept for occasional use
