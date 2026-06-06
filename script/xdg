@@ -33,3 +33,10 @@ info "setting cursor theme..."
 gsettings set org.gnome.desktop.interface cursor-theme 'bibata-modern-classic'
 gsettings set org.gnome.desktop.interface cursor-size 24
 success "cursor theme set"
+
+# system font
+info "setting system font..."
+gsettings set org.gnome.desktop.interface font-name 'Inter 11'
+gsettings set org.gnome.desktop.interface document-font-name 'Inter 11'
+gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 11'
+success "fonts set"

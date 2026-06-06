@@ -1,0 +1,9 @@
+[Unit]
+Description=Rotate wallpaper every 6 hours
+
+[Timer]
+OnBootSec=10s
+OnUnitActiveSec=21600s
+
+[Install]
+WantedBy=timers.target

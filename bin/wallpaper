@@ -1,0 +1,82 @@
+#!/bin/bash
+
+WALLPAPER_DIR="$HOME/strata/10-19_system/13_system-config/theming/wallpapers"
+BOLD='\033[1m'
+CYAN='\033[38;2;118;159;240m'
+MUTED='\033[38;2;57;66;96m'
+RESET='\033[0m'
+
+ask_yn() {
+    local prompt="$1"
+    local answer
+    while true; do
+        echo -e "${CYAN}${prompt} [y/n]:${RESET} "
+        read -r answer
+        case "$answer" in
+            y|Y) return 0 ;;
+            n|N) return 1 ;;
+            *) echo -e "${MUTED}please answer y or n${RESET}" ;;
+        esac
+    done
+}
+
+set_random() {
+    local files=()
+    while IFS= read -r -d '' f; do
+        files+=("$f")
+    done < <(find "$WALLPAPER_DIR" -maxdepth 1 -type f \
+        \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \
+           -o -iname "*.webp" -o -iname "*.gif" \) -print0)
+
+    if [ ${#files[@]} -eq 0 ]; then
+        echo "no wallpapers found in $WALLPAPER_DIR"
+        exit 1
+    fi
+
+    local chosen="${files[$RANDOM % ${#files[@]}]}"
+    local uri="file://$chosen"
+
+    gsettings set org.gnome.desktop.background picture-uri "$uri"
+    gsettings set org.gnome.desktop.background picture-uri-dark "$uri"
+    echo "$chosen"
+}
+
+# ── interactive setup ────────────────────────────────────────────────────────
+if [ "$1" = "--setup" ]; then
+    echo -e "\n${CYAN}${BOLD}wallpaper changer setup${RESET}"
+    echo -e "${MUTED}$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | wc -l) wallpapers found${RESET}\n"
+
+    if ! ask_yn "enable wallpaper rotation?"; then
+        systemctl --user disable --now wallpaper.timer 2>/dev/null
+        echo -e "\n${MUTED}wallpaper rotation disabled — run 'wallpaper --setup' to re-enable${RESET}\n"
+        exit 0
+    fi
+
+    local interval
+    while true; do
+        echo -e "${CYAN}time interval? (hours, default 6):${RESET} "
+        read -r interval
+        interval=${interval:-6}
+        if [[ "$interval" =~ ^[0-9]+$ ]] && [ "$interval" -gt 0 ]; then
+            break
+        fi
+        echo -e "${MUTED}please enter a positive number${RESET}"
+    done
+
+    interval_sec=$(( interval * 3600 ))
+    sed -i "s/OnUnitActiveSec=.*/OnUnitActiveSec=${interval_sec}s/" \
+        "$HOME/.config/systemd/user/wallpaper.timer"
+    systemctl --user daemon-reload
+    systemctl --user enable --now wallpaper.timer
+
+    if ask_yn "set a wallpaper right now?"; then
+        chosen=$(set_random)
+        echo -e "${CYAN}set:${RESET} $(basename "$chosen")"
+    fi
+
+    echo -e "\n${MUTED}rotation enabled — next change in ${interval}h${RESET}\n"
+    exit 0
+fi
+
+# ── called by timer or directly ──────────────────────────────────────────────
+set_random

@@ -1,0 +1,6 @@
+[Unit]
+Description=Set random wallpaper
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/wallpaper

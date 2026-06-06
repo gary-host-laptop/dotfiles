@@ -1,0 +1,13 @@
+# editor
+export EDITOR=hx
+
+# browser  
+export BROWSER=firefox
+
+# ensure ~/bin is in PATH for gui apps
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+# xdg base dirs (good practice to be explicit)
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
