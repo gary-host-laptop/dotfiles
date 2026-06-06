@@ -1,0 +1,35 @@
+headerbar {
+    border-bottom: none;
+    box-shadow: none;
+}
+
+.titlebar {
+    border-bottom: none;
+    box-shadow: none;
+}
+
+terminals-surface,
+.terminal-surface {
+    border-top: none;
+}
+
+window contents {
+    border-top: none;
+}
+
+.raised {
+    box-shadow: none;
+}
+
+revealer.bottom-bar {
+    box-shadow: none;
+}
+
+.top-bar, .bottom-bar {
+    box-shadow: none;
+}
+
+tabbar tabbox {
+    margin-left: 40px;
+}
+

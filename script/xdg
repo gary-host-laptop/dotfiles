@@ -17,7 +17,7 @@ cat > "$HOME/.config/user-dirs.dirs" << 'DIRS'
 # Format is XDG_xxx_DIR="$HOME/..."
 XDG_DESKTOP_DIR="$HOME/Desktop"
 XDG_DOWNLOAD_DIR="$HOME/strata/10-19_system/16_inbox"
-XDG_TEMPLATES_DIR="$HOME/strata/10-19_system/16_inbox"
+XDG_TEMPLATES_DIR="$HOME/strata/10-19_system/13_system-config/templates"
 XDG_PUBLICSHARE_DIR="$HOME/Public"
 XDG_DOCUMENTS_DIR="$HOME/strata/30-39_media/31_text"
 XDG_MUSIC_DIR="$HOME/strata/30-39_media/32_audio"
@@ -27,3 +27,9 @@ DIRS
 
 xdg-user-dirs-update
 success "xdg user dirs set"
+
+# cursor theme
+info "setting cursor theme..."
+gsettings set org.gnome.desktop.interface cursor-theme 'bibata-modern-classic'
+gsettings set org.gnome.desktop.interface cursor-size 24
+success "cursor theme set"

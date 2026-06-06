@@ -37,3 +37,8 @@ link_storage "/mnt/valus/35_video-games/games-library" "$STRATA/30-39_media/35_v
 # phaedra
 link_storage "/mnt/phaedra/34_video"           "$STRATA/30-39_media/34_video"
 link_storage "/mnt/phaedra/35_video-games/SteamLibrary" "$STRATA/30-39_media/35_video-games/steam"
+
+# cursor themes
+mkdir -p "$HOME/.local/share/icons"
+link_storage "$HOME/strata/10-19_system/13_system-config/theming/cursor/bibata-modern-classic" "$HOME/.local/share/icons/bibata-modern-classic"
+link_storage "$HOME/strata/10-19_system/13_system-config/theming/cursor/bibata-modern-ice" "$HOME/.local/share/icons/bibata-modern-ice"
