@@ -5,7 +5,7 @@ SCREENSHOTS="$HOME/Pictures/Screenshots"
 IMAGES="$HOME/strata/30-39_media/33_images/images"
 SCREENSHOTS_DST="$HOME/strata/30-39_media/33_images/screenshots"
 
-inotifywait -m -e close_write --format '%w%f' \
+inotifywait -m -e close_write -e moved_to --format '%w%f' \
     "$INBOX" "$SCREENSHOTS" | while read -r filepath; do
 
     filename=$(basename "$filepath")
