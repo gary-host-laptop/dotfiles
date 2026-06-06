@@ -1,0 +1,55 @@
+#!/bin/bash
+
+BOLD='\033[1m'
+CYAN='\033[38;2;118;159;240m'
+MUTED='\033[38;2;57;66;96m'
+LAVENDER='\033[38;2;163;174;210m'
+GREEN='\033[38;2;0;255;150m'
+YELLOW='\033[38;2;255;220;100m'
+RED='\033[38;2;255;80;80m'
+RESET='\033[0m'
+
+bar() {
+    local used=$1
+    local total=$2
+    local width=20
+    local pct=$(( used * 100 / total ))
+    local filled=$(( pct * width / 100 ))
+    local empty=$(( width - filled ))
+
+    if [ $pct -ge 90 ]; then color=$RED
+    elif [ $pct -ge 70 ]; then color=$YELLOW
+    else color=$GREEN
+    fi
+
+    printf "${color}"
+    printf '█%.0s' $(seq 1 $filled)
+    printf "${MUTED}"
+    printf '░%.0s' $(seq 1 $empty)
+    printf "${RESET} ${color}${pct}%%${RESET}"
+}
+
+disk_info() {
+    local mount=$1
+    local label=$2
+    local info=$(df -BG "$mount" 2>/dev/null | tail -1)
+    if [ -z "$info" ]; then
+        echo -e "  ${MUTED}$label${RESET}  ${MUTED}not mounted${RESET}"
+        return
+    fi
+    local total=$(echo "$info" | awk '{print $2}' | tr -d 'G')
+    local used=$(echo "$info" | awk '{print $3}' | tr -d 'G')
+    local avail=$(echo "$info" | awk '{print $4}' | tr -d 'G')
+
+    printf "  ${CYAN}%-10s${RESET}  " "$label"
+    bar $used $total
+    printf "  ${MUTED}${used}G / ${total}G  (${avail}G free)${RESET}\n"
+}
+
+echo ""
+echo -e "  ${CYAN}${BOLD}── strata storage status ──${RESET}"
+echo ""
+disk_info "/"                "/        "
+disk_info "/mnt/valus"       "valus    "
+disk_info "/mnt/phaedra"     "phaedra  "
+echo ""

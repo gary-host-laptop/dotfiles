@@ -10,6 +10,21 @@ success() { echo "  [ ok ] $1"; }
 warn()    { echo "  [warn] $1"; }
 fail()    { echo "  [FAIL] $1"; exit 1; }
 
+# ── check dependencies ───────────────────────────────────────────────────────
+check_deps() {
+    info "checking dependencies..."
+    local deps=(inotify-tools git)
+    for dep in "${deps[@]}"; do
+        if ! rpm -q "$dep" &>/dev/null; then
+            warn "$dep not found, installing..."
+            sudo dnf install -y "$dep"
+        else
+            info "$dep already installed"
+        fi
+    done
+    success "dependencies ok"
+}
+
 # ── symlink a single file ────────────────────────────────────────────────────
 link_file() {
     local src="$1"
@@ -37,9 +52,51 @@ link_file() {
 link_dotfiles() {
     info "linking dotfiles..."
     find "$DOTFILES" -name "*.symlink" | while read -r src; do
-        # strip .symlink extension, get filename, prepend $HOME
         filename="$(basename "$src" .symlink)"
         link_file "$src" "$HOME/.$filename"
+    done
+}
+
+# ── config/ → ~/.config/ (files and subdirectories) ─────────────────────────
+link_config() {
+    info "linking .config files..."
+    local config_src="$DOTFILES/config"
+
+    if [ ! -d "$config_src" ]; then
+        info "no config/ directory found, skipping"
+        return
+    fi
+
+    mkdir -p "$HOME/.config"
+
+    # link top-level files directly
+    find "$config_src" -maxdepth 1 -type f | while read -r src; do
+        filename="$(basename "$src")"
+        link_file "$src" "$HOME/.config/$filename"
+    done
+
+    # link subdirectories as whole dirs
+    find "$config_src" -maxdepth 1 -mindepth 1 -type d | while read -r src; do
+        dirname="$(basename "$src")"
+        link_file "$src" "$HOME/.config/$dirname"
+    done
+}
+
+# ── bin/ scripts → ~/bin/ ───────────────────────────────────────────────────
+link_bin() {
+    info "linking bin scripts..."
+    local bin_src="$DOTFILES/bin"
+
+    if [ ! -d "$bin_src" ]; then
+        info "no bin/ directory found, skipping"
+        return
+    fi
+
+    mkdir -p "$HOME/bin"
+    find "$bin_src" -maxdepth 1 -type f | while read -r src; do
+        filename="$(basename "$src")"
+        link_file "$src" "$HOME/bin/$filename"
+        chmod +x "$src"
     done
 }
 
@@ -64,45 +121,10 @@ link_systemd() {
     success "systemd units reloaded"
 }
 
-# ── bin/ scripts → ~/bin/ ───────────────────────────────────────────────────
-link_bin() {
-    info "linking bin scripts..."
-    local bin_src="$DOTFILES/bin"
-
-    if [ ! -d "$bin_src" ]; then
-        info "no bin/ directory found, skipping"
-        return
-    fi
-
-    mkdir -p "$HOME/bin"
-    find "$bin_src" -maxdepth 1 -type f | while read -r src; do
-        filename="$(basename "$src")"
-        link_file "$src" "$HOME/bin/$filename"
-        chmod +x "$src"
-    done
-}
-
-# ── .config.symlink files → ~/.config/ ──────────────────────────────────────
-link_config() {
-    info "linking .config files..."
-    local config_src="$DOTFILES/config"
-
-    if [ ! -d "$config_src" ]; then
-        info "no config/ directory found, skipping"
-        return
-    fi
-
-    mkdir -p "$HOME/.config"
-    find "$config_src" -maxdepth 1 -type f | while read -r src; do
-        filename="$(basename "$src")"
-        link_file "$src" "$HOME/.config/$filename"
-    done
-}
-
-# ── enable systemd path units ────────────────────────────────────────────────
+# ── enable systemd units ─────────────────────────────────────────────────────
 enable_units() {
     info "enabling systemd units..."
-    find "$DOTFILES/systemd" -maxdepth 1 -name "*.service" -o -name "*.path" | while read -r unit; do
+    find "$DOTFILES/systemd" -maxdepth 1 \( -name "*.service" -o -name "*.path" \) | while read -r unit; do
         unitname="$(basename "$unit")"
         systemctl --user enable --now "$unitname" 2>/dev/null && success "enabled $unitname"
     done
@@ -125,6 +147,7 @@ echo ""
 echo "  bootstrapping dotfiles from $DOTFILES"
 echo ""
 
+check_deps
 link_dotfiles
 link_config
 link_bin
