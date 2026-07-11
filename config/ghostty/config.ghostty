@@ -8,7 +8,6 @@ window-theme = ghostty
 gtk-custom-css = ~/.config/ghostty/custom.css
 
 # font
-font-family = Inter
 font-family = FiraCode Nerd Font
 font-size = 11
 

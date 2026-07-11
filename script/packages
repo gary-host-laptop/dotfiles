@@ -14,6 +14,7 @@ warn()    { echo "  [warn] $1"; }
 info "enabling copr repos..."
 sudo dnf copr enable -y atim/starship
 sudo dnf copr enable -y atim/bottom
+sudo dnf copr enable -y dejan/lazygit
 success "copr repos enabled"
 
 # ── dnf ──────────────────────────────────────────────────────────────────────
@@ -27,6 +28,7 @@ DNF_PACKAGES=(
     bottom
     starship
     eza
+    lazygit
     inotify-tools
 )
 
