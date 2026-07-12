@@ -1,0 +1,6 @@
+inherits = "tokyonight"
+
+"ui.background" = { fg = "fg" }
+"ui.statusline" = { fg = "#a9b1d6" }
+"ui.statusline.inactive" = { fg = "#565f89" }
+"ui.window" = { fg = "#3b4261" }
