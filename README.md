@@ -1,8 +1,6 @@
 # ｄｏｔｆｉｌｅｓ
 
-personal system configuration for a fedora linux setup organized within a johnny decimal inspired [strata](https://johnnydecimal.com/) file system.
-
-→ [apps](docs/apps.md) · [hardware](docs/hardware.md)
+personal system configuration for a fedora linux setup organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system.
 
 ---
 
@@ -10,18 +8,18 @@ personal system configuration for a fedora linux setup organized within a johnny
 
 ```
 dotfiles/
-├── bash/
-│   ├── bashrc.symlink      # → ~/.bashrc
-│   ├── profile.symlink     # → ~/.profile
-│   ├── exports.bash        # PATH, env vars
-│   ├── aliases.bash        # shell aliases
-│   └── gitconfig.symlink   # → ~/.gitconfig
-├── bin/                    # → ~/bin/
-│   ├── apugure             # system updater (dnf + flatpak)
-│   ├── move-media.sh       # moves images from inbox + screenshots
-│   ├── strata-status       # disk usage overview
-│   └── wallpaper           # random wallpaper setter
-├── config/                 # → ~/.config/
+├── bash/						# Shell configuration
+│   ├── bashrc.symlink		# → ~/.bashrc
+│   ├── profile.symlink		# → ~/.profile
+│   ├── exports.bash			# PATH, env vars
+│   ├── aliases.bash			# shell aliases
+│   └── gitconfig.symlink		# → ~/.gitconfig
+├── bin/						# Executable utilities
+│   ├── apugure				# system updater (dnf + flatpak)
+│   ├── move-media.sh			# moves images from inbox + screenshots
+│   ├── strata-status			# disk usage overview
+│   └── wallpaper				# random wallpaper setter
+├── config/					# Application configurations
 │   ├── starship.toml
 │   ├── ghostty/
 │   │   ├── config.ghostty
@@ -30,27 +28,18 @@ dotfiles/
 │       ├── config.jsonc
 │       └── logo.txt
 ├── docs/
-│   ├── apps.md             # app inventory + install notes
-│   └── hardware.md         # machine specs + drive layout
-├── systemd/                # → ~/.config/systemd/user/
+│   ├── apps.md				# app inventory + install notes
+│   └── hardware.md			# machine specs + drive layout
+├── systemd/					# System automation
 │   ├── move-media.service
 │   ├── wallpaper.service
 │   └── wallpaper.timer
 └── script/
-    ├── bootstrap           # main setup — run first
-    ├── links               # hdd symlinks into strata
-    ├── packages            # essential dnf/flatpak/rpm installs
-    └── xdg                 # user dirs, fonts, cursor, wallpaper default
+    ├── bootstrap				# main setup — run first
+    ├── links					# hdd symlinks into strata
+    ├── packages				# essential dnf/flatpak/rpm installs
+    └── xdg					# user dirs, fonts, cursor, wallpaper default
 ```
-
----
-
-## ｍａｃｈｉｎｅ
-
-**ghost-desktop** — fedora workstation
-- cpu: amd ryzen 5 5600g
-- ram: 8gb ddr4 3000mhz
-- hdds: **valus** (`/mnt/valus`) · **phaedra** (`/mnt/phaedra`)
 
 ---
 
@@ -61,7 +50,7 @@ dotfiles/
 ├── 10-19_system/
 │   └── 13_system-config/
 │       ├── dotfiles/           ← this repo
-│       ├── theming/            # cursors, wallpapers, fonts, shimeji
+│       ├── theming/            
 │       └── templates/          # nautilus new-file templates
 ├── 20-29_praxis/               # active projects, development
 └── 30-39_media/
@@ -88,22 +77,10 @@ git clone git@github.com:gary-host-laptop/dotfiles.git \
 
 cd ~/strata/10-19_system/13_system-config/dotfiles
 chmod +x script/bootstrap script/links script/packages script/xdg
-./script/bootstrap   # symlinks, deps, systemd units
-./script/packages    # dnf + flatpak installs
-./script/xdg         # user dirs, fonts, cursor theme
+./script/bootstrap
+./script/packages
+./script/xdg
 ```
-
----
-
-## ａｕｔｏｍａｔｉｏｎ
-
-| service | watches | moves to |
-|---------|---------|----------|
-| `move-media` | `~/strata/10-19_system/16_inbox` | `33_images/images/` |
-| `move-media` | `~/Pictures/Screenshots` | `33_images/screenshots/` |
-| `wallpaper.timer` | — | picks random from `theming/wallpapers/` every 6h |
-
-extensions monitored: jpg jpeg png webp gif
 
 ---
 
