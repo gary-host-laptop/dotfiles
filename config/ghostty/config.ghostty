@@ -21,3 +21,5 @@ cursor-style-blink = true
 # misc
 scrollback-limit = 10000
 copy-on-select = true
+
+command = zellij
