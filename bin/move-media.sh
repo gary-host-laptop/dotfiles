@@ -5,6 +5,9 @@ SCREENSHOTS="$HOME/Pictures/Screenshots"
 IMAGES="$HOME/strata/30-39_media/33_images/inbox"
 SCREENSHOTS_DST="$HOME/strata/30-39_media/33_images/screenshots"
 
+# ensure watch+dest dirs exist before the loop starts
+mkdir -p "$INBOX" "$SCREENSHOTS" "$IMAGES" "$SCREENSHOTS_DST"
+
 inotifywait -m -e close_write -e moved_to --format '%w%f' \
     "$INBOX" "$SCREENSHOTS" | while read -r filepath; do
 
