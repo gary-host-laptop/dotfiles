@@ -58,7 +58,7 @@ dotfiles/
     ├── 32_audio    → /mnt/valus/32_audio
     ├── 33_images   → /mnt/valus/33_images
     │   ├── images/             # monbooru library
-    │   └── screenshots/
+    │   └── screenshots/        # gnome screenshots (~/Pictures/Screenshots) land here
     ├── 34_video    → /mnt/phaedra/34_video
     └── 35_video-games/
         ├── games-library → /mnt/valus/35_video-games/games-library
