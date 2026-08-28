@@ -64,8 +64,16 @@ if [ "$1" = "--setup" ]; then
     done
 
     interval_sec=$(( interval * 3600 ))
-    sed -i "s/OnUnitActiveSec=.*/OnUnitActiveSec=${interval_sec}s/" \
-        "$HOME/.config/systemd/user/wallpaper.timer"
+
+    # interval is machine-local → keep it out of the versioned unit file
+    # a drop-in overrides the repo's 6h default without touching the symlink
+    # (removing it reverts to the versioned default)
+    mkdir -p "$HOME/.config/systemd/user/wallpaper.timer.d"
+    cat > "$HOME/.config/systemd/user/wallpaper.timer.d/interval.conf" <<EOF
+[Timer]
+OnUnitActiveSec=${interval_sec}s
+EOF
+
     systemctl --user daemon-reload
     systemctl --user enable --now wallpaper.timer
 
