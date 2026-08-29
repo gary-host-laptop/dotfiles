@@ -16,6 +16,7 @@ dotfiles/
 │   └── gitconfig.symlink		# → ~/.gitconfig
 ├── bin/						# Executable utilities
 │   ├── apugure				# system updater (dnf + flatpak)
+│   ├── cleanup				# disk maintenance (cache, journal, thumbnails)
 │   ├── move-media.sh			# moves images from inbox + screenshots
 │   ├── strata-status			# disk usage overview
 │   └── wallpaper				# random wallpaper setter

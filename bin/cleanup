@@ -1,0 +1,28 @@
+#!/bin/bash
+
+BOLD='\033[1m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+YELLOW='\033[0;33m'
+RESET='\033[0m'
+
+section() { echo -e "\n${CYAN}${BOLD}── $1 ──${RESET}"; }
+done_msg() { echo -e "${GREEN}✓ $1${RESET}"; }
+
+section "dnf cache"
+sudo dnf clean all
+done_msg "dnf cache cleaned"
+
+section "flatpak"
+flatpak repair
+done_msg "flatpak done"
+
+section "journal"
+sudo journalctl --vacuum-size=500M
+done_msg "journal vacuumed"
+
+section "thumbnail cache"
+rm -rf ~/.cache/thumbnails/fail/
+done_msg "failed thumbnails cleared"
+
+echo -e "\n${GREEN}${BOLD}クリーンアップ完了${RESET}\n"

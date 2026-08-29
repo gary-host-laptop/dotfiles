@@ -12,13 +12,11 @@ done_msg() { echo -e "${GREEN}✓ $1${RESET}"; }
 section "dnf"
 sudo dnf upgrade -y
 sudo dnf autoremove -y
-sudo dnf clean all
 done_msg "dnf done"
 
 section "flatpak"
 flatpak update -y
 flatpak uninstall --unused -y
-flatpak repair
 done_msg "flatpak done"
 
 echo -e "\n${GREEN}${BOLD}アップグレード完了${RESET}\n"
