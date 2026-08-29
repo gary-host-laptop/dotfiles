@@ -1,3 +1,7 @@
+# editor + browser for interactive shells
+export EDITOR=hx
+export BROWSER=firefox
+
 # path
 if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
     PATH="$HOME/.local/bin:$HOME/bin:$PATH"
