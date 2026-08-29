@@ -23,9 +23,9 @@ bar() {
     fi
 
     printf "${color}"
-    printf '█%.0s' $(seq 1 $filled)
+    for ((i=0; i<filled; i++)); do printf '█'; done
     printf "${MUTED}"
-    printf '░%.0s' $(seq 1 $empty)
+    for ((i=0; i<empty; i++)); do printf '░'; done
     printf "${RESET} ${color}${pct}%%${RESET}"
 }
 
