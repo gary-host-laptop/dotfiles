@@ -20,13 +20,34 @@ dotfiles/
 │   ├── strata-status			# disk usage overview
 │   └── wallpaper				# random wallpaper setter
 ├── config/					# Application configurations
-│   ├── starship.toml
+│   ├── antimicrox/
+│   │   ├── antimicrox_settings.ini
+│   │   └── gamepad.gamecontroller.amgp
+│   ├── bat/
+│   │   ├── config
+│   │   └── themes/
+│   ├── fastfetch/
+│   │   ├── config.jsonc
+│   │   └── logo.txt
 │   ├── ghostty/
 │   │   ├── config.ghostty
 │   │   └── custom.css
-│   └── fastfetch/
-│       ├── config.jsonc
-│       └── logo.txt
+│   ├── helix/
+│   │   ├── config.toml
+│   │   └── themes/
+│   ├── lazygit/
+│   │   └── config.yml
+│   ├── starship.toml
+│   ├── superfile/
+│   │   ├── config.toml
+│   │   ├── hotkeys.toml
+│   │   └── theme/
+│   │       ├── .gitignore
+│   │       └── tokyonight.toml
+│   └── zellij/
+│       ├── config.kdl
+│       ├── layouts/
+│       └── themes/
 ├── docs/
 │   ├── apps.md				# app inventory + install notes
 │   └── hardware.md			# machine specs + drive layout
