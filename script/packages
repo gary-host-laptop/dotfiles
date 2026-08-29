@@ -15,24 +15,38 @@ info "enabling copr repos..."
 sudo dnf copr enable -y atim/starship
 sudo dnf copr enable -y atim/bottom
 sudo dnf copr enable -y dejan/lazygit
+sudo dnf copr enable -y varlad/zellij
+sudo dnf copr enable -y scottames/ghostty
 success "copr repos enabled"
 
 # ── dnf ──────────────────────────────────────────────────────────────────────
 info "installing dnf packages..."
 
+# official fedora repos
 DNF_PACKAGES=(
     calibre
     flameshot
-    keepassxc
-    qbittorrent
-    bottom
-    starship
+    firefox
+    vlc
+    kdenlive
+    bat
+    helix
     eza
-    lazygit
     inotify-tools
+    mpd
+    mpc
 )
 
-sudo dnf install -y "${DNF_PACKAGES[@]}"
+# built via the coprs above
+COPR_PACKAGES=(
+    bottom
+    starship
+    lazygit
+    zellij
+    ghostty
+)
+
+sudo dnf install -y "${DNF_PACKAGES[@]}" "${COPR_PACKAGES[@]}"
 success "dnf packages installed"
 
 # ── flatpak ──────────────────────────────────────────────────────────────────
@@ -45,26 +59,35 @@ FLATPAK_PACKAGES=(
     net.ankiweb.Anki
     com.rafaelmardojai.Blanket
     org.chromium.Chromium
-    io.github.dgsasha.Damask
-    im.riot.Riot
-    org.mozilla.firefox
     org.gimp.GIMP
-    org.kde.kdenlive
+    org.inkscape.Inkscape
+    io.github.htkhiem.Euphonica
+    org.localsend.localsend_app
+    org.torproject.torbrowser-launcher
+    im.riot.Riot
+    org.mozilla.Thunderbird
+    org.libretro.RetroArch
+    org.tenacityaudio.Tenacity
     org.musicbrainz.Picard
+    org.keepassxc.KeePassXC
+    org.qbittorrent.qBittorrent
     md.obsidian.Obsidian
     com.github.jeromerobert.pdfarranger
-    org.libretro.RetroArch
     com.github.tchx84.Flatseal
     io.github.shonubot.Spruce
     com.stremio.Stremio
-    org.tenacityaudio.Tenacity
-    org.mozilla.Thunderbird
-    org.videolan.VLC
     org.nicotine_plus.Nicotine
 )
 
 flatpak install -y flathub "${FLATPAK_PACKAGES[@]}"
 success "flatpak packages installed"
+
+# ── install scripts ─────────────────────────────────────────────────────────────
+info "installing via install scripts..."
+
+# superfile
+bash -c "$(curl -sLo- https://superfile.dev/install.sh)" \
+    || warn "superfile install failed — retry from https://superfile.dev/getting-started/installation/"
 
 # ── rpm (direct) ─────────────────────────────────────────────────────────────
 info "installing rpm packages..."
@@ -79,7 +102,7 @@ sudo dnf install -y steam || warn "steam install failed"
 warn "veracrypt: download rpm from https://www.veracrypt.fr/en/Downloads.html and install manually"
 
 # zed
-warn "zed: install via 'curl -f https://zed.dev/install.sh | sh' or rpm from zed.dev"
+warn "zed: install via 'curl -f https://zed.dev/install.sh | sh' or flatpak from flathub (dev.zed.Zed)"
 
 success "rpm section done"
 

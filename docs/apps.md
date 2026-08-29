@@ -8,37 +8,44 @@ for automated installation of essentials, run `script/packages`.
 | app | package manager | category | flatpak id / notes |
 |-----|-----------------|----------|--------------------|
 | anki | flatpak | productivity | net.ankiweb.Anki |
+| bat | dnf | utilities | cat replacement |
 | blanket | flatpak | media | com.rafaelmardojai.Blanket |
 | bottom | dnf (atim/bottom copr) | utilities | |
 | calibre | dnf | productivity | |
 | chromium | flatpak | internet | org.chromium.Chromium |
 | element | flatpak | internet | im.riot.Riot |
 | euphonica | flatpak | media | io.github.htkhiem.Euphonica |
-| firefox | flatpak | internet | org.mozilla.firefox |
+| eza | dnf | utilities | ls replacement |
+| firefox | dnf | internet | |
 | flameshot | dnf | utilities | |
 | flatseal | flatpak | utilities | com.github.tchx84.Flatseal |
 | gimp | flatpak | creative | org.gimp.GIMP |
 | ghostty | dnf (scottames/ghostty copr) | utilities | |
+| helix | dnf | dev | terminal editor |
 | inkscape | flatpak | creative | org.inkscape.Inkscape |
-| kdenlive | flatpak | creative | org.kde.kdenlive |
-| keepassxc | dnf | utilities | |
+| kdenlive | dnf | creative | |
+| keepassxc | flatpak | utilities | org.keepassxc.KeePassXC |
+| lazygit | dnf (dejan/lazygit copr) | dev | |
 | localsend | flatpak | utilities | org.localsend.localsend_app |
+| mpc | dnf | media | mpd client |
+| mpd | dnf | media | music server for euphonica |
 | musicbrainz picard | flatpak | media | org.musicbrainz.Picard |
 | nicotine+ | flatpak | internet | org.nicotine_plus.Nicotine |
 | obsidian | flatpak | productivity | md.obsidian.Obsidian |
 | pdf arranger | flatpak | productivity | com.github.jeromerobert.pdfarranger |
-| qbittorrent | dnf | internet | |
+| qbittorrent | flatpak | internet | org.qbittorrent.qBittorrent |
 | retroarch | flatpak | games | org.libretro.RetroArch |
 | spruce | flatpak | utilities | io.github.shonubot.Spruce |
 | starship | dnf (atim/starship copr) | utilities | |
 | steam | rpm | games | steampowered.com |
 | stremio | flatpak | internet | com.stremio.Stremio |
+| superfile | install script | utilities | spf — https://superfile.dev/install.sh |
 | tenacity | flatpak | media | org.tenacityaudio.Tenacity |
 | thunderbird | flatpak | internet | org.mozilla.Thunderbird |
 | tor browser | flatpak | internet | org.torproject.torbrowser-launcher |
 | veracrypt | rpm | utilities | veracrypt.fr/en/Downloads.html |
-| vlc | flatpak | media | org.videolan.VLC |
-| zed | rpm | dev | zed.dev |
+| vlc | dnf | media | |
+| zellij | dnf (varlad/zellij copr) | dev | terminal multiplexer |
 
 ## ｍａｎｕａｌ　ｉｎｓｔａｌｌｓ
 
@@ -52,6 +59,7 @@ these require manual download/setup — not automated in `script/packages`.
 | shijima-qt | https://github.com/hv-chat/shijima-qt | ukagaka/shimeji runner |
 | fightcade | https://www.fightcade.com | games |
 | itch.io | https://itch.io/app | games |
+| opencode | https://opencode.ai/install | dev | CLI dev agent — installs to ~/.opencode/ |
 | portmaster | https://safing.io/portmaster | network monitor |
 
 ## ｐｒｏｂａｔｉｏｎａｒｙ
@@ -66,6 +74,7 @@ currently evaluating — not in install script.
 | mission center | flatpak | utilities | system monitor |
 | qview | flatpak | utilities | lightweight image viewer |
 | zen browser | flatpak | internet | firefox-based, evaluating |
+| zed | flatpak | dev | dev.zed.Zed — too heavy for daily use, kept for occasional use |
 
 ## ｎｏｔｅｓ
 
@@ -84,4 +93,3 @@ evaluating qview as a lightweight option.
 - damask — unused
 - elisa, lollypop — replaced by euphonica
 - kando — not using
-- zed — too heavy for daily use, kept for occasional use
