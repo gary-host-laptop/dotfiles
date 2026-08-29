@@ -2,8 +2,6 @@
 
 personal system configuration for a fedora linux setup organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system.
 
----
-
 ## ｓｔｒｕｃｔｕｒｅ
 
 ```
@@ -35,8 +33,6 @@ dotfiles/
     └── xdg					# user dirs, fonts, cursor, wallpaper default
 ```
 
----
-
 ## ｓｔｒａｔａ
 
 ```
@@ -55,10 +51,6 @@ dotfiles/
         └── steam			# 35_video-games/steam → /mnt/phaedra/35_video-games/SteamLibrary
 ```
 
-strata lives on its own partition and survives os reinstalls.
-
----
-
 ## ｆｒｅｓｈ　ｉｎｓｔａｌｌ
 
 ```bash
@@ -71,8 +63,6 @@ chmod +x script/bootstrap script/links script/packages script/xdg
 ./script/packages
 ./script/xdg
 ```
-
----
 
 ## ｂｏｏｔｓｔｒａｐ
 
