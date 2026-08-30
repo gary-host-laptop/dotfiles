@@ -10,7 +10,7 @@ for automated installation of essentials, run `script/packages`.
 | anki | flatpak | productivity | net.ankiweb.Anki |
 | bat | dnf | utilities | cat replacement |
 | blanket | flatpak | media | com.rafaelmardojai.Blanket |
-| bottom | dnf (atim/bottom copr) | utilities | |
+| btop | dnf | utilities | system monitor — crashes on AMD APUs if rocm-smi is installed |
 | calibre | dnf | productivity | |
 | chromium | flatpak | internet | org.chromium.Chromium |
 | element | flatpak | internet | im.riot.Riot |

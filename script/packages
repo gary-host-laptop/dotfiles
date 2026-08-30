@@ -13,7 +13,6 @@ warn()    { echo "  [warn] $1"; }
 # ── copr repos ───────────────────────────────────────────────────────────────
 info "enabling copr repos..."
 sudo dnf copr enable -y atim/starship
-sudo dnf copr enable -y atim/bottom
 sudo dnf copr enable -y dejan/lazygit
 sudo dnf copr enable -y varlad/zellij
 sudo dnf copr enable -y scottames/ghostty
@@ -30,6 +29,7 @@ DNF_PACKAGES=(
     vlc
     kdenlive
     bat
+    btop
     helix
     eza
     inotify-tools
@@ -39,7 +39,6 @@ DNF_PACKAGES=(
 
 # built via the coprs above
 COPR_PACKAGES=(
-    bottom
     starship
     lazygit
     zellij
