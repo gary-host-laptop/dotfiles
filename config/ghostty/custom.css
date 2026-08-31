@@ -25,11 +25,5 @@ revealer.bottom-bar {
     box-shadow: none;
 }
 
-.top-bar, .bottom-bar {
-    box-shadow: none;
-}
 
-tabbar tabbox {
-    margin-left: 40px;
-}
 
