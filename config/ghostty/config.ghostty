@@ -1,6 +1,5 @@
 # appearance
-background = #1e1e1e
-foreground = #e3e5e5
+theme = tokyonight_night
 window-padding-x = 5
 window-padding-y = 8
 
