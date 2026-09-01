@@ -1,0 +1,15 @@
+[misc]
+# disable steps you don't use
+# disable = []
+
+[dnf]
+# use sudo for system-wide upgrade
+use_sudo = true
+
+[flatpak]
+# use sudo for updating the system-wide installation
+# use_sudo = true
+
+[cargo]
+# install new versions globally
+install = true
