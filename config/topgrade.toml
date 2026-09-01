@@ -1,15 +1,8 @@
 [misc]
-# disable steps you don't use
-# disable = []
-
-[dnf]
-# use sudo for system-wide upgrade
-use_sudo = true
+[linux]
+# dnf: pass --refresh to pick up new metadata
+dnf_arguments = "--refresh"
 
 [flatpak]
 # use sudo for updating the system-wide installation
-# use_sudo = true
-
-[cargo]
-# install new versions globally
-install = true
+use_sudo = true
