@@ -11,6 +11,9 @@ export PATH
 # pkg-config
 export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
 
+# cargo (topgrade): limit concurrent rustc builds to fit 7GiB RAM
+export CARGO_INSTALL_OPTS="--jobs 1"
+
 # eza
 export EZA_ICONS_AUTO=1
 
