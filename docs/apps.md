@@ -45,7 +45,7 @@ for automated installation of essentials, run `script/packages`.
 | tor browser | flatpak | internet | org.torproject.torbrowser-launcher |
 | veracrypt | rpm | utilities | veracrypt.fr/en/Downloads.html |
 | vlc | dnf | media | |
-| zellij | dnf (varlad/zellij copr) | dev | terminal multiplexer |
+| zellij | cargo-binstall | dev | terminal multiplexer — `cargo binstall zellij`; needs >=0.45 for kitty graphics (ghostty) |
 
 ## ｍａｎｕａｌ　ｉｎｓｔａｌｌｓ
 

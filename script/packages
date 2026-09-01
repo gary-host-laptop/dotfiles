@@ -14,7 +14,6 @@ warn()    { echo "  [warn] $1"; }
 info "enabling copr repos..."
 sudo dnf copr enable -y atim/starship
 sudo dnf copr enable -y dejan/lazygit
-sudo dnf copr enable -y varlad/zellij
 sudo dnf copr enable -y scottames/ghostty
 success "copr repos enabled"
 
@@ -41,7 +40,6 @@ DNF_PACKAGES=(
 COPR_PACKAGES=(
     starship
     lazygit
-    zellij
     ghostty
 )
 
@@ -87,6 +85,13 @@ info "installing via install scripts..."
 # superfile
 bash -c "$(curl -sLo- https://superfile.dev/install.sh)" \
     || warn "superfile install failed — retry from https://superfile.dev/getting-started/installation/"
+
+# ── cargo binaries ─────────────────────────────────────────────────────────────
+info "installing cargo binaries..."
+
+# cargo-binstall + zellij (manual install handles >0.45 for kitty graphics; copr is stuck at 0.42)
+cargo install cargo-binstall || warn "cargo-binstall install failed"
+cargo binstall -y zellij || warn "zellij install failed — retry with 'cargo binstall zellij'"
 
 # ── rpm (direct) ─────────────────────────────────────────────────────────────
 info "installing rpm packages..."
