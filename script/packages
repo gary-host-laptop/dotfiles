@@ -93,6 +93,38 @@ info "installing cargo binaries..."
 cargo install cargo-binstall || warn "cargo-binstall install failed"
 cargo binstall -y zellij || warn "zellij install failed — retry with 'cargo binstall zellij'"
 
+# yazi — file manager with kitty image previews inside zellij (KgpOld).
+# NOTE: cargo-binstall currently pins yazi to an older version than the
+# yazi-rs plugins require (full-border needs >=26.8.15). Install the latest
+# release directly from GitHub to match the pinned plugin revs in package.toml.
+if ! command -v yazi &>/dev/null || ! yazi --version | grep -qP '26\.9\.'; then
+    info "installing yazi from GitHub release (latest)…"
+    tmp="$(mktemp -d)"
+    curl -L -o "$tmp/yazi.zip" \
+        "https://github.com/sxyazi/yazi/releases/download/v26.9.1/yazi-x86_64-unknown-linux-gnu.zip"
+    unzip -o "$tmp/yazi.zip" -d "$tmp" >/dev/null
+    cp "$tmp"/yazi-x86_64-unknown-linux-gnu/{yazi,ya} ~/.cargo/bin/ && chmod +x ~/.cargo/bin/{yazi,ya}
+    rm -rf "$tmp"
+    success "yazi $(yazi --version | head -1) installed"
+else
+    info "yazi already up to date"
+fi
+
+# yazi (latest release via GitHub — cargo-binstall lags behind; 26.9.1+ for plugin compat)
+YAZI_VERSION="${YAZI_VERSION:-v26.9.1}"
+if ! yazi --version 2>/dev/null | grep -q "26.9.1"; then
+    warn "installing yazi ${YAZI_VERSION} from GitHub release..."
+    yazi_tmp="$(mktemp -d)"
+    curl -sL -o "$yazi_tmp/yazi.zip" \
+        "https://github.com/sxyazi/yazi/releases/download/${YAZI_VERSION}/yazi-x86_64-unknown-linux-gnu.zip" \
+        || warn "yazi download failed — get from https://github.com/sxyazi/yazi/releases"
+    unzip -qo "$yazi_tmp/yazi.zip" -d "$yazi_tmp" \
+        && cp "$yazi_tmp"/yazi-x86_64-unknown-linux-gnu/{yazi,ya} "$HOME/.cargo/bin/" \
+        && chmod +x "$HOME/.cargo/bin/yazi" "$HOME/.cargo/bin/ya" \
+        || warn "yazi install failed"
+    rm -rf "$yazi_tmp"
+fi
+
 # ── rpm (direct) ─────────────────────────────────────────────────────────────
 info "installing rpm packages..."
 

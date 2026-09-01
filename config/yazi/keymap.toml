@@ -1,0 +1,130 @@
+# vim:fileencoding=utf-8:foldmethod=marker
+
+# Superfile-matching keybindings for Yazi
+# Matches: h/j/k/l navigation, vim-like motions, and common superfile actions
+# Skipped: multi-file-panel (n/N/tab), sidebar (s), footer toggle (F), pinned (P)
+
+# : Manager {{{
+
+[mgr]
+prepend_keymap = [
+
+	# ── quit ───────────────────────────────────────────────────────────
+	{ on = [ "q" ],       run = "quit",              desc = "Quit" },
+	{ on = [ "Q" ],       run = "quit --code=0",     desc = "Quit (cd back)" },
+
+	# ── navigation (superfile h/l = parent/enter) ──────────────────────
+	{ on = [ "l" ],       run = "enter",             desc = "Enter / open" },
+	{ on = [ "h" ],       run = "leave",             desc = "Go to parent" },
+	{ on = [ "backspace" ], run = "leave",           desc = "Go to parent" },
+
+	# ── sort (superfile o) ─────────────────────────────────────────────
+	{ on = [ "o" ],       run = "sort",              desc = "Sort by" },
+
+	# ── preview toggle (superfile f) ──────────────────────────────────
+	{ on = [ "f" ],       run = "plugin toggle-pane min-preview", desc = "Show/hide preview pane" },
+
+	# ── zoxide jump (superfile z) ─────────────────────────────────────
+	{ on = [ "z" ],       run = "cd --interactive",  desc = "Zoxide jump" },
+
+	# ── toggle hidden (superfile .) ───────────────────────────────────
+	# (yazi default already has . for hidden toggle via `hidden toggle`)
+
+	# ── file operations (superfile ctrl+key) ──────────────────────────
+	{ on = [ "c" ],       run = "yank",              desc = "Copy" },
+	{ on = [ "x" ],       run = "yank --cut",        desc = "Cut" },
+	{ on = [ "p" ],       run = "paste",             desc = "Paste" },
+	{ on = [ "P" ],       run = "paste --force",     desc = "Paste (overwrite)" },
+	{ on = [ "d" ],       run = "remove --permanently", desc = "Delete permanently" },
+
+	# ── selection ──────────────────────────────────────────────────────
+	{ on = [ "v" ],       run = "visual_mode",       desc = "Visual mode" },
+	{ on = [ "V" ],       run = "toggle_all",        desc = "Select all" },
+
+	# ── rename / create ───────────────────────────────────────────────
+	{ on = [ "r" ],       run = "rename",            desc = "Rename" },
+	{ on = [ "a" ],       run = "create",            desc = "Create file" },
+	{ on = [ "A" ],       run = "create --dir",      desc = "Create directory" },
+
+	# ── copy paths (superfile ctrl+p / c) ─────────────────────────────
+	{ on = [ "<C-p>" ],   run = "copy path",         desc = "Copy file path" },
+	{ on = [ "<C-y>" ],   run = "copy name",         desc = "Copy filename" },
+
+	# ── shell / command line ──────────────────────────────────────────
+	{ on = [ ":" ],       run = "shell --interactive", desc = "Shell command" },
+
+	# ── help (superfile ?) ───────────────────────────────────────────
+	{ on = [ "/" ],       run = "find --smart",      desc = "Find file" },
+	{ on = [ "?" ],       run = "help",              desc = "Help" },
+
+	# ── open with (superfile e) ───────────────────────────────────────
+	{ on = [ "e" ],       run = "open --interactive", desc = "Open with" },
+
+	# ── reverse sort (superfile R) ────────────────────────────────────
+	{ on = [ "S" ],       run = "sort --reverse",    desc = "Reverse sort" },
+
+	# ── go to ─────────────────────────────────────────────────────────
+	{ on = [ "g", "h" ],  run = "cd ~",              desc = "Go home" },
+	{ on = [ "g", "c" ],  run = "cd ~/.config",      desc = "Go .config" },
+	{ on = [ "g", "d" ],  run = "cd ~/Documents",    desc = "Go Documents" },
+	{ on = [ "g", "D" ],  run = "cd ~/Downloads",    desc = "Go Downloads" },
+	{ on = [ "g", "p" ],  run = "cd ~/Pictures",     desc = "Go Pictures" },
+
+	# ── no-ops for superfile keys with no yazi equivalent ─────────────
+	{ on = [ "s" ],       run = "noop",              desc = "" },
+	{ on = [ "m" ],       run = "spot",              desc = "Spot" },
+	{ on = [ "n" ],       run = "noop",              desc = "" },
+	{ on = [ "N" ],       run = "noop",              desc = "" },
+	{ on = [ "w" ],       run = "noop",              desc = "" },
+	{ on = [ "<Tab>" ],   run = "noop",              desc = "" },
+]
+
+# : }}}
+
+# : Tasks {{{
+
+[tasks]
+prepend_keymap = [
+	{ on = [ "q" ], run = "close", desc = "Close" },
+]
+
+# : }}}
+
+# : Help {{{
+
+[help]
+prepend_keymap = [
+	{ on = [ "q" ],    run = "close", desc = "Close" },
+	{ on = [ "<Esc>" ], run = "close", desc = "Close" },
+]
+
+# : }}}
+
+# : Input {{{
+
+[input]
+prepend_keymap = [
+	{ on = [ "<C-q>" ], run = "close --submit", desc = "Submit" },
+]
+
+# : }}}
+
+# : Confirm {{{
+
+[confirm]
+prepend_keymap = [
+	{ on = [ "q" ],    run = "close", desc = "Cancel" },
+	{ on = [ "<Esc>" ], run = "close", desc = "Cancel" },
+]
+
+# : }}}
+
+# : Pick {{{
+
+[pick]
+prepend_keymap = [
+	{ on = [ "q" ],    run = "close", desc = "Cancel" },
+	{ on = [ "<Esc>" ], run = "close", desc = "Cancel" },
+]
+
+# : }}}

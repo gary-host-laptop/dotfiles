@@ -39,13 +39,15 @@ for automated installation of essentials, run `script/packages`.
 | starship | dnf (atim/starship copr) | utilities | |
 | steam | rpm | games | steampowered.com |
 | stremio | flatpak | internet | com.stremio.Stremio |
-| superfile | install script | utilities | spf — https://superfile.dev/install.sh |
+| superfile | install script | utilities | spf — https://superfile.dev/install.sh; image previews use kitty placeholders, incompatible with zellij (use yazi inside zellij) |
 | tenacity | flatpak | media | org.tenacityaudio.Tenacity |
 | thunderbird | flatpak | internet | org.mozilla.Thunderbird |
 | tor browser | flatpak | internet | org.torproject.torbrowser-launcher |
 | veracrypt | rpm | utilities | veracrypt.fr/en/Downloads.html |
 | vlc | dnf | media | |
 | zellij | cargo-binstall | dev | terminal multiplexer — `cargo binstall zellij`; needs >=0.45 for kitty graphics (ghostty) |
+| yazi | gh release | dev | file manager — `config/yazi`; kitty image preview via KgpOld works inside zellij; replaces superfile in-zellij |
+| yazi | GitHub release | dev | file manager — replaces superfile inside zellij; supports kitty graphics via `KgpOld`; install latest from yazi-rs/yazi releases (cargo-binstall lags) |
 
 ## ｍａｎｕａｌ　ｉｎｓｔａｌｌｓ
 
