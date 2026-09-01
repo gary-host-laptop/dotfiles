@@ -20,6 +20,10 @@ fi
 
 # starship
 eval "$(starship init bash)"
+
+# zoxide
+eval "$(zoxide init bash)"
+
 export PATH=$PATH:/usr/local/go/bin
 
 # opencode
