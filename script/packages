@@ -86,12 +86,34 @@ info "installing via install scripts..."
 bash -c "$(curl -sLo- https://superfile.dev/install.sh)" \
     || warn "superfile install failed — retry from https://superfile.dev/getting-started/installation/"
 
-# ── cargo binaries ─────────────────────────────────────────────────────────────
+# ── rust toolchain ────────────────────────────────────────────────────
+info "installing rust toolchain (rustup, non-distro cargo)…"
+
+if ! command -v rustup &>/dev/null; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+        | sh -s -- -y --default-toolchain stable \
+        || warn "rustup install failed — retry from https://rustup.rs"
+else
+    info "rustup already installed"
+fi
+# cargo/rustup live under ~/.cargo/bin (PATH added by bash/exports.bash);
+# source now so the rest of this script can use cargo.
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# ── cargo binaries ────────────────────────────────────────────────────
 info "installing cargo binaries..."
 
 # cargo-binstall + zellij (manual install handles >0.45 for kitty graphics; copr is stuck at 0.42)
 cargo install cargo-binstall || warn "cargo-binstall install failed"
 cargo binstall -y zellij || warn "zellij install failed — retry with 'cargo binstall zellij'"
+
+# topgrade (updater) + zoxide (smarter cd) — used by bash
+cargo install --locked topgrade zoxide \
+    || warn "topgrade/zoxide install failed — retry with 'cargo install topgrade zoxide'"
+
+# croft — rust toolchain manager (crates.io name: croft-software)
+cargo install --locked croft-software \
+    || warn "croft install failed — retry with 'cargo install croft-software'"
 
 # yazi — file manager with kitty image previews inside zellij (KgpOld).
 # NOTE: cargo-binstall currently pins yazi to an older version than the
@@ -108,6 +130,23 @@ if ! command -v yazi &>/dev/null || ! yazi --version | grep -qP '26\.9\.'; then
     success "yazi $(yazi --version | head -1) installed"
 else
     info "yazi already up to date"
+fi
+
+# ── bleachbit (upstream rpm, not in fedora repo — stale at 4.6.0) ────────
+# native install (not flatpak) so dnf-cache cleaning works; used via `sudo bbit`.
+# NOTE: pulls the pinned release; bump BB_VER when a new one ships.
+if ! rpm -q bleachbit &>/dev/null; then
+    info "installing bleachbit upstream rpm…"
+    BB_VER="6.0.3"
+    tmp="$(mktemp -d)"
+    curl -L -o "$tmp/bleachbit.rpm" \
+        "https://github.com/bleachbit/bleachbit/releases/download/v${BB_VER}/bleachbit-${BB_VER}-1.1.fc44.noarch.rpm" \
+        || warn "bleachbit download failed"
+    sudo dnf install -y "$tmp/bleachbit.rpm" \
+        || warn "bleachbit install failed — manual: https://www.bleachbit.org/download/linux"
+    rm -rf "$tmp"
+else
+    info "bleachbit already installed ($(rpm -q bleachbit))"
 fi
 
 # ── rpm (direct) ─────────────────────────────────────────────────────────────

@@ -9,6 +9,8 @@ for automated installation of essentials, run `script/packages`.
 |-----|-----------------|----------|--------------------|
 | anki | flatpak | productivity | net.ankiweb.Anki |
 | bat | dnf | utilities | cat replacement |
+| bleachbit | rpm (upstream manual) | utilities | cache/disk cleaner — `sudo bbit`; native 6.0.3 fc44 noarch rpm (upstream), fedora repo stale at 4.6.0; manual updates |
+| croft | cargo | dev | rust toolchain manager — crates.io `croft-software` |
 | blanket | flatpak | media | com.rafaelmardojai.Blanket |
 | btop | dnf | utilities | system monitor — crashes on AMD APUs if rocm-smi is installed |
 | calibre | dnf | productivity | |
@@ -42,12 +44,13 @@ for automated installation of essentials, run `script/packages`.
 | superfile | install script | utilities | spf — https://superfile.dev/install.sh; image previews use kitty placeholders, incompatible with zellij (use yazi inside zellij) |
 | tenacity | flatpak | media | org.tenacityaudio.Tenacity |
 | thunderbird | flatpak | internet | org.mozilla.Thunderbird |
+| topgrade | cargo | dev | multi-tool updater — `tg` alias; config at `config/topgrade.toml` |
 | tor browser | flatpak | internet | org.torproject.torbrowser-launcher |
 | veracrypt | rpm | utilities | veracrypt.fr/en/Downloads.html |
 | vlc | dnf | media | |
 | zellij | cargo-binstall | dev | terminal multiplexer — `cargo binstall zellij`; needs >=0.45 for kitty graphics (ghostty) |
-| yazi | gh release | dev | file manager — `config/yazi`; kitty image preview via KgpOld works inside zellij; replaces superfile in-zellij |
-| yazi | GitHub release | dev | file manager — replaces superfile inside zellij; supports kitty graphics via `KgpOld`; install latest from yazi-rs/yazi releases (cargo-binstall lags) |
+| zoxide | cargo | dev | smarter `cd` — init in `bash/bashrc.symlink` |
+| yazi | gh release | dev | file manager — replaces superfile inside zellij; kitty image preview via `KgpOld`; install latest from yazi-rs/yazi releases (cargo-binstall lags) |
 
 ## ｍａｎｕａｌ　ｉｎｓｔａｌｌｓ
 

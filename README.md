@@ -28,7 +28,7 @@ dotfiles/
 └── script/
     ├── bootstrap			# main setup — run first
     ├── links				# hdd symlinks into strata
-    ├── packages			# essential dnf/flatpak/rpm installs
+    ├── packages			# essential dnf/flatpak/rpm/cargo/rust installs
     └── xdg					# user dirs, fonts, cursor, wallpaper default
 ```
 
@@ -61,6 +61,13 @@ chmod +x script/bootstrap script/links script/packages script/xdg
 ./script/bootstrap
 ./script/packages
 ./script/xdg
+```
+
+## ｕｓａｇｅ
+
+```bash
+sudo bbit    # disk cleanup — dnf cache + thumbnails + journal (uses BleachBit)
+tg           # topgrade — update everything (dnf/flatpak/cargo/…)
 ```
 
 ## ｂｏｏｔｓｔｒａｐ
