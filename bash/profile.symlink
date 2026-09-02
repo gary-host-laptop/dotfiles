@@ -1,16 +1,5 @@
-# editor
-export EDITOR=hx
-
-# browser
-export BROWSER=firefox
-
 # prefer user-local paths for login shells
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
-
-# xdg base dirs (good practice to be explicit)
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.cache"
 
 # cargo env, only if present
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
