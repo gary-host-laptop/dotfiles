@@ -14,6 +14,9 @@ export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
 # cargo (topgrade): limit concurrent rustc builds to fit 7GiB RAM
 export CARGO_INSTALL_OPTS="--jobs 1"
 
+# helix: runtime (grammars, queries) outside dotfiles tree
+export HELIX_RUNTIME="$XDG_DATA_HOME/helix/runtime"
+
 # eza
 export EZA_ICONS_AUTO=1
 
