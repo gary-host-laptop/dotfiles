@@ -110,21 +110,6 @@ else
     info "yazi already up to date"
 fi
 
-# yazi (latest release via GitHub — cargo-binstall lags behind; 26.9.1+ for plugin compat)
-YAZI_VERSION="${YAZI_VERSION:-v26.9.1}"
-if ! yazi --version 2>/dev/null | grep -q "26.9.1"; then
-    warn "installing yazi ${YAZI_VERSION} from GitHub release..."
-    yazi_tmp="$(mktemp -d)"
-    curl -sL -o "$yazi_tmp/yazi.zip" \
-        "https://github.com/sxyazi/yazi/releases/download/${YAZI_VERSION}/yazi-x86_64-unknown-linux-gnu.zip" \
-        || warn "yazi download failed — get from https://github.com/sxyazi/yazi/releases"
-    unzip -qo "$yazi_tmp/yazi.zip" -d "$yazi_tmp" \
-        && cp "$yazi_tmp"/yazi-x86_64-unknown-linux-gnu/{yazi,ya} "$HOME/.cargo/bin/" \
-        && chmod +x "$HOME/.cargo/bin/yazi" "$HOME/.cargo/bin/ya" \
-        || warn "yazi install failed"
-    rm -rf "$yazi_tmp"
-fi
-
 # ── rpm (direct) ─────────────────────────────────────────────────────────────
 info "installing rpm packages..."
 
