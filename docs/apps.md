@@ -140,10 +140,3 @@ these require manual download/setup — not automated in `script/packages`.
 | itch.io | https://itch.io/app | games |
 | opencode | https://opencode.ai/install | CLI dev agent — installs to ~/.opencode/ |
 | portmaster | https://safing.io/portmaster | network monitor |
-
-## ｒｅｍｏｖｅｄ
-
-- damask — unused
-- elisa, lollypop — replaced by euphonica
-- kando — not using (uninstalled)
-- mpc — dropped; euphonica's GUI handles mpd control
