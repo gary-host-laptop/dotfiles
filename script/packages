@@ -34,7 +34,6 @@ DNF_PACKAGES=(
     glow        # markdown reader CLI (charm repo — see below)
     inotify-tools
     mpd
-    mpc
 )
 
 # glow ships from the charm yum repo (newer than fedora's), e.g. 3.0.0
@@ -71,6 +70,7 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 
 FLATPAK_PACKAGES=(
     net.ankiweb.Anki
+    org.amule.aMule
     com.rafaelmardojai.Blanket
     org.chromium.Chromium
     org.gimp.GIMP
