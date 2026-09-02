@@ -31,10 +31,27 @@ DNF_PACKAGES=(
     btop
     helix
     eza
+    glow        # markdown reader CLI (charm repo — see below)
     inotify-tools
     mpd
     mpc
 )
+
+# glow ships from the charm yum repo (newer than fedora's), e.g. 3.0.0
+if ! rpm -q glow &>/dev/null; then
+    info "enabling charm repo for glow..."
+    cat <<'EOF' | sudo tee /etc/yum.repos.d/charm.repo >/dev/null
+[charm]
+name=Charm
+baseurl=https://repo.charm.sh/yum/
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.charm.sh/yum/gpg.key
+EOF
+    sudo dnf install -y glow || warn "glow install failed"
+else
+    info "glow already installed ($(rpm -q glow))"
+fi
 
 # built via the coprs above
 COPR_PACKAGES=(

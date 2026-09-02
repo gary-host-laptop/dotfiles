@@ -23,6 +23,7 @@ for automated installation of essentials, run `script/packages`.
 | flatseal | flatpak | utilities | com.github.tchx84.Flatseal |
 | gimp | flatpak | creative | org.gimp.GIMP |
 | ghostty | dnf (scottames/ghostty copr) | utilities | |
+| glow | dnf (charm repo) | utilities | markdown reader CLI — renders .md in terminal; `glow file.md` |
 | helix | dnf | dev | terminal editor |
 | inkscape | flatpak | creative | org.inkscape.Inkscape |
 | kdenlive | dnf | creative | |
