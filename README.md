@@ -13,6 +13,7 @@ dotfiles/
 │   ├── aliases.bash		# shell aliases
 │   └── gitconfig.symlink	# bash/gitconfig.symlink → ~/.gitconfig
 ├── bin/					# executable utilities
+│   ├── bbit				# one-shot BleachBit cleanup (dnf/thumbnails/journal)
 │   ├── move-media.sh		# moves images from inbox + screenshots
 │   ├── strata-status		# disk usage overview
 │   └── wallpaper			# random wallpaper setter

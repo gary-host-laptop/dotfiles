@@ -1,0 +1,6 @@
+#!/bin/bash
+# interactive cleanup — default safe set via BleachBit
+# dnf.clean_all       → sudo dnf clean all (needs root)
+# thumbnails.cache    → clear thumbnail cache
+# journald.clean      → journal maintenance
+bleachbit -c dnf.clean_all thumbnails.cache journald.clean
