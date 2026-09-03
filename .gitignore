@@ -6,3 +6,8 @@ config/zellij/*.bak
 # editor / tool backups
 *.bak
 
+# nushell generated init + history
+config/nushell/starship-init.nu
+config/nushell/zoxide.nu
+config/nushell/history.txt
+

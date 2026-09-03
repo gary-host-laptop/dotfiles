@@ -34,6 +34,7 @@ DNF_PACKAGES=(
     glow        # markdown reader CLI (charm repo — see below)
     inotify-tools
     mpd
+    nushell
 )
 
 # glow ships from the charm yum repo (newer than fedora's), e.g. 3.0.0
