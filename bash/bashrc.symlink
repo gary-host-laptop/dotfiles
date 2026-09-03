@@ -4,7 +4,9 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # source dotfiles bash configs
-DOTFILES="$HOME/strata/10-19_system/13_system-config/dotfiles"
+# resolve the real path of this symlinked file (→ ~/.bashrc) to locate the repo
+DOTFILES="$(dirname "$(realpath -m "${BASH_SOURCE[0]}")")/.."
+DOTFILES="$(realpath -m "$DOTFILES")"
 for file in "$DOTFILES"/bash/*.bash; do
     [ -f "$file" ] && . "$file"
 done
@@ -27,4 +29,4 @@ eval "$(zoxide init bash)"
 export PATH=$PATH:/usr/local/go/bin
 
 # opencode
-export PATH=/home/ghost_user/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"

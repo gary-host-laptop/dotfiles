@@ -126,7 +126,11 @@ enable_units() {
     info "enabling systemd units..."
     find "$DOTFILES/systemd" -maxdepth 1 \( -name "*.service" -o -name "*.path" -o -name "*.timer" \) | while read -r unit; do
         unitname="$(basename "$unit")"
-        systemctl --user enable --now "$unitname" 2>/dev/null && success "enabled $unitname"
+        if systemctl --user enable --now "$unitname" 2>/dev/null; then
+            success "enabled $unitname"
+        else
+            warn "failed to enable $unitname — run 'systemctl --user status $unitname'"
+        fi
     done
 }
 

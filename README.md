@@ -63,13 +63,6 @@ chmod +x script/bootstrap script/links script/packages script/xdg
 ./script/xdg
 ```
 
-## ｕｓａｇｅ
-
-```bash
-sudo bbit    # disk cleanup — dnf cache + thumbnails + journal (uses BleachBit)
-tg           # topgrade — update everything (dnf/flatpak/cargo/…)
-```
-
 ## ｂｏｏｔｓｔｒａｐ
 
 ```

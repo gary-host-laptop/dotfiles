@@ -8,8 +8,7 @@ headerbar {
     box-shadow: none;
 }
 
-terminals-surface,
-.terminal-surface {
+terminal-surface {
     border-top: none;
 }
 

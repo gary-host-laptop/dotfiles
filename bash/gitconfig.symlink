@@ -2,7 +2,7 @@
 	email = github.striven@aleeas.com
 	name = gary-host-laptop
 [core]
-	editor = nano
+	editor = hx
 [init]
 	defaultBranch = main
 [pull]

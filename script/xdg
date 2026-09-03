@@ -21,6 +21,7 @@ XDG_TEMPLATES_DIR="$HOME/strata/10-19_system/13_system-config/templates"
 XDG_PUBLICSHARE_DIR="$HOME/Public"
 XDG_DOCUMENTS_DIR="$HOME/strata/30-39_media/31_text"
 XDG_MUSIC_DIR="$HOME/strata/30-39_media/32_audio"
+XDG_PICTURES_DIR="$HOME/Pictures"
 XDG_VIDEOS_DIR="$HOME/strata/30-39_media/34_video"
 DIRS
 

@@ -2,8 +2,8 @@
 
 WALLPAPER_DIR="$HOME/strata/10-19_system/13_system-config/theming/wallpapers"
 BOLD='\033[1m'
-CYAN='\033[38;2;118;159;240m'
-MUTED='\033[38;2;57;66;96m'
+CYAN='\033[38;2;122;162;247m'
+MUTED='\033[38;2;59;66;97m'
 RESET='\033[0m'
 
 ask_yn() {
