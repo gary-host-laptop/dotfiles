@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# =============================================================================
+# Generate nushell init files (starship, zoxide)
+# Runs once via chezmoi init — needed before nushell can parse its config
+# =============================================================================
+
+{{- if eq .machine "fedora" }}
+
+NU_DIR="{{ .chezmoi.sourceDir }}/dot_config/nushell"
+
+info()    { echo "  [ .. ] $1"; }
+success() { echo "  [ ok ] $1"; }
+warn()    { echo "  [warn] $1"; }
+
+info "generating nushell init files (starship, zoxide)..."
+
+if command -v starship >/dev/null 2>&1; then
+    starship init nu > "$NU_DIR/starship-init.nu" 2>/dev/null \
+        && success "wrote $NU_DIR/starship-init.nu" \
+        || warn "failed to generate starship init for nushell"
+else
+    warn "starship not found — skipping nushell starship init"
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+    zoxide init nushell > "$NU_DIR/zoxide.nu" 2>/dev/null \
+        && success "wrote $NU_DIR/zoxide.nu" \
+        || warn "failed to generate zoxide init for nushell"
+else
+    warn "zoxide not found — skipping nushell zoxide init"
+fi
+
+{{- else if eq .machine "nixos" }}
+echo "nixos: nushell init managed by home.nix — skipping"
+{{- end }}

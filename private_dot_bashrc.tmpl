@@ -1,0 +1,17 @@
+# source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# source dotfiles bash configs
+DOTFILES="{{ .chezmoi.sourceDir }}"
+for file in "$DOTFILES"/dot_bash/*.bash; do
+    [ -f "$file" ] && . "$file"
+done
+unset file
+
+{{- if eq .machine "fedora" }}
+source "$DOTFILES/dot_bash/fedora-specific.bash"
+{{- else if eq .machine "nixos" }}
+source "$DOTFILES/dot_bash/nixos-specific.bash"
+{{- end }}

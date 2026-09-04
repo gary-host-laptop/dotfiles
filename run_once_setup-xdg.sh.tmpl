@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # =============================================================================
-# XDG user dirs setup
-# Run after reinstall once strata is in place.
+# XDG user dirs + desktop theming — runs once via chezmoi init
 # =============================================================================
+
+{{- if eq .machine "fedora" }}
 
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
@@ -40,3 +41,8 @@ gsettings set org.gnome.desktop.interface font-name 'Inter 11'
 gsettings set org.gnome.desktop.interface document-font-name 'Inter 11'
 gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 11'
 success "fonts set"
+
+{{- else if eq .machine "nixos" }}
+# nixos: xdg + theming managed by home.nix and configuration.nix
+echo "nixos: xdg/theming managed by nix — skipping"
+{{- end }}

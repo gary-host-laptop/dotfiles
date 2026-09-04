@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# =============================================================================
 # Storage topology — maps physical drives into strata
-# Edit these to match your actual mount points and hdd paths.
-# Run manually or via bootstrap when setting up a new machine.
+# Runs once via chezmoi init. Edit mount points for each machine.
+# =============================================================================
+
+{{- if eq .machine "fedora" }}
 
 STRATA="$HOME/strata"
 
@@ -42,3 +45,9 @@ link_storage "/mnt/phaedra/35_video-games/SteamLibrary" "$STRATA/30-39_media/35_
 mkdir -p "$HOME/.local/share/icons"
 link_storage "$HOME/strata/10-19_system/13_system-config/theming/cursor/bibata-modern-classic" "$HOME/.local/share/icons/bibata-modern-classic"
 link_storage "$HOME/strata/10-19_system/13_system-config/theming/cursor/bibata-modern-ice" "$HOME/.local/share/icons/bibata-modern-ice"
+
+{{- else if eq .machine "nixos" }}
+# nixos: storage topology managed separately
+# edit this section for nixos-specific mount points
+echo "nixos: storage topology — edit run_once_setup-storage.sh for your nixos mounts"
+{{- end }}

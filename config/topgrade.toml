@@ -1,8 +1,0 @@
-[misc]
-[linux]
-# dnf: pass --refresh to pick up new metadata
-dnf_arguments = "--refresh"
-
-[flatpak]
-# use sudo for updating the system-wide installation
-use_sudo = true

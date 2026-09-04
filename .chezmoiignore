@@ -1,0 +1,5 @@
+# nushell generated init + history (mirrors .gitignore — chezmoi ignores .gitignore, so these must be listed here too)
+# NOTE: patterns match against the TARGET path (not the source path)
+.config/nushell/history.txt
+.config/nushell/starship-init.nu
+.config/nushell/zoxide.nu

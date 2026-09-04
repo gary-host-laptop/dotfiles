@@ -1,35 +1,58 @@
 # ｄｏｔｆｉｌｅｓ
 
-personal system configuration for a fedora linux setup organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system.
+personal system configuration managed by [chezmoi](https://www.chezmoi.io/), organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system.
+
+supports multiple machines via templates — fedora (current) and nixos (planned).
 
 ## ｓｔｒｕｃｔｕｒｅ
 
 ```
 dotfiles/
-├── bash/					# shell configuration
-│   ├── bashrc.symlink		# bash/bashrc.symlink → ~/.bashrc
-│   ├── profile.symlink		# bash/profile.symlink → ~/.profile
-│   ├── exports.bash		# PATH, env vars
-│   ├── aliases.bash		# shell aliases
-│   └── gitconfig.symlink	# bash/gitconfig.symlink → ~/.gitconfig
-├── bin/					# executable utilities
-│   ├── bbit				# one-shot BleachBit cleanup (dnf/thumbnails/journal)
-│   ├── move-media.sh		# moves images from inbox + screenshots
-│   ├── strata-status		# disk usage overview
-│   └── wallpaper			# random wallpaper setter
-├── config/					# application configurations
+├── chezmoi.yaml                        # source dir config
+├── private_dot_bashrc.tmpl             # ~/.bashrc (template: machine-specific init)
+├── private_dot_bash_profile            # ~/.bash_profile
+├── private_dot_profile                 # ~/.profile
+├── private_dot_gitconfig               # ~/.gitconfig
+├── dot_bash/
+│   ├── aliases.bash                    # shell aliases (shared)
+│   ├── exports.bash                    # PATH, env vars (shared)
+│   └── fedora-specific.bash            # starship, zoxide, opencode (fedora only)
+├── dot_config/                         # ~/.config/
+│   ├── btop/btop.conf.tmpl             # template: theme differs per machine
+│   ├── topgrade.toml.tmpl              # template: [linux] vs [nix] section
+│   ├── bat/                            # shared
+│   ├── helix/                          # shared
+│   ├── starship.toml                   # shared
+│   ├── glow/                           # shared
+│   ├── lazygit/                        # shared
+│   ├── superfile/                      # shared
+│   ├── fastfetch/                      # shared
+│   ├── yazi/                           # shared
+│   ├── zellij/                         # shared
+│   ├── ghostty/                        # fedora only
+│   ├── environment.d/                  # fedora only
+│   ├── nushell/                        # fedora only
+│   ├── antimicrox/                     # fedora only
+│   ├── mpd/                            # fedora only
+│   └── systemd/user/                   # fedora only
+│       ├── move-media.service
+│       ├── wallpaper.service
+│       └── wallpaper.timer
+├── bin/                                 # ~/bin/ scripts — executable_ prefix → 755
+│   ├── executable_bbit                  # one-shot BleachBit cleanup
+│   ├── executable_move-media.sh         # moves images from inbox + screenshots
+│   ├── executable_strata-status         # disk usage overview
+│   └── executable_wallpaper             # random wallpaper setter (GNOME)
+├── run_once_install-packages.sh.tmpl   # package install (one-time)
+├── run_once_setup-xdg.sh.tmpl          # xdg dirs + theming (one-time)
+├── run_once_setup-storage.sh.tmpl      # hdd symlinks (one-time)
+├── run_once_generate-nushell-init.sh.tmpl  # starship/zoxide for nushell
+├── run_on_change_enable-units.sh       # systemd daemon-reload + enable
 ├── docs/
-│   ├── apps.md				# app inventory + install notes
-│   └── hardware.md			# machine specs + drive layout
-├── systemd/				# system automation
-│   ├── move-media.service
-│   ├── wallpaper.service
-│   └── wallpaper.timer
-└── script/
-    ├── bootstrap			# main setup — run first
-    ├── links				# hdd symlinks into strata
-    ├── packages			# essential dnf/flatpak/rpm/cargo/rust installs
-    └── xdg					# user dirs, fonts, cursor, wallpaper default
+│   ├── apps.md                         # app inventory + install notes
+│   └── hardware.md                     # machine specs + drive layout
+├── README.md
+└── LICENSE
 ```
 
 ## ｓｔｒａｔａ
@@ -38,41 +61,71 @@ dotfiles/
 ~/strata/
 ├── 10-19_system/
 │   └── 13_system-config/
-│       └── dotfiles/		# 13_system-config/dotfiles ← this repository
+│       ├── dotfiles/                   # 13_system-config/dotfiles ← this repository
+│       └── nixos/                      # nixos system config (flake + home manager)
 ├── 20-29_praxis/
 └── 30-39_media/
-    ├── 31_text				# 30-39_media/31_text → /mnt/valus/31_text
-    ├── 32_audio			# 30-39_media/32_audio → /mnt/valus/32_audio
-    ├── 33_images			# 30-39_media/33_images → /mnt/valus/33_images
-    ├── 34_video			# 30-39_media/34_video → /mnt/phaedra/34_video
+    ├── 31_text                         # 30-39_media/31_text → /mnt/valus/31_text
+    ├── 32_audio                        # 30-39_media/32_audio → /mnt/valus/32_audio
+    ├── 33_images                       # 30-39_media/33_images → /mnt/valus/33_images
+    ├── 34_video                        # 30-39_media/34_video → /mnt/phaedra/34_video
     └── 35_video-games/
-        ├── games-library	# 35_video-games/games-library → /mnt/valus/35_video-games/games-library
-        └── steam			# 35_video-games/steam → /mnt/phaedra/35_video-games/SteamLibrary
+        ├── games-library               # 35_video-games/games-library → /mnt/valus/35_video-games/games-library
+        └── steam                       # 35_video-games/steam → /mnt/phaedra/35_video-games/SteamLibrary
 ```
 
 ## ｆｒｅｓｈ　ｉｎｓｔａｌｌ
 
 ```bash
-git clone git@github.com:gary-host-laptop/dotfiles.git \
-  ~/strata/10-19_system/13_system-config/dotfiles
+# install chezmoi
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
 
-cd ~/strata/10-19_system/13_system-config/dotfiles
-chmod +x script/bootstrap script/links script/packages script/xdg
-./script/bootstrap
-./script/packages
-./script/xdg
+# initialize — clones repo, applies configs, runs setup scripts
+chezmoi init --source ~/strata/10-19_system/13_system-config/dotfiles --apply gary-host-laptop
+
+# that's it. chezmoi will:
+# 1. clone/sync this repo
+# 2. run run_once_install-packages.sh (dnf, flatpak, cargo)
+# 3. run run_once_setup-xdg.sh (user dirs, fonts, cursor)
+# 4. run run_once_setup-storage.sh (hdd symlinks)
+# 5. run run_once_generate-nushell-init.sh (starship/zoxide for nu)
+# 6. apply all managed files to ~/
 ```
 
-## ｂｏｏｔｓｔｒａｐ
+## ｕｓｉｎｇ　ｃｈｅｚｍｏｉ
+
+```bash
+chezmoi apply            # apply pending changes
+chezmoi edit <file>      # edit a managed file (opens in $EDITOR)
+chezmoi cd               # cd to the source directory
+chezmoi diff             # see what would change
+chezmoi status           # current state vs managed
+chezmoi forget <file>    # stop managing a file
+```
+
+## ｍｕｌｔｉ‑ｍａｃｈｉｎｅ
+
+templates (`.tmpl` files) use `{{ if eq .chezmoi.machine "..." }}` to render different configs per machine.
+
+on each machine, create `~/.config/chezmoi/chezmoi.yaml`:
+
+```yaml
+# fedora:
+machine: fedora
+
+# nixos:
+machine: nixos
+```
+
+chezmoi compiles templates on each machine, so the same source produces different outputs.
+
+## ｂｏｏｔｓｔｒａｐ　ｆｌｏｗ
 
 ```
-./script/bootstrap
-check_deps          # inotify-tools, git
-link_file           # backs up overwritten files → ~/.dotfiles-backup/
-link_dotfiles       # bash/*.symlink → ~/.<name>
-link_config         # config/* → ~/.config/
-link_bin            # bin/* → ~/bin/, chmod +x
-link_systemd        # systemd/* → ~/.config/systemd/user/
-enable_units        # daemon-reload, enable --now
-setup_links         # hdd symlinks into strata
+chezmoi init --apply
+├── run_once_install-packages.sh    # dnf, copr, flatpak, cargo, rust
+├── run_once_setup-xdg.sh           # xdg user dirs, cursor, fonts
+├── run_once_setup-storage.sh       # hdd symlinks into strata
+├── run_once_generate-nushell-init.sh  # starship/zoxide init for nushell
+└── run_on_change_enable-units.sh   # systemd daemon-reload + enable
 ```
