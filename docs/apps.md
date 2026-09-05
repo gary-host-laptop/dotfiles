@@ -1,7 +1,7 @@
 # ａｐｐｓ
 
 reference doc for all installed and evaluated applications.
-essential apps are installed by `script/packages`.
+essential apps are installed by `run_once_install-packages.sh.tmpl`.
 
 ## ｃｌｉ　/　ｔｕｉ　ｔｏｏｌｓ
 
@@ -19,9 +19,9 @@ essential apps are installed by `script/packages`.
 | lazygit | dnf (dejan/lazygit copr) | dev | |
 | starship | dnf (atim/starship copr) | utilities | shell prompt |
 | superfile | install script | utilities | spf — https://superfile.dev/install.sh; standalone file manager |
-| topgrade | cargo | dev | multi-tool updater — `tg` alias; config at `config/topgrade.toml` |
+| topgrade | cargo | dev | multi-tool updater — `tg` alias; config at `dot_config/topgrade.toml.tmpl` |
 | zellij | cargo-binstall | dev | terminal multiplexer — `cargo binstall zellij`; needs >=0.45 for kitty graphics (ghostty) |
-| zoxide | cargo | dev | smarter `cd` — init in `bash/bashrc.symlink` |
+| zoxide | cargo | dev | smarter `cd` — init in `dot_bash/fedora-specific.bash` |
 
 ### ｐｒｏｂａｔｉｏｎａｒｙ
 
@@ -125,11 +125,11 @@ plus a system-level music server:
 
 | name | package manager | category | notes |
 |------|-----------------|----------|-------|
-| mpd | dnf | media server | music daemon served to euphonica; config at `config/mpd/mpd.conf` |
+| mpd | dnf | media server | music daemon served to euphonica; config at `dot_config/mpd/mpd.conf` |
 
 ## ｍａｎｕａｌ　ｉｎｓｔａｌｌｓ
 
-these require manual download/setup — not automated in `script/packages`.
+these require manual download/setup — not automated in `run_once_install-packages.sh.tmpl`.
 
 | app | url | notes |
 |-----|-----|-------|
