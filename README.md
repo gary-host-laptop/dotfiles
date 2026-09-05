@@ -8,7 +8,6 @@ supports multiple machines via templates — fedora (current) and nixos (planned
 
 ```
 dotfiles/
-├── chezmoi.yaml                        # source dir config
 ├── private_dot_bashrc.tmpl             # ~/.bashrc (template: machine-specific init)
 ├── private_dot_bash_profile            # ~/.bash_profile
 ├── private_dot_profile                 # ~/.profile
@@ -17,42 +16,17 @@ dotfiles/
 │   ├── aliases.bash                    # shell aliases (shared)
 │   ├── exports.bash                    # PATH, env vars (shared)
 │   └── fedora-specific.bash            # starship, zoxide, opencode (fedora only)
-├── dot_config/                         # ~/.config/
-│   ├── btop/btop.conf.tmpl             # template: theme differs per machine
-│   ├── topgrade.toml.tmpl              # template: [linux] vs [nix] section
-│   ├── bat/                            # shared
-│   ├── helix/                          # shared
-│   ├── starship.toml                   # shared
-│   ├── glow/                           # shared
-│   ├── lazygit/                        # shared
-│   ├── superfile/                      # shared
-│   ├── fastfetch/                      # shared
-│   ├── yazi/                           # shared
-│   ├── zellij/                         # shared
-│   ├── ghostty/                        # fedora only
-│   ├── environment.d/                  # fedora only
-│   ├── nushell/                        # fedora only
-│   ├── antimicrox/                     # fedora only
-│   ├── mpd/                            # fedora only
-│   └── systemd/user/                   # fedora only
-│       ├── move-media.service
-│       ├── wallpaper.service
-│       └── wallpaper.timer
-├── bin/                                 # ~/bin/ scripts — executable_ prefix → 755
-│   ├── executable_bbit                  # one-shot BleachBit cleanup
-│   ├── executable_move-media.sh         # moves images from inbox + screenshots
-│   ├── executable_strata-status         # disk usage overview
-│   └── executable_wallpaper             # random wallpaper setter (GNOME)
+├── dot_config/                         # ~/.config/ — app configs
+│   └── systemd/user/                   # move-media, wallpaper, wallpaper.timer
+├── bin/                                # ~/bin/ scripts — executable_ prefix → 755
 ├── run_once_install-packages.sh.tmpl   # package install (one-time)
 ├── run_once_setup-xdg.sh.tmpl          # xdg dirs + theming (one-time)
 ├── run_once_setup-storage.sh.tmpl      # hdd symlinks (one-time)
 ├── run_once_generate-nushell-init.sh.tmpl  # starship/zoxide for nushell
-├── run_on_change_enable-units.sh       # systemd daemon-reload + enable
-├── docs/
-│   ├── apps.md                         # app inventory + install notes
-│   └── hardware.md                     # machine specs + drive layout
-├── README.md
-└── LICENSE
+├── run_onchange_enable-units.sh        # systemd daemon-reload + enable
+└── docs/
+    ├── apps.md                         # app inventory + install notes
+    └── hardware.md                     # machine specs + drive layout
 ```
 
 ## ｓｔｒａｔａ
@@ -107,14 +81,11 @@ chezmoi forget <file>    # stop managing a file
 
 templates (`.tmpl` files) use `{{ if eq .chezmoi.machine "..." }}` to render different configs per machine.
 
-on each machine, create `~/.config/chezmoi/chezmoi.yaml`:
+on each machine, create `~/.config/chezmoi/chezmoi.toml`:
 
-```yaml
-# fedora:
-machine: fedora
-
-# nixos:
-machine: nixos
+```toml
+[data]
+machine = "fedora"   # or "nixos"
 ```
 
 chezmoi compiles templates on each machine, so the same source produces different outputs.
@@ -127,5 +98,5 @@ chezmoi init --apply
 ├── run_once_setup-xdg.sh           # xdg user dirs, cursor, fonts
 ├── run_once_setup-storage.sh       # hdd symlinks into strata
 ├── run_once_generate-nushell-init.sh  # starship/zoxide init for nushell
-└── run_on_change_enable-units.sh   # systemd daemon-reload + enable
+└── run_onchange_enable-units.sh   # systemd daemon-reload + enable
 ```
