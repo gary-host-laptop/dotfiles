@@ -1,11 +1,12 @@
 # path
-if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
-    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+missing=""
+for d in "$HOME/.local/bin" "$HOME/bin"; do
+    [[ ":$PATH:" == *":$d:"* ]] || missing="$missing:$d"
+done
+if [ -n "$missing" ]; then
+    PATH="${missing#:}:$PATH"
 fi
 export PATH
-
-# pkg-config
-export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
 
 # cargo (topgrade): limit concurrent rustc builds to fit 7GiB RAM
 export CARGO_INSTALL_OPTS="--jobs 1"

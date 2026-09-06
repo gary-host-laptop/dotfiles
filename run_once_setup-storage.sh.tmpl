@@ -5,7 +5,7 @@
 # Runs once via chezmoi init. Edit mount points for each machine.
 # =============================================================================
 
-{{- if eq .machine "fedora" }}
+{{- if eq (.machine | default "fedora") "fedora" }}
 
 STRATA="$HOME/strata"
 

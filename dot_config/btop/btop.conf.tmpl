@@ -1,4 +1,4 @@
-{{- if eq .machine "fedora" }}
+{{- if eq (.machine | default "fedora") "fedora" }}
 color_theme = "tokyonight_night"
 {{- else }}
 color_theme = "tokyo-night"

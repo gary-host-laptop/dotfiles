@@ -4,7 +4,7 @@
 # XDG user dirs + desktop theming — runs once via chezmoi init
 # =============================================================================
 
-{{- if eq .machine "fedora" }}
+{{- if eq (.machine | default "fedora") "fedora" }}
 
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }

@@ -5,7 +5,7 @@
 # fedora-specific: dnf, copr, flatpak, cargo
 # =============================================================================
 
-{{- if eq .machine "fedora" }}
+{{- if eq (.machine | default "fedora") "fedora" }}
 
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
@@ -60,7 +60,7 @@ COPR_PACKAGES=(
     ghostty
 )
 
-sudo dnf install -y "${DNF_PACKAGES[@]}" "${COPR_PACKAGES[@]}"
+sudo dnf install -y --refresh "${DNF_PACKAGES[@]}" "${COPR_PACKAGES[@]}"
 success "dnf packages installed"
 
 # ── flatpak ──────────────────────────────────────────────────────────────────
@@ -92,8 +92,19 @@ FLATPAK_PACKAGES=(
     org.nicotine_plus.Nicotine
 )
 
-flatpak install -y flathub "${FLATPAK_PACKAGES[@]}" \
-    || warn "flatpak install failed — check ids in the FLATPAK_PACKAGES list"
+# install only the missing subset — skip the expensive full re-run
+installed=$(flatpak list --app --columns=application 2>/dev/null)
+to_install=()
+for pkg in "${FLATPAK_PACKAGES[@]}"; do
+    grep -qxF -- "$pkg" <<<"$installed" || to_install+=("$pkg")
+done
+
+if [ ${#to_install[@]} -eq 0 ]; then
+    info "all flatpaks already installed"
+else
+    flatpak install -y flathub "${to_install[@]}" \
+        || warn "flatpak install failed — check ids in the FLATPAK_PACKAGES list"
+fi
 success "flatpak packages installed"
 
 # ── install scripts ─────────────────────────────────────────────────────────
@@ -147,17 +158,20 @@ else
     info "croft already installed"
 fi
 
-if ! command -v yazi &>/dev/null || ! yazi --version | grep -qP '26\.9\.'; then
-    info "installing yazi from GitHub release (latest)…"
+# yazi is pinned to a GitHub release (no dnf/rust package) — bump this manually
+YAZI_VER="26.9.1"
+
+if ! command -v yazi &>/dev/null || [ "$(yazi --version | awk '{print $2}')" != "$YAZI_VER" ]; then
+    info "installing yazi from GitHub release (v$YAZI_VER)…"
     tmp="$(mktemp -d)"
     curl -L -o "$tmp/yazi.zip" \
-        "https://github.com/sxyazi/yazi/releases/download/v26.9.1/yazi-x86_64-unknown-linux-gnu.zip"
+        "https://github.com/sxyazi/yazi/releases/download/v${YAZI_VER}/yazi-x86_64-unknown-linux-gnu.zip"
     unzip -o "$tmp/yazi.zip" -d "$tmp" >/dev/null
     cp "$tmp"/yazi-x86_64-unknown-linux-gnu/{yazi,ya} ~/.cargo/bin/ && chmod +x ~/.cargo/bin/{yazi,ya}
     rm -rf "$tmp"
     success "yazi $(yazi --version | head -1) installed"
 else
-    info "yazi already up to date"
+    info "yazi already installed"
 fi
 
 # ── bleachbit ───────────────────────────────────────────────────────────────
@@ -166,7 +180,7 @@ if ! rpm -q bleachbit &>/dev/null; then
     BB_VER="6.0.3"
     tmp="$(mktemp -d)"
     curl -L -o "$tmp/bleachbit.rpm" \
-        "https://github.com/bleachbit/bleachbit/releases/download/v${BB_VER}/bleachbit-${BB_VER}-1.1.fc44.noarch.rpm" \
+        "https://github.com/bleachbit/bleachbit/releases/download/v${BB_VER}/bleachbit-${BB_VER}-1.1.fc$(rpm -E %fedora).noarch.rpm" \
         || warn "bleachbit download failed"
     sudo dnf install -y "$tmp/bleachbit.rpm" \
         || warn "bleachbit install failed — manual: https://www.bleachbit.org/download/linux"

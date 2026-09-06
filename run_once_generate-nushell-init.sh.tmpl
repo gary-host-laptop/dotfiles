@@ -5,7 +5,7 @@
 # Runs once via chezmoi init — needed before nushell can parse its config
 # =============================================================================
 
-{{- if eq .machine "fedora" }}
+{{- if eq (.machine | default "fedora") "fedora" }}
 
 NU_DIR="{{ .chezmoi.sourceDir }}/dot_config/nushell"
 

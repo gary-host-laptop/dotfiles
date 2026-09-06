@@ -79,7 +79,7 @@ chezmoi forget <file>    # stop managing a file
 
 ## ｍｕｌｔｉ‑ｍａｃｈｉｎｅ
 
-templates (`.tmpl` files) use `{{ if eq .chezmoi.machine "..." }}` to render different configs per machine.
+templates (`.tmpl` files) use `{{ if eq (.machine | default "fedora") "..." }}` to render different configs per machine (`| default "fedora"` keeps working even if `machine` is unset).
 
 on each machine, create `~/.config/chezmoi/chezmoi.toml`:
 

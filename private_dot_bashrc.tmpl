@@ -6,12 +6,16 @@ fi
 # source dotfiles bash configs
 DOTFILES="{{ .chezmoi.sourceDir }}"
 for file in "$DOTFILES"/dot_bash/*.bash; do
+    # machine-specific files are sourced once below, skip them here
+    case "${file##*/}" in
+        fedora-specific.bash|nixos-specific.bash) continue ;;
+    esac
     [ -f "$file" ] && . "$file"
 done
 unset file
 
-{{- if eq .machine "fedora" }}
+{{- if eq (.machine | default "fedora") "fedora" }}
 source "$DOTFILES/dot_bash/fedora-specific.bash"
-{{- else if eq .machine "nixos" }}
+{{- else if eq (.machine | default "fedora") "nixos" }}
 source "$DOTFILES/dot_bash/nixos-specific.bash"
 {{- end }}

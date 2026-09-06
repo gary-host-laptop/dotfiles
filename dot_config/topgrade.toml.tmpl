@@ -1,5 +1,5 @@
 [misc]
-{{- if eq .machine "fedora" }}
+{{- if eq (.machine | default "fedora") "fedora" }}
 [linux]
 # dnf: pass --refresh to pick up new metadata
 dnf_arguments = "--refresh"

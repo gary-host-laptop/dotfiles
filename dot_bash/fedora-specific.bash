@@ -12,6 +12,10 @@ eval "$(starship init bash)"
 # zoxide
 eval "$(zoxide init bash)"
 
+# pkg-config (fedora layout)
+export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
+
+# go (installed via dnf at /usr/local/go)
 export PATH=$PATH:/usr/local/go/bin
 
 # opencode
