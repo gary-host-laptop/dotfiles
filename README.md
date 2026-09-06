@@ -19,7 +19,7 @@ dotfiles/
 ├── dot_config/                         # ~/.config/ — app configs
 │   └── systemd/user/                   # move-media, wallpaper, wallpaper.timer
 ├── bin/                                # ~/bin/ scripts — executable_ prefix → 755
-├── run_once_install-packages.sh.tmpl   # package install (one-time)
+├── run_onchange_install-packages.sh.tmpl   # package install (re-runs on change)
 ├── run_once_setup-xdg.sh.tmpl          # xdg dirs + theming (one-time)
 ├── run_once_setup-storage.sh.tmpl      # hdd symlinks (one-time)
 ├── run_once_generate-nushell-init.sh.tmpl  # starship/zoxide for nushell
@@ -59,7 +59,7 @@ chezmoi init --source ~/strata/10-19_system/13_system-config/dotfiles --apply ga
 
 # that's it. chezmoi will:
 # 1. clone/sync this repo
-# 2. run run_once_install-packages.sh (dnf, flatpak, cargo)
+# 2. run run_onchange_install-packages.sh (dnf, flatpak, cargo)
 # 3. run run_once_setup-xdg.sh (user dirs, fonts, cursor)
 # 4. run run_once_setup-storage.sh (hdd symlinks)
 # 5. run run_once_generate-nushell-init.sh (starship/zoxide for nu)
@@ -94,7 +94,7 @@ chezmoi compiles templates on each machine, so the same source produces differen
 
 ```
 chezmoi init --apply
-├── run_once_install-packages.sh    # dnf, copr, flatpak, cargo, rust
+├── run_onchange_install-packages.sh    # dnf, copr, flatpak, cargo, rust
 ├── run_once_setup-xdg.sh           # xdg user dirs, cursor, fonts
 ├── run_once_setup-storage.sh       # hdd symlinks into strata
 ├── run_once_generate-nushell-init.sh  # starship/zoxide init for nushell

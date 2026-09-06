@@ -1,7 +1,7 @@
 # ａｐｐｓ
 
 reference doc for all installed and evaluated applications.
-essential apps are installed by `run_once_install-packages.sh.tmpl`.
+essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 
 ## ｃｌｉ　/　ｔｕｉ　ｔｏｏｌｓ
 
@@ -35,7 +35,7 @@ essential apps are installed by `run_once_install-packages.sh.tmpl`.
 
 | app | package manager | category | flatpak id / notes |
 |-----|-----------------|----------|--------------------|
-| amule | flatpak | internet | org.amule.aMule — eD2k/Kad p2p client |
+| amule | manual | internet | org.amule.aMule — eD2k/Kad p2p client; flathub submission pending — install from https://amule-org.github.io/download (AppImage/.flatpak) |
 | anki | flatpak | productivity | net.ankiweb.Anki |
 | blanket | flatpak | media | com.rafaelmardojai.Blanket |
 | calibre | dnf | productivity | |
@@ -129,7 +129,7 @@ plus a system-level music server:
 
 ## ｍａｎｕａｌ　ｉｎｓｔａｌｌｓ
 
-these require manual download/setup — not automated in `run_once_install-packages.sh.tmpl`.
+these require manual download/setup — not automated in `run_onchange_install-packages.sh.tmpl`.
 
 | app | url | notes |
 |-----|-----|-------|

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-# package installation — runs once via chezmoi init
+# package installation — idempotent, re-runs when this script changes
 # fedora-specific: dnf, copr, flatpak, cargo
 # =============================================================================
 
@@ -31,6 +31,7 @@ DNF_PACKAGES=(
     btop
     helix
     eza
+    fastfetch
     glow
     inotify-tools
     mpd
@@ -69,7 +70,6 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 
 FLATPAK_PACKAGES=(
     net.ankiweb.Anki
-    org.amule.aMule
     com.rafaelmardojai.Blanket
     org.chromium.Chromium
     org.gimp.GIMP
@@ -92,14 +92,19 @@ FLATPAK_PACKAGES=(
     org.nicotine_plus.Nicotine
 )
 
-flatpak install -y flathub "${FLATPAK_PACKAGES[@]}"
+flatpak install -y flathub "${FLATPAK_PACKAGES[@]}" \
+    || warn "flatpak install failed — check ids in the FLATPAK_PACKAGES list"
 success "flatpak packages installed"
 
 # ── install scripts ─────────────────────────────────────────────────────────
 info "installing via install scripts..."
 
-bash -c "$(curl -sLo- https://superfile.dev/install.sh)" \
-    || warn "superfile install failed — retry from https://superfile.dev/getting-started/installation/"
+if ! command -v spf &>/dev/null; then
+    bash -c "$(curl -sLo- https://superfile.dev/install.sh)" \
+        || warn "superfile install failed — retry from https://superfile.dev/getting-started/installation/"
+else
+    info "superfile already installed"
+fi
 
 # ── rust toolchain ──────────────────────────────────────────────────────────
 info "installing rust toolchain (rustup, non-distro cargo)…"
@@ -116,14 +121,31 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # ── cargo binaries ──────────────────────────────────────────────────────────
 info "installing cargo binaries..."
 
-cargo install cargo-binstall || warn "cargo-binstall install failed"
-cargo binstall -y zellij || warn "zellij install failed — retry with 'cargo binstall zellij'"
+if ! command -v cargo-binstall &>/dev/null; then
+    cargo install cargo-binstall || warn "cargo-binstall install failed"
+else
+    info "cargo-binstall already installed"
+fi
 
-cargo install --locked topgrade zoxide \
-    || warn "topgrade/zoxide install failed — retry with 'cargo install topgrade zoxide'"
+if ! command -v zellij &>/dev/null; then
+    cargo binstall -y zellij || warn "zellij install failed — retry with 'cargo binstall zellij'"
+else
+    info "zellij already installed ($(zellij --version 2>/dev/null | head -1))"
+fi
 
-cargo install --locked croft-software \
-    || warn "croft install failed — retry with 'cargo install croft-software'"
+if ! command -v topgrade &>/dev/null || ! command -v zoxide &>/dev/null; then
+    cargo install --locked topgrade zoxide \
+        || warn "topgrade/zoxide install failed — retry with 'cargo install topgrade zoxide'"
+else
+    info "topgrade/zoxide already installed"
+fi
+
+if ! command -v croft &>/dev/null; then
+    cargo install --locked croft-software \
+        || warn "croft install failed — retry with 'cargo install croft-software'"
+else
+    info "croft already installed"
+fi
 
 if ! command -v yazi &>/dev/null || ! yazi --version | grep -qP '26\.9\.'; then
     info "installing yazi from GitHub release (latest)…"
@@ -156,13 +178,23 @@ fi
 # ── rpm (direct) ────────────────────────────────────────────────────────────
 info "installing rpm packages..."
 
-sudo dnf install -y \
-    https://repo.steampowered.com/steam/archive/stable/steam-repo-1-0.x86_64.rpm \
-    || warn "steam rpm failed — install manually from steampowered.com"
-sudo dnf install -y steam || warn "steam install failed"
+# steam — ships from rpmfusion-nonfree-steam, not the (dead) valve repo
+if ! rpm -q steam &>/dev/null; then
+    sudo dnf install -y \
+        https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+        https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+        || warn "rpmfusion release install failed"
+    sudo dnf install -y \
+        https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-steam-release-$(rpm -E %fedora).noarch.rpm \
+        || warn "rpmfusion steam repo install failed"
+    sudo dnf install -y steam || warn "steam install failed"
+else
+    info "steam already installed ($(rpm -q steam))"
+fi
 
 warn "veracrypt: download rpm from https://www.veracrypt.fr/en/Downloads.html and install manually"
 warn "zed: install via 'curl -f https://zed.dev/install.sh | sh' or flatpak from flathub (dev.zed.Zed)"
+warn "amule: flathub submission pending — install manually from https://amule-org.github.io/download (AppImage/.flatpak)"
 
 success "rpm section done"
 
