@@ -158,6 +158,13 @@ else
     info "croft already installed"
 fi
 
+if ! command -v rmpc &>/dev/null || ! command -v superseedr &>/dev/null; then
+    cargo install --locked rmpc superseedr \
+        || warn "rmpc/superseedr install failed — retry with 'cargo install rmpc superseedr'"
+else
+    info "rmpc/superseedr already installed"
+fi
+
 # yazi is pinned to a GitHub release (no dnf/rust package) — bump this manually
 YAZI_VER="26.9.1"
 
@@ -172,6 +179,15 @@ if ! command -v yazi &>/dev/null || [ "$(yazi --version | awk '{print $2}')" != 
     success "yazi $(yazi --version | head -1) installed"
 else
     info "yazi already installed"
+fi
+
+# ── drift ─────────────────────────────────────────────────────────
+if ! command -v drift &>/dev/null; then
+    info "installing drift (idle terminal screensaver)…"
+    GOBIN="$HOME/.local/bin" go install github.com/phlx0/drift@latest \
+        || warn "drift install failed — retry with 'GOBIN=~/.local/bin go install github.com/phlx0/drift@latest'"
+else
+    info "drift already installed ($(drift version 2>/dev/null | head -1))"
 fi
 
 # ── bleachbit ───────────────────────────────────────────────────────────────

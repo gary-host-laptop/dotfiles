@@ -1,0 +1,18 @@
+[engine]
+fps = 30
+cycle_seconds = 60
+fade_seconds = 0.3
+scenes = "all"
+theme = "tokyonight"
+shuffle = true
+hide_tmux_status = false
+oled_shift = false
+
+[scene.clock]
+show_date = true
+
+# tokyo-night (folke/tokyonight.nvim — night) palette mapped to drift scenes
+[theme.tokyonight]
+bright = "#c0caf5"
+palette = ["#7aa2f7", "#bb9af7", "#9ece6a", "#e0af68", "#f7768e", "#73daca", "#2ac3de", "#ff9e64"]
+dim = ["#283457", "#3b2e5f", "#2d3f2e", "#4a3a2e", "#4d2f35", "#2d453e", "#1f3b47", "#4a3a2b"]

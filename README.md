@@ -14,6 +14,7 @@ dotfiles/
 ├── private_dot_gitconfig               # ~/.gitconfig
 ├── dot_bash/
 │   ├── aliases.bash                    # shell aliases (shared)
+│   ├── drift.bash                      # drift idle screensaver shell hook
 │   ├── exports.bash                    # PATH, env vars (shared)
 │   └── fedora-specific.bash            # starship, zoxide, opencode (fedora only)
 ├── dot_config/                         # ~/.config/ — app configs
