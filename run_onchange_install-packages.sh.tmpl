@@ -21,11 +21,13 @@ success "copr repos enabled"
 # ── dnf ──────────────────────────────────────────────────────────────────────
 info "installing dnf packages..."
 
+# yank installs as yank-cli (upstream rename) — aliases.bash weds it to wl-copy
 DNF_PACKAGES=(
     calibre
     flameshot
     firefox
     vlc
+    yank
     kdenlive
     bat
     btop

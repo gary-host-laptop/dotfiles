@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# =============================================================================
+# clipclear — wipe every live clipboard selection (X11 + Wayland).
+# clipboards on this machine live in RAM only (compositor + owner processes),
+# so clearing them deletes the data outright — nothing persistent to purge.
+# =============================================================================
+
+cleared=()
+
+# wayland (wl-clipboard)
+if command -v wl-copy >/dev/null 2>&1; then
+    wl-copy --clear 2>/dev/null && cleared+=("wayland-clipboard")
+    wl-copy --clear --primary 2>/dev/null && cleared+=("wayland-primary")
+fi
+
+# x11 via xsel (works over XWayland on a wayland session)
+if command -v xsel >/dev/null 2>&1; then
+    xsel -c -b 2>/dev/null && cleared+=("x11-clipboard")
+    xsel -c -p 2>/dev/null && cleared+=("x11-primary")
+fi
+
+if [ ${#cleared[@]} -gt 0 ]; then
+    echo "cleared: ${cleared[*]}"
+else
+    echo "no clipboard tools found — nothing to clear"
+fi

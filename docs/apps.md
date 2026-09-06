@@ -12,6 +12,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | bat | dnf | utilities | cat replacement |
 | bleachbit | rpm (upstream manual) | utilities | cache/disk cleaner — `sudo bbit`; native 6.0.3 fc44 noarch rpm (upstream), fedora repo stale at 4.6.0; manual updates |
 | btop | dnf | utilities | system monitor — crashes on AMD APUs if rocm-smi is installed |
+| clipclear | bin | utilities | wipes all live X11+Wayland clipboard selections (`wl-copy --clear` + `xsel -c`) — clipboards here are RAM-only, so clearing actually deletes the data |
 | croft | cargo | dev | rust toolchain manager — crates.io `croft-software` |
 | drift | go | utilities | idle terminal screensaver — shells out via `dot_bash/drift.bash` (DRIFT_TIMEOUT=120); config at `dot_config/drift/config.toml` (tokyo-night theme) |
 | eza | dnf | utilities | ls replacement |
@@ -23,6 +24,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | superfile | install script | utilities | spf — https://superfile.dev/install.sh; standalone file manager |
 | superseedr | cargo | internet | TUI bittorrent client — downloads land in `~/strata/10-19_system/16_inbox` (move-media picks them up); `settings.toml` tracked, runtime state ignored (see `.chezmoiignore`) |
 | topgrade | cargo | dev | multi-tool updater — `tg` alias; config at `dot_config/topgrade.toml.tmpl` |
+| yank | dnf | utilities | terminal output → clipboard picker — dnf ships `/usr/bin/yank-cli` (upstream rename); `aliases.bash` weds it to `wl-copy`; `yank -- CMD` overrides |
 | zellij | cargo-binstall | dev | terminal multiplexer — `cargo binstall zellij`; needs >=0.45 for kitty graphics (ghostty) |
 | zoxide | cargo | dev | smarter `cd` — init in `dot_bash/fedora-specific.bash` |
 
