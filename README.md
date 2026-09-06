@@ -97,7 +97,7 @@ machine = "fedora"   # or "nixos"
 
 # per-machine values for templated secrets — never stored in the repo
 [data.amule]
-kadUdpKey = "742076407"    # optional; omitted → aMule regenerates (0)
+kadUdpKey = "0"            # optional; omitted → aMule regenerates (0)
 [data.nicotine]
 password = "..."           # nicotine+ soulseek password; omitted → ""
 [data.keepassxc]
