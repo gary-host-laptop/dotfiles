@@ -18,7 +18,14 @@ dotfiles/
 │   ├── exports.bash                    # PATH, env vars (shared)
 │   └── fedora-specific.bash            # starship, zoxide, opencode (fedora only)
 ├── dot_config/                         # ~/.config/ — app configs
-│   └── systemd/user/                   # move-media, wallpaper, wallpaper.timer
+│   ├── systemd/user/                   # move-media, wallpaper, wallpaper.timer
+│   ├── kitty/ mimeapps.list autostart/ # terminal, default apps, autostart
+│   ├── flameshot/ vlc/ calibre/        # screenshots, video, ebook manager
+│   └── gtk-3.0/bookmarks.tmpl          # nautilus bookmarks (templated home)
+├── dot_varr/                           # ~/.var/ — flatpak app configs
+│   └── app/dev.zed.Zed/                # zed editor config + sevastolink theme
+│   └── app/org.nicotine_plus.Nicotine/ # nicotine+ p2p config (passw templated)
+├── dot_aMule/                          # ~/.aMule/ — amule.conf (KAD key templated)
 ├── bin/                                # ~/bin/ scripts — executable_ prefix → 755
 ├── run_onchange_install-packages.sh.tmpl   # package install (re-runs on change)
 ├── run_once_setup-xdg.sh.tmpl          # xdg dirs + theming (one-time)
@@ -87,9 +94,17 @@ on each machine, create `~/.config/chezmoi/chezmoi.toml`:
 ```toml
 [data]
 machine = "fedora"   # or "nixos"
+
+# per-machine values for templated secrets — never stored in the repo
+[data.amule]
+kadUdpKey = "742076407"    # optional; omitted → aMule regenerates (0)
+[data.nicotine]
+password = "..."           # nicotine+ soulseek password; omitted → ""
+[data.keepassxc]
+keeShareOwn = ""           # optional; omitted → KeeShare identity regenerated
 ```
 
-chezmoi compiles templates on each machine, so the same source produces different outputs.
+chezmoi compiles templates on each machine, so the same source produces different outputs. missing `amule`/`nicotine` data degrades to neutered values (`0` / `""`) so the repo still applies on a fresh machine.
 
 ## ｂｏｏｔｓｔｒａｐ　ｆｌｏｗ
 

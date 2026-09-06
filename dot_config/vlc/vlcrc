@@ -1,0 +1,53 @@
+#### vlcrc (trimmed) - only non-default keys vs vlc 3.0.23 defaults
+
+[sharpen]
+sharpen-sigma=2.000000
+# default: 0.050000
+
+[freetype]
+freetype-font=Noto Sans
+# default: NotoSerif
+freetype-monofont=Noto Sans Mono
+# default: NotoSansMono
+freetype-rel-fontsize=12
+# default: 0
+freetype-background-opacity=128
+# default: 0
+freetype-outline-thickness=6
+# default: 4
+
+[marq]
+marq-position=0
+# default: -1
+
+[logo]
+logo-position=0
+# default: -1
+
+[audiobargraph_v]
+audiobargraph_v-position=0
+# default: -1
+
+[qt]
+qt-video-autoresize=0
+# default: 1
+qt-dark-palette=1
+# default: 0
+qt-privacy-ask=0
+# default: 1
+
+[core]
+aout=any
+# default: 
+text-renderer=any
+# default: 
+audio-language=Japanese
+# default: 
+vod-server=any
+# default: 
+loop=1
+# default: 0
+one-instance-when-started-from-file=0
+# default: 1
+metadata-network-access=1
+# default: 0

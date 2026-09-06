@@ -40,23 +40,25 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 
 | app | package manager | category | flatpak id / notes |
 |-----|-----------------|----------|--------------------|
-| amule | manual | internet | org.amule.aMule — eD2k/Kad p2p client; flathub submission pending — install from https://amule-org.github.io/download (AppImage/.flatpak) |
+| amule | manual | internet | org.amule.aMule — eD2k/Kad p2p client; flathub submission pending — install from https://amule-org.github.io/download (AppImage/.flatpak); config tracked `dot_aMule/amule.conf.tmpl`, KAD key via `[data.amule]` |
 | anki | flatpak | productivity | net.ankiweb.Anki |
 | blanket | flatpak | media | com.rafaelmardojai.Blanket |
-| calibre | dnf | productivity | |
+| calibre | dnf | productivity | config subset tracked `dot_config/calibre/` (incl. OpenLibraryPlus plugin, templated library/db paths) |
 | chromium | flatpak | internet | org.chromium.Chromium |
 | element | flatpak | internet | im.riot.Riot |
 | euphonica | flatpak | media | io.github.htkhiem.Euphonica — music client for mpd |
 | firefox | dnf | internet | |
-| flameshot | dnf | utilities | |
+| flameshot | dnf | utilities | config + autostart tracked (save path templated) |
 | flatseal | flatpak | utilities | com.github.tchx84.Flatseal |
 | gimp | flatpak | creative | org.gimp.GIMP |
 | ghostty | dnf (scottames/ghostty copr) | utilities | |
 | inkscape | flatpak | creative | org.inkscape.Inkscape |
 | kdenlive | dnf | creative | |
-| keepassxc | flatpak | utilities | org.keepassxc.KeePassXC |
+| keepassxc | flatpak | utilities | org.keepassxc.KeePassXC — config tracked `dot_config/keepassxc/keepassxc.ini.tmpl` |
+| kitty | dnf | utilities | terminal — full `kitty.conf` tracked (plain), no machine-specific bits |
 | localsend | flatpak | utilities | org.localsend.localsend_app |
 | musicbrainz picard | flatpak | media | org.musicbrainz.Picard |
+| nicotine+ | flatpak | internet | org.nicotine_plus.Nicotine — soulseek p2p; config tracked, password via `[data.nicotine]` (see README multi-machine) |
 | obsidian | flatpak | productivity | md.obsidian.Obsidian |
 | pdf arranger | flatpak | productivity | com.github.jeromerobert.pdfarranger |
 | qbittorrent | flatpak | internet | org.qbittorrent.qBittorrent |
@@ -67,7 +69,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | tenacity | flatpak | media | org.tenacityaudio.Tenacity |
 | thunderbird | flatpak | internet | org.mozilla.Thunderbird |
 | tor browser | flatpak | internet | org.torproject.torbrowser-launcher |
-| vlc | dnf | media | |
+| vlc | dnf | media | config trimmed to custom keys → `dot_config/vlc/vlcrc` (19 keys) |
 
 ### ｐｒｏｂａｔｉｏｎａｒｙ
 
@@ -91,7 +93,32 @@ currently evaluating — not in install script.
 | tubeconverter | flatpak | internet | org.nickvision.tubeconverter |
 | ytdl-gui | flatpak | internet | page.codeberg.impromptux.ytdl-gui |
 | zen browser | flatpak | internet | firefox-based, evaluating |
-| zed | flatpak | dev | dev.zed.Zed — too heavy for daily use, kept for occasional use |
+| zed | flatpak | dev | dev.zed.Zed — too heavy for daily use, kept for occasional use; flatpak config + sevastolink theme tracked `dot_varr/app/dev.zed.Zed/` |
+
+### ｔｒａｃｋｅｄ　ｇｕｉ　ｃｏｎｆｉｇｓ
+
+managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-config/dotfiles`):
+
+| app | source → target | notes |
+|-----|-----------------|-------|
+| autostart | `dot_config/autostart/` → `~/.config/autostart/` | Flameshot only; Mouzi + radia removed |
+| calibre | `dot_config/calibre/` → `~/.config/calibre/` | `global.py.json`/`customize.py.json` templated (`library_path`, plugin zip path); excluded: `gui.json`, `caches/`, `metadata-sources-cache.json`, `icons-any.rcc`, viewer annots |
+| flameshot | `dot_config/flameshot/flameshot.ini.tmpl` (save path templated) | |
+| gtk bookmarks | `dot_config/gtk-3.0/bookmarks.tmpl` | nautilus sidebar |
+| keepassxc | `dot_config/keepassxc/keepassxc.ini.tmpl` | native config (app runs via flatpak) — CompactMode, monochrome tray, 16-word pass generator, idle lock; **KeeShare RSA private key scrubbed** → `[data.keepassxc]` (local chezmoi.toml), absent → regenerated |
+| kitty | `dot_config/kitty/kitty.conf` → `~/.config/kitty/kitty.conf` | plain copy, no machine-specific bits |
+| mimeapps | `dot_config/mimeapps.list` → `~/.config/mimeapps.list` | zed default editor, loupe images, vlc video |
+| aMule | `dot_aMule/amule.conf.tmpl` → `~/.aMule/amule.conf` | `CryptoKadUDPKey` scrubbed → `[data.amule]`; `cryptkey.dat`/`.met`/bak excluded (runtime) |
+| nicotine+ | `dot_varr/app/org.nicotine_plus.Nicotine/.../config.tmpl` → `~/.var/.../nicotine/config` | plaintext `passw` scrubbed → `[data.nicotine]` |
+| vlc | `dot_config/vlc/vlcrc` → `~/.config/vlc/vlcrc` | trimmed to 19 non-default keys |
+| zed | `dot_varr/app/dev.zed.Zed/config/zed/` → `~/.var/app/dev.zed.Zed/config/zed/` | settings.json + sevastolink theme |
+
+**credentials** are never stored in the repo — values live in each machine's `~/.config/chezmoi/chezmoi.toml` (`[data.amule]`, `[data.nicotine]`, `[data.keepassxc]`), and render via `index`/`with` fallbacks so a fresh clone degrades to neutered values. see README "multi-machine".
+
+### broken / removed
+
+- **radia** — removed (hopflight alpha voice-assistant); deleted `~/.local/bin/radia`, `~/.config/radia/`, autostart entry
+- **mouzi** — removed; deleted autostart entry + `/usr/bin/mouzi`
 
 ## ｓｅｌｆｈｏｓｔｅｄ　／　ｓｅｒｖｅｒｓ
 

@@ -1,0 +1,32 @@
+[General]
+ConfigVersion=2
+NumberOfRememberedLastDatabases=1
+
+[Browser]
+CustomProxyLocation=
+
+[GUI]
+CompactMode=true
+HideGroupPanel=false
+HideMenubar=false
+HidePreviewPanel=true
+TrayIconAppearance=monochrome-light
+
+[KeeShare]
+Active="<?xml version=\"1.0\"?><KeeShare><Active/></KeeShare>\n"
+Own={{ with index . "keepassxc" }}{{ with index . "keeShareOwn" }}{{ . }}{{ else }}""{{ end }}{{ else }}""{{ end }}
+QuietSuccess=true
+
+[PasswordGenerator]
+AdditionalChars=
+ExcludedChars=
+Length=16
+SpecialChars=false
+WordCount=2
+
+[Security]
+ClearSearch=true
+ClearSearchTimeout=1
+IconDownloadFallback=true
+LockDatabaseIdle=true
+LockDatabaseIdleSeconds=300
