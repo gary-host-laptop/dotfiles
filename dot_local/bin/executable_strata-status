@@ -29,16 +29,27 @@ bar() {
     printf "${RESET} ${color}${pct}%%${RESET}"
 }
 
+not_mounted_bar() {
+    local width=20
+    printf "${MUTED}"
+    for ((i=0; i<width; i++)); do printf '█'; done
+    printf "${RESET}"
+}
+
 disk_info() {
     local mount=$1
     local label=$2
     if ! mountpoint -q "$mount" 2>/dev/null; then
-        echo -e "  ${RED}$label${RESET}  ${RED}not mounted${RESET}"
+        printf "  ${CYAN}%-10s${RESET}  " "$label"
+        not_mounted_bar
+        printf "  ${RED}not mounted${RESET}\n"
         return
     fi
     local info=$(df -BG "$mount" 2>/dev/null | tail -1)
     if [ -z "$info" ]; then
-        echo -e "  ${RED}$label${RESET}  ${RED}not mounted${RESET}"
+        printf "  ${CYAN}%-10s${RESET}  " "$label"
+        not_mounted_bar
+        printf "  ${RED}not mounted${RESET}\n"
         return
     fi
     local total=$(echo "$info" | awk '{print $2}' | tr -d 'G')
