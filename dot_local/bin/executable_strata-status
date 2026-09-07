@@ -32,9 +32,13 @@ bar() {
 disk_info() {
     local mount=$1
     local label=$2
+    if ! mountpoint -q "$mount" 2>/dev/null; then
+        echo -e "  ${RED}$label${RESET}  ${RED}not mounted${RESET}"
+        return
+    fi
     local info=$(df -BG "$mount" 2>/dev/null | tail -1)
     if [ -z "$info" ]; then
-        echo -e "  ${MUTED}$label${RESET}  ${MUTED}not mounted${RESET}"
+        echo -e "  ${RED}$label${RESET}  ${RED}not mounted${RESET}"
         return
     fi
     local total=$(echo "$info" | awk '{print $2}' | tr -d 'G')
