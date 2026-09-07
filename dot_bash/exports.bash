@@ -1,6 +1,6 @@
 # path
 missing=""
-for d in "$HOME/.local/bin" "$HOME/bin"; do
+for d in "$HOME/.local/bin"; do
     [[ ":$PATH:" == *":$d:"* ]] || missing="$missing:$d"
 done
 if [ -n "$missing" ]; then

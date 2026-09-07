@@ -5,7 +5,7 @@ essential machine-local data → `~/strata/10-19_system/14_backups/`.
 the dotfiles repo holds **configuration** (reproducible from GitHub). this covers the
 **state and credentials** that live only on this machine and would be lost on a reinstall.
 
-## essentials (`~/bin/backup`)
+## essentials (`~/.local/bin/backup`)
 
 run anytime — idempotent, one directory per item, latest-wins:
 

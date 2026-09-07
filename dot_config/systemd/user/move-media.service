@@ -4,7 +4,7 @@ After=default.target
 
 [Service]
 Type=simple
-ExecStart=%h/bin/move-media.sh
+ExecStart=%h/.local/bin/move-media.sh
 Restart=always
 RestartSec=5
 

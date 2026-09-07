@@ -1,5 +1,5 @@
 # prefer user-local paths for login shells
-export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # cargo env, only if present
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

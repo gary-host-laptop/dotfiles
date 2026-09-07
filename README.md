@@ -26,7 +26,8 @@ dotfiles/
 │   └── app/dev.zed.Zed/                # zed editor config + sevastolink theme
 │   └── app/org.nicotine_plus.Nicotine/ # nicotine+ p2p config (passw templated)
 ├── dot_aMule/                          # ~/.aMule/ — amule.conf (KAD key templated)
-├── bin/                                # ~/bin/ scripts — executable_ prefix → 755
+├── dot_local/bin/                      # ~/.local/bin/ scripts — executable_ prefix → 755
+├── dot_gemrc                           # ~/.gemrc — gem installs → ~/.local/bin
 ├── run_onchange_install-packages.sh.tmpl   # package install (re-runs on change)
 ├── run_once_setup-xdg.sh.tmpl          # xdg dirs + theming (one-time)
 ├── run_once_setup-storage.sh.tmpl      # hdd symlinks (one-time)
