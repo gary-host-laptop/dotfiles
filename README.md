@@ -36,10 +36,13 @@ dotfiles/
     ├── apps.md                         # app inventory + install notes
     ├── backup.md                       # essentials-backup inventory + restore
     ├── fstab.fedora                    # /etc/fstab reference for reinstalls
-    └── hardware.md                     # machine specs + drive layout
+    ├── hardware.md                     # machine specs + drive layout
+    └── strata.md                       # johnny-decimal category/tree/index docs
 ```
 
 ## ｓｔｒａｔａ
+
+full breakdown (categories, tree, drive mapping, index files): [`docs/strata.md`](docs/strata.md).
 
 ```
 ~/strata/
