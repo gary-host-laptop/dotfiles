@@ -10,6 +10,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | app | package manager | category | id / notes |
 |-----|-----------------|----------|------------|
 | bat | dnf | utilities | cat replacement |
+| backup | bin | utilities | essentials snapshot → `~/strata/10-19_system/14_backups/` (chezmoi.toml, ssh, beets, firefox logins+bookmarks, fstab) — see `docs/backup.md` |
 | bleachbit | rpm (upstream manual) | utilities | cache/disk cleaner — `sudo bbit`; native 6.0.3 fc44 noarch rpm (upstream), fedora repo stale at 4.6.0; manual updates |
 | btop | dnf | utilities | system monitor — crashes on AMD APUs if rocm-smi is installed |
 | clipclear | bin | utilities | wipes all live X11+Wayland clipboard selections (`wl-copy --clear` + `xsel -c`) — clipboards here are RAM-only, so clearing actually deletes the data |
@@ -105,7 +106,7 @@ managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-con
 | calibre | `dot_config/calibre/` → `~/.config/calibre/` | `global.py.json`/`customize.py.json` templated (`library_path`, plugin zip path); excluded: `gui.json`, `caches/`, `metadata-sources-cache.json`, `icons-any.rcc`, viewer annots |
 | flameshot | `dot_config/flameshot/flameshot.ini.tmpl` (save path templated) | |
 | gtk bookmarks | `dot_config/gtk-3.0/bookmarks.tmpl` | nautilus sidebar |
-| keepassxc | `dot_config/keepassxc/keepassxc.ini.tmpl` | native config (app runs via flatpak) — CompactMode, monochrome tray, 16-word pass generator, idle lock; **KeeShare RSA private key scrubbed** → `[data.keepassxc]` (local chezmoi.toml), absent → regenerated |
+| keepassxc | `dot_config/keepassxc/keepassxc.ini.tmpl` | native config (app runs via flatpak) — CompactMode, monochrome tray, 16-word pass generator, idle lock; KeeShare identity set to `Own=""` (unused feature — KeePassXC regenerates) |
 | kitty | `dot_config/kitty/kitty.conf` → `~/.config/kitty/kitty.conf` | plain copy, no machine-specific bits |
 | mimeapps | `dot_config/mimeapps.list` → `~/.config/mimeapps.list` | zed default editor, loupe images, vlc video |
 | aMule | `dot_aMule/amule.conf.tmpl` → `~/.aMule/amule.conf` | `CryptoKadUDPKey` scrubbed → `[data.amule]`; `cryptkey.dat`/`.met`/bak excluded (runtime) |
@@ -113,7 +114,7 @@ managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-con
 | vlc | `dot_config/vlc/vlcrc` → `~/.config/vlc/vlcrc` | trimmed to 19 non-default keys |
 | zed | `dot_varr/app/dev.zed.Zed/config/zed/` → `~/.var/app/dev.zed.Zed/config/zed/` | settings.json + sevastolink theme |
 
-**credentials** are never stored in the repo — values live in each machine's `~/.config/chezmoi/chezmoi.toml` (`[data.amule]`, `[data.nicotine]`, `[data.keepassxc]`), and render via `index`/`with` fallbacks so a fresh clone degrades to neutered values. see README "multi-machine".
+**credentials** are never stored in the repo — values live in each machine's `~/.config/chezmoi/chezmoi.toml` (`[data.amule]`, `[data.nicotine]`), and render via `index`/`with` fallbacks so a fresh clone degrades to neutered values. see README "multi-machine".
 
 ### broken / removed
 

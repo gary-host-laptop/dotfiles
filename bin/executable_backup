@@ -1,0 +1,59 @@
+#!/bin/bash
+
+BOLD='\033[1m'
+CYAN='\033[38;2;122;162;247m'
+MUTED='\033[38;2;59;66;97m'
+LAVENDER='\033[38;2;169;177;214m'
+GREEN='\033[38;2;0;255;150m'
+YELLOW='\033[38;2;255;220;100m'
+RESET='\033[0m'
+
+set -euo pipefail
+
+ROOT="${HOME}/strata/10-19_system/14_backups"
+FF_PROFILE="$(ls -d "${HOME}/.mozilla/firefox/"*.default-release 2>/dev/null | head -1 || true)"
+
+copied=()
+copy() {
+    local src="$1"
+    local dst="$2"
+    if [ ! -e "$src" ]; then
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (missing)"
+        return 1
+    fi
+    mkdir -p "$(dirname "$dst")"
+    cp -p "$src" "$dst"
+    copied+=("$(basename "$src")")
+}
+
+copy_dir() {
+    local src="$1"
+    local dst="$2"
+    if [ ! -d "$src" ]; then
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (missing)"
+        return 1
+    fi
+    mkdir -p "$dst"
+    cp -pR "$src"/. "$dst"/
+    copied+=("$(basename "$src")/")
+}
+
+echo ""
+echo -e "  ${CYAN}${BOLD}── essentials backup ──${RESET}  ${MUTED}→ ${ROOT}${RESET}"
+
+copy "${HOME}/.config/chezmoi/chezmoi.toml"      "${ROOT}/chezmoi/chezmoi.toml" || true
+for f in id_ed25519 id_ed25519.pub known_hosts known_hosts.old; do
+    copy "${HOME}/.ssh/${f}"                     "${ROOT}/ssh/${f}" || true
+done
+copy_dir "${HOME}/.config/beets"                 "${ROOT}/beets" || true
+if [ -n "$FF_PROFILE" ]; then
+    copy "${FF_PROFILE}/logins.json"             "${ROOT}/firefox-profile/logins.json" || true
+    copy "${FF_PROFILE}/places.sqlite"           "${ROOT}/firefox-profile/places.sqlite" || true
+else
+    echo -e "  ${YELLOW}skip${RESET}  ${MUTED}firefox profile${RESET}  (missing)"
+fi
+copy "/etc/fstab"                                 "${ROOT}/fstab/fstab" || true
+
+echo ""
+echo -e "  ${GREEN}${BOLD}${#copied[@]} file(s) backed up${RESET}: ${LAVENDER}${copied[*]}${RESET}"
+echo ""

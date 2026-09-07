@@ -34,6 +34,8 @@ dotfiles/
 ├── run_onchange_enable-units.sh        # systemd daemon-reload + enable
 └── docs/
     ├── apps.md                         # app inventory + install notes
+    ├── backup.md                       # essentials-backup inventory + restore
+    ├── fstab.fedora                    # /etc/fstab reference for reinstalls
     └── hardware.md                     # machine specs + drive layout
 ```
 
@@ -100,8 +102,6 @@ machine = "fedora"   # or "nixos"
 kadUdpKey = "0"            # optional; omitted → aMule regenerates (0)
 [data.nicotine]
 password = "..."           # nicotine+ soulseek password; omitted → ""
-[data.keepassxc]
-keeShareOwn = ""           # optional; omitted → KeeShare identity regenerated
 ```
 
 chezmoi compiles templates on each machine, so the same source produces different outputs. missing `amule`/`nicotine` data degrades to neutered values (`0` / `""`) so the repo still applies on a fresh machine.
