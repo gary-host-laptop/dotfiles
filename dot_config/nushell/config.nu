@@ -9,6 +9,20 @@ alias la = eza -a
 alias lg = eza -l --git
 alias tg = topgrade
 
+# yank (binary ships as yank-cli — bash/aliases.bash parity) — pick a line, copy via wl-copy;
+# your own `-- CMD` overrides the default copy command. `--wrapped` lets a standalone `--`
+# reached the prompt reach $args (nushell treats `--` as an empty flag otherwise); def (not
+# alias) because it must inject `-- wl-copy` conditionally and forward stdin ($in).
+def --wrapped yank [...args: string] {
+    let input = $in
+    let target = if "--" in $args { $args } else { [...$args "--" "wl-copy"] }
+    if (($input | describe) == "nothing") {
+        ^yank-cli ...$target
+    } else {
+        $input | ^yank-cli ...$target
+    }
+}
+
 # editor / banner
 $env.config.buffer_editor = "hx"
 $env.config.show_banner = false
