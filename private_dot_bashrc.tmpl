@@ -11,12 +11,16 @@ if [ -d "$HOME/.bashrc.d" ]; then
     unset rc
 fi
 
+# opencode — add once, never stack (no-op if not installed)
+case ":$PATH:" in *":$HOME/.opencode/bin:"*) ;; *) PATH="$HOME/.opencode/bin:$PATH" ;; esac
+
+# cargo — on PATH before tooling inits so cargo-installed tools (zoxide,
+# topgrade) resolve even in the first post-login shell (.profile runs after .bashrc)
+case ":$PATH:" in *":$HOME/.cargo/bin:"*) ;; *) PATH="$HOME/.cargo/bin:$PATH" ;; esac
+
 # core interactive tools
 eval "$(starship init bash 2>/dev/null)"
 eval "$(zoxide init bash 2>/dev/null)"
-
-# opencode — add once, never stack (no-op if not installed)
-case ":$PATH:" in *":$HOME/.opencode/bin:"*) ;; *) PATH="$HOME/.opencode/bin:$PATH" ;; esac
 
 {{- if eq (.machine | default "fedora") "fedora" }}
 # pkg-config (fedora multilib layout)
