@@ -1,5 +1,18 @@
-# prefer user-local paths for login shells
-export PATH="$HOME/.local/bin:$PATH"
-
-# cargo env, only if present
+# cargo env, only if present (do this before pinning ~/.local/bin)
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# pin ~/.local/bin to the front — drop any earlier copies, then prepend, so
+# user scripts win over cargo/opencode in login shells. Idempotent, POSIX-only.
+if [ -n "$PATH" ]; then
+    pinned=""
+    IFS_OLD=$IFS
+    IFS=:
+    for _d in $PATH; do
+        [ -z "$_d" ] && continue
+        [ "$_d" = "$HOME/.local/bin" ] && continue
+        pinned="${pinned}${pinned:+:}${_d}"
+    done
+    IFS=$IFS_OLD
+    unset _d
+    export PATH="$HOME/.local/bin:$pinned"
+fi
