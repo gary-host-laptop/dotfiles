@@ -27,7 +27,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | topgrade | cargo | dev | multi-tool updater — `tg` alias; config at `dot_config/topgrade.toml.tmpl` |
 | yank | dnf | utilities | terminal output → clipboard picker — dnf ships `/usr/bin/yank-cli` (upstream rename); `aliases.bash` weds it to `wl-copy`; `yank -- CMD` overrides |
 | zellij | cargo-binstall | dev | terminal multiplexer — `cargo binstall zellij`; needs >=0.45 for kitty graphics (ghostty) |
-| zoxide | cargo | dev | smarter `cd` — init in `dot_bash/fedora-specific.bash` |
+| zoxide | cargo | dev | smarter `cd` — init in `private_dot_bashrc.tmpl` |
 
 ### ｐｒｏｂａｔｉｏｎａｒｙ
 

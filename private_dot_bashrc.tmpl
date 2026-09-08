@@ -3,19 +3,48 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
-# source dotfiles bash configs
-DOTFILES="{{ .chezmoi.sourceDir }}"
-for file in "$DOTFILES"/dot_bash/*.bash; do
-    # machine-specific files are sourced once below, skip them here
-    case "${file##*/}" in
-        fedora-specific.bash|nixos-specific.bash) continue ;;
-    esac
-    [ -f "$file" ] && . "$file"
-done
-unset file
+# ~/.bashrc.d user drop-ins
+if [ -d "$HOME/.bashrc.d" ]; then
+    for rc in "$HOME"/.bashrc.d/*; do
+        [ -f "$rc" ] && . "$rc"
+    done
+    unset rc
+fi
+
+# core interactive tools
+eval "$(starship init bash 2>/dev/null)"
+eval "$(zoxide init bash 2>/dev/null)"
+
+# opencode — add once, never stack (no-op if not installed)
+case ":$PATH:" in *":$HOME/.opencode/bin:"*) ;; *) PATH="$HOME/.opencode/bin:$PATH" ;; esac
 
 {{- if eq (.machine | default "fedora") "fedora" }}
-source "$DOTFILES/dot_bash/fedora-specific.bash"
-{{- else if eq (.machine | default "fedora") "nixos" }}
-source "$DOTFILES/dot_bash/nixos-specific.bash"
+# pkg-config (fedora multilib layout)
+export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
+
+# go (installed at /usr/local/go) — append only if not present
+case ":$PATH:" in *":/usr/local/go/bin:"*) ;; *) PATH="$PATH:/usr/local/go/bin" ;; esac
 {{- end }}
+
+# pin ~/.local/bin to the front — drop any earlier copies, then prepend, so
+# user scripts win over opencode/cargo. Idempotent, POSIX-only.
+if [ -n "$PATH" ]; then
+    pinned=""
+    IFS_OLD=$IFS
+    IFS=:
+    for _d in $PATH; do
+        [ -z "$_d" ] && continue
+        [ "$_d" = "$HOME/.local/bin" ] && continue
+        pinned="${pinned}${pinned:+:}${_d}"
+    done
+    IFS=$IFS_OLD
+    unset _d
+    export PATH="$HOME/.local/bin:$pinned"
+fi
+
+# source dotfiles bash configs
+DOTFILES="{{ .chezmoi.sourceDir }}"
+. "$DOTFILES/dot_bash/exports.bash"
+. "$DOTFILES/dot_bash/aliases.bash"
+. "$DOTFILES/dot_bash/drift.bash"
+unset DOTFILES

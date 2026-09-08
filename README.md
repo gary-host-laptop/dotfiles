@@ -8,15 +8,14 @@ supports multiple machines via templates — fedora (current) and nixos (planned
 
 ```
 dotfiles/
-├── private_dot_bashrc.tmpl             # ~/.bashrc (template: machine-specific init)
+├── private_dot_bashrc.tmpl             # ~/.bashrc (interactive init + fedora block)
 ├── private_dot_bash_profile            # ~/.bash_profile
 ├── private_dot_profile                 # ~/.profile
 ├── private_dot_gitconfig               # ~/.gitconfig
 ├── dot_bash/
 │   ├── aliases.bash                    # shell aliases (shared)
 │   ├── drift.bash                      # drift idle screensaver shell hook
-│   ├── exports.bash                    # PATH, env vars (shared)
-│   └── fedora-specific.bash            # starship, zoxide, opencode (fedora only)
+│   └── exports.bash                    # env vars (shared)
 ├── dot_config/                         # ~/.config/ — app configs
 │   ├── systemd/user/                   # move-media, wallpaper, wallpaper.timer
 │   ├── kitty/ mimeapps.list autostart/ # terminal, default apps, autostart

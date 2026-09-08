@@ -1,13 +1,3 @@
-# path
-missing=""
-for d in "$HOME/.local/bin"; do
-    [[ ":$PATH:" == *":$d:"* ]] || missing="$missing:$d"
-done
-if [ -n "$missing" ]; then
-    PATH="${missing#:}:$PATH"
-fi
-export PATH
-
 # cargo (topgrade): limit concurrent rustc builds to fit 7GiB RAM
 export CARGO_INSTALL_OPTS="--jobs 1"
 
@@ -43,4 +33,3 @@ uu=38;2;122;162;247:\
 gu=38;2;122;162;247:\
 un=38;2;169;177;214:\
 gn=38;2;169;177;214:"
-
