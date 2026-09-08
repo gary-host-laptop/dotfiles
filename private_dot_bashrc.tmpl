@@ -30,14 +30,15 @@ export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
 case ":$PATH:" in *":/usr/local/go/bin:"*) ;; *) PATH="$PATH:/usr/local/go/bin" ;; esac
 {{- end }}
 
-# pin ~/.local/bin to the front — drop any earlier copies, then prepend, so
-# user scripts win over opencode/cargo. Idempotent, POSIX-only.
+# pin ~/.local/bin to the front and drop duplicate entries, so any polluted
+# ancestor converges clean in one hop. Idempotent, POSIX-only.
 if [ -n "$PATH" ]; then
     pinned=""
     IFS_OLD=$IFS
     IFS=:
     for _d in $PATH; do
         [ -z "$_d" ] && continue
+        case ":$pinned:" in *":$_d:"*) continue ;; esac
         [ "$_d" = "$HOME/.local/bin" ] && continue
         pinned="${pinned}${pinned:+:}${_d}"
     done
