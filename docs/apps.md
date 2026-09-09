@@ -98,7 +98,7 @@ currently evaluating — not in install script.
 
 ### ｔｒａｃｋｅｄ　ｇｕｉ　ｃｏｎｆｉｇｓ
 
-managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-config/dotfiles`):
+managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-config/dotfiles/strata` — the `.chezmoiroot` source dir):
 
 | app | source → target | notes |
 |-----|-----------------|-------|

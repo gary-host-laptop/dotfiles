@@ -8,37 +8,34 @@ supports multiple machines via templates — fedora (current) and nixos (planned
 
 ```
 dotfiles/
-├── private_dot_bashrc.tmpl             # ~/.bashrc (interactive init + fedora block)
-├── private_dot_bash_profile            # ~/.bash_profile
-├── private_dot_profile                 # ~/.profile
-├── private_dot_gitconfig               # ~/.gitconfig
-├── dot_bash/
-│   ├── aliases.bash                    # shell aliases (shared)
-│   ├── drift.bash                      # drift idle screensaver shell hook
-│   └── exports.bash                    # env vars (shared)
-├── dot_config/                         # ~/.config/ — app configs
-│   ├── systemd/user/                   # move-media, wallpaper, wallpaper.timer
-│   ├── kitty/ mimeapps.list autostart/ # terminal, default apps, autostart
-│   ├── flameshot/ vlc/ calibre/        # screenshots, video, ebook manager
-│   └── gtk-3.0/bookmarks.tmpl          # nautilus bookmarks (templated home)
-├── dot_varr/                           # ~/.var/ — flatpak app configs
-│   └── app/dev.zed.Zed/                # zed editor config + sevastolink theme
-│   └── app/org.nicotine_plus.Nicotine/ # nicotine+ p2p config (passw templated)
-├── dot_aMule/                          # ~/.aMule/ — amule.conf (KAD key templated)
-├── dot_local/bin/                      # ~/.local/bin/ scripts — executable_ prefix → 755
-├── dot_gemrc                           # ~/.gemrc — gem installs → ~/.local/bin
-├── .chezmoiscripts/                    # run scripts (exec only; nothing installed)
-│   ├── run_onchange_install-packages.sh.tmpl   # package install (re-runs on change)
-│   ├── run_once_setup-xdg.sh.tmpl      # xdg dirs + theming (one-time)
-│   ├── run_once_setup-storage.sh.tmpl  # hdd symlinks (one-time)
-│   ├── run_once_generate-nushell-init.sh.tmpl  # starship/zoxide for nushell
-│   └── run_onchange_enable-units.sh    # systemd daemon-reload + enable
-└── docs/
-    ├── apps.md                         # app inventory + install notes
-    ├── backup.md                       # essentials-backup inventory + restore
-    ├── fstab.fedora                    # /etc/fstab reference for reinstalls
-    ├── hardware.md                     # machine specs + drive layout
-    └── strata.md                       # johnny-decimal category/tree/index docs
+├── .chezmoiroot                        # → "strata": source dir is the strata/ subdir below
+├── README.md LICENSE .gitignore docs/  # repo-level docs/meta (not dotfile source)
+└── strata/                             # the chezmoi source dir (per .chezmoiroot)
+    ├── private_dot_bashrc.tmpl         # ~/.bashrc (interactive init + fedora block)
+    ├── private_dot_bash_profile        # ~/.bash_profile
+    ├── private_dot_profile             # ~/.profile
+    ├── private_dot_gitconfig           # ~/.gitconfig
+    ├── dot_bash/
+    │   ├── aliases.bash                # shell aliases (shared)
+    │   ├── drift.bash                  # drift idle screensaver shell hook
+    │   └── exports.bash                # env vars (shared)
+    ├── dot_config/                     # ~/.config/ — app configs
+    │   ├── systemd/user/               # move-media, wallpaper, wallpaper.timer
+    │   ├── kitty/ mimeapps.list autostart/ # terminal, default apps, autostart
+    │   ├── flameshot/ vlc/ calibre/    # screenshots, video, ebook manager
+    │   └── gtk-3.0/bookmarks.tmpl      # nautilus bookmarks (templated home)
+    ├── dot_varr/                       # ~/.var/ — flatpak app configs
+    │   └── app/dev.zed.Zed/            # zed editor config + sevastolink theme
+    │   └── app/org.nicotine_plus.Nicotine/ # nicotine+ p2p config (passw templated)
+    ├── dot_aMule/                      # ~/.aMule/ — amule.conf (KAD key templated)
+    ├── dot_local/bin/                  # ~/.local/bin/ scripts — executable_ prefix → 755
+    ├── dot_gemrc                       # ~/.gemrc — gem installs → ~/.local/bin
+    └── .chezmoiscripts/                # run scripts (exec only; nothing installed)
+        ├── run_onchange_install-packages.sh.tmpl  # package install (re-runs on change)
+        ├── run_once_setup-xdg.sh.tmpl  # xdg dirs + theming (one-time)
+        ├── run_once_setup-storage.sh.tmpl # hdd symlinks (one-time)
+        ├── run_once_generate-nushell-init.sh.tmpl # starship/zoxide for nushell
+        └── run_onchange_enable-units.sh # systemd daemon-reload + enable
 ```
 
 ## ｓｔｒａｔａ
