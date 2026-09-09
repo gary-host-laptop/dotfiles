@@ -3,7 +3,14 @@
 
 # PATH hygiene: collapse inherited duplicates from a polluted parent. Runs here
 # (not only in env.nu) because config.nu reliably loads on every REPL start.
-$env.PATH = ($env.PATH | uniq | str join ":")
+# Note: plain `uniq` here is adjacent-only; the reduce is a global keep-first dedupe.
+$env.PATH = (
+    $env.PATH
+    | reduce --fold [] {|entry, acc|
+        if ($entry in $acc) { $acc } else { $acc ++ [$entry] }
+      }
+    | str join ":"
+)
 
 # aliases (keep in sync with bash/aliases.bash)
 alias ls = eza
