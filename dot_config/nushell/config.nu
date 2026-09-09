@@ -1,6 +1,10 @@
 # nushell behavior (mirrors bash/aliases.bash + shell init)
 # aliases, editor, starship prompt, zoxide — sourced after $env.config exists
 
+# PATH hygiene: collapse inherited duplicates from a polluted parent. Runs here
+# (not only in env.nu) because config.nu reliably loads on every REPL start.
+$env.PATH = ($env.PATH | uniq | str join ":")
+
 # aliases (keep in sync with bash/aliases.bash)
 alias ls = eza
 alias ll = eza -lah
