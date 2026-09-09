@@ -3,12 +3,17 @@
 
 # PATH hygiene: collapse inherited duplicates from a polluted parent. Runs here
 # (not only in env.nu) because config.nu reliably loads on every REPL start.
-# Note: plain `uniq` here is adjacent-only; the reduce is a global keep-first dedupe.
+# At config load the inherited PATH is a raw string (ENV_CONVERSIONS run after the
+# config files), so normalize via `split row ":"` before the list dedupe; `uniq` is
+# global distinct and preserves first-occurrence order.
 $env.PATH = (
-    $env.PATH
-    | reduce --fold [] {|entry, acc|
-        if ($entry in $acc) { $acc } else { $acc ++ [$entry] }
-      }
+    (if ($env.PATH | describe | str starts-with "string") {
+        $env.PATH | split row ":"
+      } else {
+        $env.PATH
+      })
+    | where {|e| $e != ""}
+    | uniq
     | str join ":"
 )
 
