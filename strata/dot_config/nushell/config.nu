@@ -1,8 +1,10 @@
 # nushell behavior (mirrors bash/aliases.bash + shell init)
 # aliases, editor, starship prompt, zoxide — sourced after $env.config exists
 
-# PATH hygiene: collapse inherited duplicates from a polluted parent. Runs here
-# (not only in env.nu) because config.nu reliably loads on every REPL start.
+# PATH hygiene: normalize-only safety net — collapse inherited duplicates and
+# fix nu's string-vs-list quirk, but NEVER adds entries. Entry-point writers:
+# ~/.profile (bash tree) and env.nu (zellij/nu tree). Keep this block content-free
+# (no prepend/append) — if a missing path must be added, it belongs in env.nu.
 # At config load the inherited PATH is a raw string (ENV_CONVERSIONS run after the
 # config files), so normalize via `split row ":"` before the list dedupe; `uniq` is
 # global distinct and preserves first-occurrence order.

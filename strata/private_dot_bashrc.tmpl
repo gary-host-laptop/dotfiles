@@ -11,41 +11,16 @@ if [ -d "$HOME/.bashrc.d" ]; then
     unset rc
 fi
 
-# opencode — add once, never stack (no-op if not installed)
-case ":$PATH:" in *":$HOME/.opencode/bin:"*) ;; *) PATH="$HOME/.opencode/bin:$PATH" ;; esac
+# guard for non-login interactive shells (most terminal emulators spawn bash
+# non-login, so ~/.profile never ran): ensure the single PATH assembly happened
+# exactly once, without duplicating it here. ~/.profile is the one writer.
+if [ -z "$_DOTFILES_PROFILE_SOURCED" ] && [ -f "$HOME/.profile" ]; then
+    . "$HOME/.profile"
+fi
 
-# cargo — on PATH before tooling inits so cargo-installed tools (zoxide,
-# topgrade) resolve even in the first post-login shell (.profile runs after .bashrc)
-case ":$PATH:" in *":$HOME/.cargo/bin:"*) ;; *) PATH="$HOME/.cargo/bin:$PATH" ;; esac
-
-# core interactive tools
+# core interactive tools (PATH is fully assembled by this point either way)
 eval "$(starship init bash 2>/dev/null)"
 eval "$(zoxide init bash 2>/dev/null)"
-
-{{- if eq (.machine | default "fedora") "fedora" }}
-# pkg-config (fedora multilib layout)
-export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
-
-# go (installed at /usr/local/go) — append only if not present
-case ":$PATH:" in *":/usr/local/go/bin:"*) ;; *) PATH="$PATH:/usr/local/go/bin" ;; esac
-{{- end }}
-
-# pin ~/.local/bin to the front and drop duplicate entries, so any polluted
-# ancestor converges clean in one hop. Idempotent, POSIX-only.
-if [ -n "$PATH" ]; then
-    pinned=""
-    IFS_OLD=$IFS
-    IFS=:
-    for _d in $PATH; do
-        [ -z "$_d" ] && continue
-        case ":$pinned:" in *":$_d:"*) continue ;; esac
-        [ "$_d" = "$HOME/.local/bin" ] && continue
-        pinned="${pinned}${pinned:+:}${_d}"
-    done
-    IFS=$IFS_OLD
-    unset _d
-    export PATH="$HOME/.local/bin:$pinned"
-fi
 
 # source dotfiles bash configs
 DOTFILES="{{ .chezmoi.sourceDir }}"

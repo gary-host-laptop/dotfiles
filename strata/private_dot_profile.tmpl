@@ -1,0 +1,38 @@
+# canonical PATH assembly for the bash/login tree — THE writer for this lineage.
+# Runs once per session: at login via ~/.bash_profile, by a display/session
+# manager that sources ~/.profile directly, or via the guard in ~/.bashrc when
+# bash starts non-login. The zellij tree (GNOME → ghostty → zellij → nu) has no
+# bash ancestor, so env.nu mirrors this assembly for its own tree.
+export _DOTFILES_PROFILE_SOURCED=1
+
+# opencode — add once, never stack (no-op if not installed)
+case ":$PATH:" in *":$HOME/.opencode/bin:"*) ;; *) PATH="$HOME/.opencode/bin:$PATH" ;; esac
+
+# cargo — sources the full env script, not just PATH (picks up other cargo vars).
+# Added after opencode so cargo lands before it, matching the legacy bashrc order.
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+{{- if eq (.machine | default "fedora") "fedora" }}
+# go (installed at /usr/local/go) — append only if not present
+case ":$PATH:" in *":/usr/local/go/bin:"*) ;; *) PATH="$PATH:/usr/local/go/bin" ;; esac
+
+# pkg-config (fedora multilib layout)
+export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
+{{- end }}
+
+# pin ~/.local/bin to the front and drop duplicate entries, so any polluted
+# ancestor converges clean in one hop. Idempotent, POSIX-only.
+if [ -n "$PATH" ]; then
+    pinned=""
+    IFS_OLD=$IFS
+    IFS=:
+    for _d in $PATH; do
+        [ -z "$_d" ] && continue
+        case ":$pinned:" in *":$_d:"*) continue ;; esac
+        [ "$_d" = "$HOME/.local/bin" ] && continue
+        pinned="${pinned}${pinned:+:}${_d}"
+    done
+    IFS=$IFS_OLD
+    unset _d
+    export PATH="$HOME/.local/bin:$pinned"
+fi
