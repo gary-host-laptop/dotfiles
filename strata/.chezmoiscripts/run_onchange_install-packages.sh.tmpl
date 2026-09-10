@@ -11,6 +11,14 @@ info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
 warn()    { echo "  [warn] $1"; }
 
+require_sudo() {
+  sudo -v 2>/dev/null || {
+    warn "sudo credentials unavailable — run 'sudo -v' first, then re-run 'chezmoi apply'"
+    exit 0
+  }
+}
+require_sudo
+
 # ── copr repos ───────────────────────────────────────────────────────────────
 info "enabling copr repos..."
 sudo dnf copr enable -y atim/starship
@@ -29,6 +37,7 @@ DNF_PACKAGES=(
     vlc
     yank
     kdenlive
+    kitty            # second terminal — kitty graphics protocol testing
     bat
     btop
     helix
