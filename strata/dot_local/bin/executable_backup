@@ -47,7 +47,7 @@ for f in id_ed25519 id_ed25519.pub known_hosts known_hosts.old; do
 done
 copy_dir "${HOME}/.config/beets"                 "${ROOT}/beets" || true
 if [ -n "$FF_PROFILE" ]; then
-    copy "${FF_PROFILE}/logins.json"             "${ROOT}/firefox-profile/logins.json" || true
+    copy "${FF_PROFILE}/cookies.sqlite"          "${ROOT}/firefox-profile/cookies.sqlite" || true
     copy "${FF_PROFILE}/places.sqlite"           "${ROOT}/firefox-profile/places.sqlite" || true
 else
     echo -e "  ${YELLOW}skip${RESET}  ${MUTED}firefox profile${RESET}  (missing)"

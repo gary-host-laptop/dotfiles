@@ -2,7 +2,7 @@
 
 personal system configuration managed by [chezmoi](https://www.chezmoi.io/), organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system.
 
-supports multiple machines via templates — fedora (current) and nixos (planned).
+machine-conditional rendering via templates — fedora (current) and nixos (planned). one caveat: the fedora session-PATH root (`environment.d/90-user.conf`) is intentionally machine-specific (see ｐａｔｈ　ａｒｃｈｉｔｅｃｔｕｒｅ below).
 
 ## ｓｔｒｕｃｔｕｒｅ
 
@@ -13,23 +13,26 @@ dotfiles/
 └── strata/                             # the chezmoi source dir (per .chezmoiroot)
     ├── private_dot_bashrc.tmpl         # ~/.bashrc (interactive init + fedora block)
     ├── private_dot_bash_profile        # ~/.bash_profile
-    ├── private_dot_profile             # ~/.profile
+    ├── private_dot_profile.tmpl        # ~/.profile (bash/login-tree PATH assembly)
     ├── private_dot_gitconfig           # ~/.gitconfig
     ├── dot_bash/
     │   ├── aliases.bash                # shell aliases (shared)
     │   ├── drift.bash                  # drift idle screensaver shell hook
     │   └── exports.bash                # env vars (shared)
     ├── dot_config/                     # ~/.config/ — app configs
+    │   ├── environment.d/90-user.conf  # session/GUI-tree PATH + XDG roots (systemd --user)
     │   ├── systemd/user/               # move-media, wallpaper, wallpaper.timer
-    │   ├── kitty/ mimeapps.list autostart/ # terminal, default apps, autostart
-    │   ├── flameshot/ vlc/ calibre/    # screenshots, video, ebook manager
+    │   ├── ghostty/ zellij/ kitty/     # terminals + multiplexer (zellij default_shell "nu")
+    │   ├── nushell/                    # config.nu + env.nu (PATH normalize-only; writers elsewhere)
+    │   ├── starship.toml helix/ yazi/  # prompt, editor, file managers
+    │   ├── flameshot/ vlc/ calibre/ superseedr/ # screenshots, video, ebooks, torrents
     │   └── gtk-3.0/bookmarks.tmpl      # nautilus bookmarks (templated home)
     ├── dot_varr/                       # ~/.var/ — flatpak app configs
     │   └── app/dev.zed.Zed/            # zed editor config + sevastolink theme
     │   └── app/org.nicotine_plus.Nicotine/ # nicotine+ p2p config (passw templated)
     ├── dot_aMule/                      # ~/.aMule/ — amule.conf (KAD key templated)
     ├── dot_local/bin/                  # ~/.local/bin/ scripts — executable_ prefix → 755
-    ├── dot_gemrc                       # ~/.gemrc — gem installs → ~/.local/bin
+    ├── dot_gemrc.tmpl                  # ~/.gemrc — gem installs → ~/.local/bin (templated home)
     └── .chezmoiscripts/                # run scripts (exec only; nothing installed)
         ├── run_onchange_install-packages.sh.tmpl  # package install (re-runs on change)
         ├── run_once_setup-xdg.sh.tmpl  # xdg dirs + theming (one-time)
@@ -37,6 +40,20 @@ dotfiles/
         ├── run_once_generate-nushell-init.sh.tmpl # starship/zoxide for nushell
         └── run_onchange_enable-units.sh # systemd daemon-reload + enable
 ```
+
+## ｐａｔｈ　ａｒｃｈｉｔｅｃｔｕｒｅ
+
+`PATH` is assembled once, idempotently, at **two converging roots** — both add-once /
+normalizing, so they never duplicate:
+
+1. `environment.d/90-user.conf` — applied by `systemd --user` at boot; the root for the
+   GUI/session tree (GNOME → ghostty → zellij → nu, which has no bash ancestor).
+2. `~/.profile` — the bash/login/tty/rescue assembly; Fedora GDM also sources it at
+   session start, so GUI processes see the same PATH.
+
+`dot_config/nushell/env.nu` + `config.nu` only *normalize* the inherited value (dedupe,
+string-vs-list fix) and never add entries — new paths belong in the two roots above.
+`~/.bashrc` similarly sources `~/.profile` once for non-login interactive bash.
 
 ## ｓｔｒａｔａ
 

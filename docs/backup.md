@@ -14,7 +14,7 @@ run anytime — idempotent, one directory per item, latest-wins:
 | `chezmoi/chezmoi.toml` | `~/.config/chezmoi/chezmoi.toml` | nicotine `passw`, aMule `kadUdpKey` — this machine's secret data values |
 | `ssh/` | `~/.ssh/` | `id_ed25519` (600 preserved) + pub + `known_hosts` — needed to push this repo (`git@github.com:`) |
 | `beets/` | `~/.config/beets/` | `library.db` + config + state (music metadata index) |
-| `firefox-profile/` | `~/.mozilla/firefox/*.default-release/` | `logins.json` (saved passwords) + `places.sqlite` (bookmarks/history) |
+| `firefox-profile/` | `~/.mozilla/firefox/*.default-release/` | `cookies.sqlite` (saved log-in sessions) + `places.sqlite` (bookmarks/history) |
 | `fstab/fstab` | `/etc/fstab` | btrfs subvols + `/mnt/phaedra` `/mnt/valus` boot mounts |
 
 non-secret duplicates living in this repo: `docs/fstab.fedora`.
@@ -26,7 +26,7 @@ never committed to the repo: ssh keys, beets db, `chezmoi.toml`, firefox data.
 after a fresh install, copy these back before `chezmoi apply`:
 - `chezmoi/chezmoi.toml` → `~/.config/chezmoi/chezmoi.toml` (restores nicotine/amule secret data)
 - `ssh/` → `~/.ssh/` (chmod 600 the private key)
-- `firefox-profile/{logins.json,places.sqlite}` → your new firefox profile dir
+- `firefox-profile/{cookies.sqlite,places.sqlite}` → your new firefox profile dir
 - `beets/` → `~/.config/beets/`
 - `fstab/fstab` → `/etc/fstab` (or restore from `docs/fstab.fedora`, then `mount -a`)
 
