@@ -13,7 +13,8 @@ fi
 
 # guard for non-login interactive shells (most terminal emulators spawn bash
 # non-login, so ~/.profile never ran): ensure the single PATH assembly happened
-# exactly once, without duplicating it here. ~/.profile is the one writer.
+# exactly once, without duplicating it here. ~/.profile is the bash tree's writer
+# (environment.d roots the session/GUI tree at boot).
 if [ -z "$_DOTFILES_PROFILE_SOURCED" ] && [ -f "$HOME/.profile" ]; then
     . "$HOME/.profile"
 fi

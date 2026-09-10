@@ -1,8 +1,9 @@
-# canonical PATH assembly for the bash/login tree — THE writer for this lineage.
-# Runs once per session: at login via ~/.bash_profile, by a display/session
-# manager that sources ~/.profile directly, or via the guard in ~/.bashrc when
-# bash starts non-login. The zellij tree (GNOME → ghostty → zellij → nu) has no
-# bash ancestor, so env.nu mirrors this assembly for its own tree.
+# bash/login-tree PATH assembly — plus, on this machine, Fedora GDM sources this
+# file during session start (verified), so GUI-launched processes inherit the same
+# PATH. Runs via ~/.bash_profile (login), a display/session manager that sources
+# ~/.profile (GDM verified), or the ~/.bashrc guard (non-login bash). The session
+# tree's boot-time root is environment.d/90-user.conf; this is the independent
+# fallback and the tty/ssh/rescue assembler. Keep the two convergent.
 export _DOTFILES_PROFILE_SOURCED=1
 
 # opencode — add once, never stack (no-op if not installed)
