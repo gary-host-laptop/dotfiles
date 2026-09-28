@@ -63,7 +63,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | obsidian | flatpak | productivity | md.obsidian.Obsidian |
 | pdf arranger | flatpak | productivity | com.github.jeromerobert.pdfarranger |
 | qbittorrent | flatpak | internet | org.qbittorrent.qBittorrent |
-| retroarch | flatpak | games | org.libretro.RetroArch |
+| retroarch | dnf | games | native (retroarch + retroarch-assets from fedora repos) — cores fetched from https://buildbot.libretro.com/nightly/linux/x86_64/latest` into `~/.config/retroarch/cores`; flatpak (org.libretro.RetroArch) uninstalled; see tracked configs below |
 | spruce | flatpak | utilities | io.github.shonubot.Spruce |
 | steam | rpm | games | steampowered.com |
 | stremio | flatpak | internet | com.stremio.Stremio |
@@ -94,7 +94,7 @@ currently evaluating — not in install script.
 | tubeconverter | flatpak | internet | org.nickvision.tubeconverter |
 | ytdl-gui | flatpak | internet | page.codeberg.impromptux.ytdl-gui |
 | zen browser | flatpak | internet | firefox-based, evaluating |
-| zed | flatpak | dev | dev.zed.Zed — too heavy for daily use, kept for occasional use; flatpak config + sevastolink theme tracked `dot_varr/app/dev.zed.Zed/` |
+| zed | flatpak | dev | dev.zed.Zed — too heavy for daily use, kept for occasional use; flatpak config + sevastolink theme tracked `dot_var/app/dev.zed.Zed/` |
 
 ### ｔｒａｃｋｅｄ　ｇｕｉ　ｃｏｎｆｉｇｓ
 
@@ -110,9 +110,10 @@ managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-con
 | kitty | `dot_config/kitty/kitty.conf` → `~/.config/kitty/kitty.conf` | plain copy, no machine-specific bits |
 | mimeapps | `dot_config/mimeapps.list` → `~/.config/mimeapps.list` | zed default editor, loupe images, vlc video |
 | aMule | `dot_aMule/amule.conf.tmpl` → `~/.aMule/amule.conf` | `CryptoKadUDPKey` scrubbed → `[data.amule]`; `cryptkey.dat`/`.met`/bak excluded (runtime) |
-| nicotine+ | `dot_varr/app/org.nicotine_plus.Nicotine/.../config.tmpl` → `~/.var/.../nicotine/config` | plaintext `passw` scrubbed → `[data.nicotine]` |
+| nicotine+ | `dot_var/app/org.nicotine_plus.Nicotine/.../config.tmpl` → `~/.var/.../nicotine/config` | plaintext `passw` scrubbed → `[data.nicotine]` |
+| retroarch | `dot_config/retroarch/retroarch.cfg.tmpl` → `~/.config/retroarch/retroarch.cfg` | trimmed keys; per-core BIOS overrides `dot_config/retroarch/config/<Core>/<Core>.cfg.tmpl` → `~/.config/retroarch/config/<Core>/<Core>.cfg` (points `system_directory` at the RomM `bios/<system>` subdir); library root via `[data.retroarch]` falling back to the fedora mount |
 | vlc | `dot_config/vlc/vlcrc` → `~/.config/vlc/vlcrc` | trimmed to 19 non-default keys |
-| zed | `dot_varr/app/dev.zed.Zed/config/zed/` → `~/.var/app/dev.zed.Zed/config/zed/` | settings.json + sevastolink theme |
+| zed | `dot_var/app/dev.zed.Zed/config/zed/` → `~/.var/app/dev.zed.Zed/config/zed/` | settings.json + sevastolink theme |
 
 **credentials** are never stored in the repo — values live in each machine's `~/.config/chezmoi/chezmoi.toml` (`[data.amule]`, `[data.nicotine]`), and render via `index`/`with` fallbacks so a fresh clone degrades to neutered values. see README "multi-machine".
 

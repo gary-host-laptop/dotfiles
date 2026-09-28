@@ -42,6 +42,7 @@ dotfiles/
     │   ├── vlc/                        # video player
     │   ├── superseedr/                 # torrent client
     │   ├── antimicrox/                 # gamepad mapper
+    │   ├── retroarch/                  # retroarch.cfg.tmpl + per-core BIOS overrides (config/<Core>/<Core>.cfg.tmpl)
     │   └── gtk-3.0/bookmarks.tmpl      # nautilus bookmarks
     ├── dot_var/
     │   ├── app/dev.zed.Zed/            # zed editor + sevastolink theme

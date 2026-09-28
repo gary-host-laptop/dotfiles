@@ -1,0 +1,3 @@
+# per-core frontend override — auto-loaded by RetroArch (config/<Core>/<Core>.cfg)
+# points BIOS lookup at the RomM bios/<system> subdir (RomM + RetroArch coexistence)
+system_directory = "{{ with index . "retroarch" }}{{ with index . "libraryRoot" }}{{ . }}{{ else }}/mnt/valus/35_video-games/games-library{{ end }}{{ else }}/mnt/valus/35_video-games/games-library{{ end }}/bios/turbografx-cd"

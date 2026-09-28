@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# =============================================================================
+# retroarch-playlists — generate RetroArch .lpl playlists from the RomM ROM tree
+#
+# RomM library root (read-only):  /mnt/valus/35_video-games/games-library/roms
+# Output:                         ~/.config/retroarch/playlists/*.lpl
+#
+# RetroArch consumes playlists via absolute paths, so the RomM slug directory
+# names work as-is. System dirs with zero ROM files (after non-ROM filtering)
+# are skipped. `win/` is PC games — not RetroArch content — and is excluded.
+# Idempotent: clears generated .lpl files, then rebuilds from the tree.
+# =============================================================================
+
+set -euo pipefail
+
+ROM_ROOT="/mnt/valus/35_video-games/games-library/roms"
+PLAYLIST_DIR="${HOME}/.config/retroarch/playlists"
+
+EXCLUDE_SYSTEMS="win"
+# non-ROM junk found mixed into the tree (artwork, urls, notes, etc.)
+_bad_re='\.(txt|nfo|xml|url|html|htm|jpg|jpeg|png|gif|ico|json|sqlite|md|pdf|cub|sou)$'
+
+mkdir -p "$PLAYLIST_DIR"
+
+# slug -> (friendly playlist name | core .so file)
+declare -A CORES=(
+    [famicom]="nestopia_libretro.so"
+    [nes]="nestopia_libretro.so"
+    [gba]="mgba_libretro.so"
+    [pokemon-mini]="pokemini_libretro.so"
+    [playstation]="pcsx_rearmed_libretro.so"
+    [playstation-2]="swanstation_libretro.so"
+    [pcenginecd]="mednafen_pce_fast_libretro.so"
+    [pc-9800-series]="pcem_libretro.so"
+    [dreamcast]="flycast_libretro.so"
+    [nintendo-64]="mupen64plus_next_libretro.so"
+    [nds]="melonds_libretro.so"
+    [saturn]="yabasanshiro_libretro.so"
+    [gamecube]="dolphin_libretro.so"
+)
+declare -A NAMES=(
+    [famicom]="Nintendo - Famicom"
+    [nes]="Nintendo - Nintendo Entertainment System"
+    [gba]="Nintendo - Game Boy Advance"
+    [pokemon-mini]="Nintendo - Pokemon Mini"
+    [playstation]="Sony - PlayStation"
+    [playstation-2]="Sony - PlayStation 2"
+    [pcenginecd]="NEC - PC Engine CD - TurboGrafx-CD"
+    [pc-9800-series]="NEC - PC-9800 Series"
+    [dreamcast]="Sega - Dreamcast"
+    [nintendo-64]="Nintendo - Nintendo 64"
+    [nds]="Nintendo - Nintendo DS"
+    [saturn]="Sega - Saturn"
+    [gamecube]="Nintendo - GameCube"
+)
+
+json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g;s/"/\\"/g'; }
+
+is_bad_ext() {
+    local f="$1"
+    [[ "$f" =~ $_bad_re ]] && return 0 || return 1
+}
+
+# clear only previously generated playlists (every *.lpl we produce)
+find "$PLAYLIST_DIR" -maxdepth 1 -name '*.lpl' -delete 2>/dev/null || true
+
+for dir in "$ROM_ROOT"/*/; do
+    slug="$(basename "$dir")"
+    [[ "$EXCLUDE_SYSTEMS" == *"$slug"* ]] && continue
+    [[ -n "${NAMES[$slug]+x}" ]] || { echo "  [skip] $slug (no core mapping)"; continue; }
+
+    # collect rom files: any regular file, recursively, minus non-ROM junk
+    # and extensionless aux/prototype files
+    mapfile -t files < <(find "$dir" -type f -not -name '.*' | while read -r f; do
+        [[ "$f" != *.* ]] && continue
+        is_bad_ext "$f" && continue; printf '%s\n' "$f"; done)
+
+    ((${#files[@]})) || { echo "  [skip] $slug (no rom files)"; continue; }
+
+    lpl="$PLAYLIST_DIR/${NAMES[$slug]}.lpl"
+    {
+    echo "{"
+    echo "  \"version\": \"1.4\","
+    echo "  \"default_core_path\": \"${HOME}/.config/retroarch/cores/${CORES[$slug]}\","
+    echo "  \"default_core_name\": \"$(json_escape "${CORES[$slug]%_libretro.so}")\","
+    echo "  \"label_display_mode\": 0,"
+    echo "  \"right_thumbnail_mode\": 0,"
+    echo "  \"left_thumbnail_mode\": 0,"
+    echo "  \"sort_mode\": 0,"
+    echo "  \"items\": ["
+    first=1
+    for f in "${files[@]}"; do
+        label="$(basename "$f")"; label="${label%.*}"
+        (($first)) || echo "    },"
+        first=0
+        printf '    {\n      "path": "%s",\n      "label": "%s",\n      "core_path": "DETECT",\n      "core_name": "DETECT",\n      "crc32": "DETECT",\n      "db_name": ""\n' \
+            "$(json_escape "$f")" "$(json_escape "$label")"
+    done
+    echo "    }"
+    echo "  ]"
+    echo "}"
+} >"$lpl"
+
+    echo "  [ ok ] $(basename "$lpl")  (${#files[@]} games)"
+done
+
+echo "done. playlists in $PLAYLIST_DIR"
