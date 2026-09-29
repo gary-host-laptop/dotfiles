@@ -63,7 +63,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | obsidian | flatpak | productivity | md.obsidian.Obsidian |
 | pdf arranger | flatpak | productivity | com.github.jeromerobert.pdfarranger |
 | qbittorrent | flatpak | internet | org.qbittorrent.qBittorrent |
-| retroarch | dnf | games | native (retroarch + retroarch-assets from fedora repos) — cores fetched from https://buildbot.libretro.com/nightly/linux/x86_64/latest` into `~/.config/retroarch/cores`; flatpak (org.libretro.RetroArch) uninstalled; see tracked configs below |
+| retroarch | dnf | games | native (retroarch + retroarch-assets from fedora repos) — cores fetched from https://buildbot.libretro.com/nightly/linux/x86_64/latest` into `~/.config/retroarch/cores`; flatpak (org.libretro.RetroArch) still installed, uninstall pending (`sudo flatpak uninstall org.libretro.RetroArch`); see tracked configs below |
 | spruce | flatpak | utilities | io.github.shonubot.Spruce |
 | steam | rpm | games | steampowered.com |
 | stremio | flatpak | internet | com.stremio.Stremio |
@@ -111,7 +111,8 @@ managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-con
 | mimeapps | `dot_config/mimeapps.list` → `~/.config/mimeapps.list` | zed default editor, loupe images, vlc video |
 | aMule | `dot_aMule/amule.conf.tmpl` → `~/.aMule/amule.conf` | `CryptoKadUDPKey` scrubbed → `[data.amule]`; `cryptkey.dat`/`.met`/bak excluded (runtime) |
 | nicotine+ | `dot_var/app/org.nicotine_plus.Nicotine/.../config.tmpl` → `~/.var/.../nicotine/config` | plaintext `passw` scrubbed → `[data.nicotine]` |
-| retroarch | `dot_config/retroarch/retroarch.cfg.tmpl` → `~/.config/retroarch/retroarch.cfg` | trimmed keys; per-core BIOS overrides `dot_config/retroarch/config/<Core>/<Core>.cfg.tmpl` → `~/.config/retroarch/config/<Core>/<Core>.cfg` (points `system_directory` at the RomM `bios/<system>` subdir); library root via `[data.retroarch]` falling back to the fedora mount |
+| antimicrox | `dot_config/antimicrox/modify_antimicrox_settings.ini` → `~/.config/antimicrox/antimicrox_settings.ini` | app owns the whole ini, so it's managed by a `modify_` script (not a template): guarantees DisplayNames=0, last profile = `gamepad.gamecontroller.amgp` while preserving app-written keys (window pos/size) |
+| retroarch | `dot_config/retroarch/modify_retroarch.cfg` → `~/.config/retroarch/retroarch.cfg` | retroarch rewrites the whole cfg on exit, so it's managed by a `modify_` script that only enforces key = "value" lines (drivers glcore/pipewire/ozone, ROM dirs in `~/.config/retroarch/...` form, `/usr/share/libretro/...` data, input sdl2) and leaves app-owned lines alone; per-core BIOS overrides `dot_config/retroarch/config/<Core>/<Core>.cfg.tmpl` → `~/.config/retroarch/config/<Core>/<Core>.cfg` (points `system_directory` at the RomM `bios/<system>` subdir); library config via `[data.retroarch]` falling back to the fedora mount; app-grid icon via `dot_local/share/icons/hicolor/scalable/apps/com.libretro.RetroArch.svg` (copied from `/usr/share/pixmaps`) — the build's window is borderless regardless of `video_window_show_decorations`/driver/backend, so no effort is spent forcing a titlebar |
 | vlc | `dot_config/vlc/vlcrc` → `~/.config/vlc/vlcrc` | trimmed to 19 non-default keys |
 | zed | `dot_var/app/dev.zed.Zed/config/zed/` → `~/.var/app/dev.zed.Zed/config/zed/` | settings.json + sevastolink theme |
 

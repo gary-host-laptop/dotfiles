@@ -41,14 +41,15 @@ dotfiles/
     │   ├── calibre/                    # ebook manager
     │   ├── vlc/                        # video player
     │   ├── superseedr/                 # torrent client
-    │   ├── antimicrox/                 # gamepad mapper
-    │   ├── retroarch/                  # retroarch.cfg.tmpl + per-core BIOS overrides (config/<Core>/<Core>.cfg.tmpl)
+    │   ├── antimicrox/                 # gamepad mapper (settings.ini via modify_ script)
+    │   ├── retroarch/                  # modify_retroarch.cfg + per-core BIOS overrides (config/<Core>/<Core>.cfg.tmpl)
     │   └── gtk-3.0/bookmarks.tmpl      # nautilus bookmarks
     ├── dot_var/
     │   ├── app/dev.zed.Zed/            # zed editor + sevastolink theme
     │   └── app/org.nicotine_plus.Nicotine/ # nicotine+ config (password templated)
     ├── dot_aMule/                      # amule config (KAD key templated)
     ├── dot_local/bin/                  # ~/.local/bin/ scripts
+    ├── dot_local/share/icons/          # hicolor theme icons (retroarch app-grid icon)
     └── .chezmoiscripts/
         ├── run_onchange_install-packages.sh.tmpl   # dnf, flatpak, cargo
         ├── run_onchange_enable-units.sh            # systemd daemon-reload + enable
