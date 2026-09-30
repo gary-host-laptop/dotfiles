@@ -9,8 +9,8 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 
 | app | package manager | category | id / notes |
 |-----|-----------------|----------|------------|
-| bat | dnf | utilities | cat replacement |
-| backup | bin | utilities | essentials snapshot → `~/strata/10-19_system/14_backups/` (chezmoi.toml, ssh, beets, firefox logins+bookmarks, fstab) — see `docs/backup.md` |
+| bat | dnf | utilities | cat replacement — custom theme `dot_config/bat/themes/tokyonight_night.tmTheme` (folke/tokyonight); theme key is the *filename stem*, not the plist's internal `TokyoNight` name. Since 0.26 bat loads custom themes **only** via its binary asset cache (`~/.cache/bat/themes.bin`), so `bat cache --build` is mandatory (run by install-packages; re-run after any bat upgrade or bat hard-errors on the version-pinned cache) |
+| backup | bin | utilities | essentials backup → `~/strata/10-19_system/14_backups/` (chezmoi.toml, ssh, beets, firefox cookies+bookmarks, fstab) — see `docs/backup.md` |
 | bleachbit | rpm (upstream manual) | utilities | cache/disk cleaner — `sudo bbit`; native 6.0.3 fc44 noarch rpm (upstream), fedora repo stale at 4.6.0; manual updates |
 | btop | dnf | utilities | system monitor — crashes on AMD APUs if rocm-smi is installed |
 | clipclear | bin | utilities | wipes all live X11+Wayland clipboard selections (`wl-copy --clear` + `xsel -c`) — clipboards here are RAM-only, so clearing actually deletes the data |

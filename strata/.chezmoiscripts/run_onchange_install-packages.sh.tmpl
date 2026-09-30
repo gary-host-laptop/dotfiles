@@ -76,6 +76,14 @@ COPR_PACKAGES=(
 sudo dnf install -y --refresh "${DNF_PACKAGES[@]}" "${COPR_PACKAGES[@]}"
 success "dnf packages installed"
 
+# bat >=0.26 only reads custom themes through its binary asset cache
+# (~/.cache/bat/themes.bin) — .tmTheme files in dot_config/bat/themes are
+# ignored otherwise, and --theme then warns "Unknown theme". metadata.yaml
+# pins the bat version, so re-run this after a bat upgrade or bat fails
+# with an incompatible-cache error.
+info "building bat asset cache (custom themes)..."
+bat cache --build || warn "bat cache --build failed — custom themes won't load until re-run"
+
 # ── flatpak ──────────────────────────────────────────────────────────────────
 info "installing flatpak packages..."
 
