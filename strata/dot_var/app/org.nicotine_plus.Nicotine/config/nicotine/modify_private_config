@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+# chezmoi:modify-template
+# modify_ script (chezmoi): Nicotine+ owns `config` and rewrites the whole file
+# on exit, so tracking it as a plain/templated file always drifts — the live copy
+# accumulated app state (search history, [statistics] counters, [columns] widths,
+# window geometry) that no dotfile repo should own, and the repo copy was a stale
+# snapshot that `chezmoi apply` would have rolled backwards.
+#
+# This normalizer is fed the current file on stdin and only guarantees the
+# 23 keys below — the Soulseek identity, the network port, the three
+# inbox/media directories, the speed limits, the share folders and the
+# transfer retry/grouping policy. Every other line (all of [logging], [ui],
+# [notifications], [statistics], [columns], [searches], [userinfo],
+# [interests], [players], [privatechat], [words], [urls], [userbrowse])
+# passes through untouched, so Nicotine manages its own preferences and state.
+#
+# Notes:
+#   - keyed by (section, key) because "transfers" is BOTH a section name and a
+#     key inside [logging]; a bare-key lookup would collide.
+#   - values are the full "key = value" lines, stored verbatim, so
+#     `interface = ` keeps its trailing space instead of being reformatted.
+#   - `passw` is scrubbed to [data.nicotine] in chezmoi.toml, as before.
+#   - private_ => target stays 0600 (it holds a plaintext password).
+#   - idempotent: running this on its own output is a no-op, so `chezmoi status`
+#     stays green between applies. If stdin is empty (fresh install) it emits a
+#     minimal file with just the enforced sections; Nicotine fills in defaults.
+
+import re
+import sys
+
+HOME = "{{ .chezmoi.homeDir }}"
+
+ENFORCE = {
+    "server": {
+        "server": "server = ('server.slsknet.org', 2242)",
+        "login": "login = kras_mazov",
+        # NOTE: single-quoted Python string on purpose — this file is itself a Go
+        # template, and Go's lexer rejects backslash escapes inside an action, so
+        # the action must reach it with plain double quotes. Same expression as
+        # the old config.tmpl, which scrubbed the password to [data.nicotine].
+        # (Do not write a literal Go-template delimiter in any comment here.)
+        "passw": 'passw = {{ with index . "nicotine" }}{{ with index . "password" }}{{ . }}{{ else }}""{{ end }}{{ else }}""{{ end }}',
+        "interface": "interface = ",
+        "portrange": "portrange = (2234, 2234)",
+        "upnp": "upnp = True",
+        "upnp_interval": "upnp_interval = 4",
+        "auto_connect_startup": "auto_connect_startup = True",
+        "autoaway": "autoaway = 15",
+    },
+    "transfers": {
+        "incompletedir": "incompletedir = " + HOME + "/strata/10-19_system/16_inbox/nicotine/incomplete",
+        "downloaddir": "downloaddir = " + HOME + "/strata/10-19_system/16_inbox/nicotine/downloads",
+        "uploaddir": "uploaddir = ${NICOTINE_DATA_HOME}/received",
+        # paths are quoted because nicotine parses these as Python literals
+        "shared": "shared = [('32_audio', '" + HOME + "/strata/30-39_media/32_audio'), ('31_text', '" + HOME + "/strata/30-39_media/31_text')]",
+        "uploadbandwidth": "uploadbandwidth = 50",
+        "uploadlimit": "uploadlimit = 1000",
+        "downloadlimit": "downloadlimit = 1000",
+        "useupslots": "useupslots = False",
+        "uploadslots": "uploadslots = 2",
+        "limitby": "limitby = True",
+        "queuelimit": "queuelimit = 10000",
+        "filelimit": "filelimit = 100",
+        "groupdownloads": "groupdownloads = folder_grouping",
+        "groupuploads": "groupuploads = folder_grouping",
+    },
+}
+
+SECTION_RE = re.compile(r"\[([A-Za-z0-9_]+)\]")
+KEY_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)[ \t]*=")
+
+
+def emit_fresh():
+    out = []
+    for section, keys in ENFORCE.items():
+        out.append("[" + section + "]")
+        out.extend(keys[k] for k in sorted(keys))
+        out.append("")
+    sys.stdout.write("\n".join(out).rstrip("\n") + "\n")
+
+
+def write_out(lines):
+    # keep the file's trailing blank line if it had one — nicotine writes a
+    # final newline-terminated blank, and dropping it shows up as phantom drift
+    trailing = 2 if lines and not lines[-1].strip() else 1
+    sys.stdout.write("\n".join(lines).rstrip("\n") + "\n" * trailing)
+
+
+def main():
+    data = sys.stdin.read()
+    if not data.strip():
+        emit_fresh()
+        return
+
+    lines = data.splitlines()
+
+    # pass 1 — replace enforced keys in place, remember which we saw
+    body = []
+    seen = {}
+    current = None
+    for line in lines:
+        header = SECTION_RE.fullmatch(line)
+        if header:
+            current = header.group(1)
+            if current in ENFORCE:
+                seen.setdefault(current, set())
+            body.append(line)
+            continue
+        match = KEY_RE.match(line)
+        if match and current in ENFORCE:
+            key = match.group(1)
+            if key in ENFORCE[current]:
+                body.append(ENFORCE[current][key])
+                seen[current].add(key)
+                continue
+        body.append(line)
+
+    # pass 2 — append keys the file was missing, at the end of their own
+    # section but ahead of the blank lines separating it from the next one
+    out = []
+    carry = []
+
+    def flush():
+        nonlocal carry
+        if not carry:
+            return
+        blanks = []
+        while out and not out[-1].strip():
+            blanks.insert(0, out.pop())
+        out.extend(carry)
+        out.extend(blanks)
+        carry = []
+
+    for line in body:
+        header = SECTION_RE.fullmatch(line)
+        if header:
+            flush()
+            current = header.group(1)
+            out.append(line)
+            if current in ENFORCE:
+                carry = [
+                    ENFORCE[current][k]
+                    for k in ENFORCE[current]
+                    if k not in seen.get(current, set())
+                ]
+            continue
+        out.append(line)
+    flush()
+
+    write_out(out)
+
+
+if __name__ == "__main__":
+    main()
