@@ -34,6 +34,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | app | package manager | category | notes |
 |-----|-----------------|----------|-------|
 | yazi | gh release | dev | file manager — kitty image preview via `KgpOld`; superfile keeps the essential slot |
+| zotero | official tarball | productivity | reference manager — pinned `ZOTERO_VER` in install-packages (no usable dnf/copr/flatpak build: the flathub build sandboxes the data dir). Extracts to `~/.local/opt/Zotero-<ver>` behind a stable `~/.local/opt/Zotero` symlink, so upgrades keep the old version and rollback is a symlink flip. Launcher at `~/.local/bin/zotero` (on PATH) + rewritten desktop entry/icons in `~/.local/share`. **Library at `~/strata/30-39_media/31_text/zotero`** (alongside calibre) — set once in Preferences → Advanced → Data Directory Location; untracked and not covered by `14_backups` (see plakar) |
 
 ## ｇｕｉ　ａｐｐｌｉｃａｔｉｏｎｓ
 

@@ -201,6 +201,71 @@ else
     info "yazi already installed"
 fi
 
+# ── zotero ───────────────────────────────────────────────────────
+# official tarball (no dnf/copr/flatpak package worth using — the flathub build
+# sandboxes the data dir). Pinned like yazi: bump manually.
+#
+# extracts to ~/.local/opt/Zotero-<ver>, with a stable ~/.local/opt/Zotero
+# symlink, so an upgrade leaves the old version in place and rollback is a
+# symlink flip. ~/.local/bin/zotero is a launcher, so the desktop entry and PATH
+# both survive upgrades. The library itself lives OUTSIDE the dotfiles tree at
+# ~/strata/30-39_media/31_text/zotero (set once in the app under
+# Preferences -> Advanced -> Data Directory Location) — deliberately not tracked.
+ZOTERO_VER="10.0.5"
+ZOTERO_URL="https://download.zotero.org/client/release/${ZOTERO_VER}/Zotero-${ZOTERO_VER}_linux-x86_64.tar.xz"
+ZOTERO_OPT="${HOME}/.local/opt"
+ZOTERO_LIB="${HOME}/strata/30-39_media/31_text/zotero"
+
+if [ ! -x "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}/zotero" ]; then
+    info "installing zotero v${ZOTERO_VER} from the official tarball…"
+    tmp="$(mktemp -d)"
+    if curl -fL -o "${tmp}/zotero.tar.xz" "$ZOTERO_URL"; then
+        mkdir -p "$ZOTERO_OPT"
+        # the tarball unpacks to a fixed Zotero_linux-x86_64/ name regardless of
+        # version, so rename it rather than trusting --strip-components
+        tar -xJf "${tmp}/zotero.tar.xz" -C "$ZOTERO_OPT"
+        mv "${ZOTERO_OPT}/Zotero_linux-x86_64" "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}"
+        ln -sfn "Zotero-${ZOTERO_VER}" "${ZOTERO_OPT}/Zotero"
+
+        # PATH launcher, so `zotero` and the desktop entry survive upgrades
+        mkdir -p "${HOME}/.local/bin"
+        cat > "${HOME}/.local/bin/zotero" <<EOF
+#!/bin/sh
+# Zotero launcher — official tarball install at ~/.local/opt/Zotero (symlink to
+# the current versioned dir). Kept so \`zotero\` resolves from PATH; the desktop
+# entry calls this too.
+exec "\$HOME/.local/opt/Zotero/zotero" "\$@"
+EOF
+        chmod 0755 "${HOME}/.local/bin/zotero"
+
+        # desktop entry — the stock one uses a realpath hack and references a
+        # zotero.ico the tarball doesn't ship, so rewrite both
+        mkdir -p "${HOME}/.local/share/applications" "${HOME}/.local/share/icons/hicolor"
+        sed 's|^Exec=.*|Exec=zotero %U|; s|^Icon=.*|Icon=zotero|' \
+            "${ZOTERO_OPT}/Zotero/zotero.desktop" \
+            > "${HOME}/.local/share/applications/zotero.desktop"
+        for size in 128 64; do
+            mkdir -p "${HOME}/.local/share/icons/hicolor/${size}x${size}/apps"
+            cp "${ZOTERO_OPT}/Zotero/icons/icon${size}.png" \
+               "${HOME}/.local/share/icons/hicolor/${size}x${size}/apps/zotero.png"
+        done
+        mkdir -p "${HOME}/.local/share/icons/hicolor/scalable/apps"
+        cp "${ZOTERO_OPT}/Zotero/icons/symbolic.svg" \
+           "${HOME}/.local/share/icons/hicolor/scalable/apps/zotero-symbolic.svg"
+
+        success "zotero ${ZOTERO_VER} installed"
+    else
+        warn "zotero download failed — retry: curl -fL -O ${ZOTERO_URL}"
+    fi
+    rm -rf "$tmp"
+else
+    info "zotero already installed (v${ZOTERO_VER})"
+fi
+
+# the library dir is created but left empty — zotero.sqlite is written by the app
+# itself on first run, and the data dir location is set inside zotero, not here
+mkdir -p "$ZOTERO_LIB"
+
 # ── drift ─────────────────────────────────────────────────────────
 if ! command -v drift &>/dev/null; then
     info "installing drift (idle terminal screensaver)…"
