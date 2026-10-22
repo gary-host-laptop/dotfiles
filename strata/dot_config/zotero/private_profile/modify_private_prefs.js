@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import json
 import re
-import shutil
-import subprocess
 import sys
 from pathlib import Path
 
@@ -33,16 +31,6 @@ def render(key):
 
 
 def main():
-    if shutil.which("pgrep"):
-        result = subprocess.run(
-            ["pgrep", "-f", "[z]otero-bin"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        if result.returncode == 0:
-            print("Zotero is running; quit it before applying prefs.js", file=sys.stderr)
-            return 1
-
     text = sys.stdin.read()
     newline = "\r\n" if "\r\n" in text else "\n"
     lines = text.splitlines(keepends=True)
