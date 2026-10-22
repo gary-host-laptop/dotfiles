@@ -1,0 +1,5 @@
+#!/bin/sh
+# Zotero launcher — official tarball install at ~/.local/opt/Zotero (symlink to
+# the current versioned dir). Kept so `zotero` resolves from PATH; the desktop
+# entry calls this too. The profile is pinned so chezmoi can manage prefs.js.
+exec "$HOME/.local/opt/Zotero/zotero" --profile "$HOME/.config/zotero/profile" "$@"
