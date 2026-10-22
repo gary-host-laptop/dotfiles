@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""chezmoi modify_ script: VLC owns ~/.config/vlc/vlcrc.
+
+vlc rewrites its whole rc file on exit (thousands of lines: every option,
+current table/column state, playback history, ...), so tracking it as a plain
+file always drifts and `chezmoi apply` would roll the live config back to a
+53-line stub. This script is fed the current file on stdin and only guarantees
+the 19 non-default keys below; everything else passes through byte-for-byte.
+
+Keys and the upstream defaults they override:
+
+  [sharpen]
+    sharpen-sigma=2.000000                          (default 0.050000)
+  [freetype]
+    freetype-font=Noto Sans                         (default NotoSerif)
+    freetype-monofont=Noto Sans Mono                (default NotoSansMono)
+    freetype-rel-fontsize=12                        (default 0)
+    freetype-background-opacity=128                 (default 0)
+    freetype-outline-thickness=6                    (default 4)
+  [marq]
+    marq-position=0                                 (default -1)
+  [logo]
+    logo-position=0                                 (default -1)
+  [audiobargraph_v]
+    audiobargraph_v-position=0                      (default -1)
+  [qt]
+    qt-video-autoresize=0                           (default 1)
+    qt-dark-palette=1                               (default 0)
+    qt-privacy-ask=0                                (default 1)
+  [core]
+    aout=any                                        (default empty)
+    text-renderer=any                               (default empty)
+    audio-language=Japanese                         (default empty)
+    vod-server=any                                  (default empty)
+    loop=1                                          (default 0)
+    one-instance-when-started-from-file=0           (default 1)
+    metadata-network-access=1                       (default 0)
+
+Section-aware: vlc's rc is split into ~200 [sections], so a missing key is
+inserted at the end of its own section rather than at EOF. Keys are matched
+only when uncommented; the live file contains each of these exactly once.
+
+Read/written as bytes so the file's UTF-8 BOM and line endings survive
+untouched. Idempotent: running this on its own output is a no-op, so
+`chezmoi status` stays green between applies.
+"""
+
+import re
+import sys
+
+ENFORCE = {
+    "sharpen": {
+        "sharpen-sigma": "2.000000",
+    },
+    "freetype": {
+        "freetype-font": "Noto Sans",
+        "freetype-monofont": "Noto Sans Mono",
+        "freetype-rel-fontsize": "12",
+        "freetype-background-opacity": "128",
+        "freetype-outline-thickness": "6",
+    },
+    "marq": {
+        "marq-position": "0",
+    },
+    "logo": {
+        "logo-position": "0",
+    },
+    "audiobargraph_v": {
+        "audiobargraph_v-position": "0",
+    },
+    "qt": {
+        "qt-video-autoresize": "0",
+        "qt-dark-palette": "1",
+        "qt-privacy-ask": "0",
+    },
+    "core": {
+        "aout": "any",
+        "text-renderer": "any",
+        "audio-language": "Japanese",
+        "vod-server": "any",
+        "loop": "1",
+        "one-instance-when-started-from-file": "0",
+        "metadata-network-access": "1",
+    },
+}
+
+SECTION_RE = re.compile(rb"^\[([^\]]+)\]")
+
+
+def main() -> None:
+    lines = sys.stdin.buffer.read().splitlines(keepends=True)
+
+    out: list[bytes] = []
+    seen: dict[str, set[str]] = {section: set() for section in ENFORCE}
+    current: str | None = None
+
+    def flush(section: str | None) -> None:
+        if section not in ENFORCE:
+            return
+        missing = [
+            (key, value)
+            for key, value in ENFORCE[section].items()
+            if key not in seen[section]
+        ]
+        if not missing:
+            return
+        if out and not out[-1].endswith(b"\n"):
+            out.append(b"\n")
+        for key, value in missing:
+            out.append(key.encode() + b"=" + value.encode() + b"\n")
+
+    for line in lines:
+        match = SECTION_RE.match(line)
+        if match:
+            flush(current)
+            current = match.group(1).decode("utf-8", "replace")
+            out.append(line)
+            continue
+
+        if current in ENFORCE:
+            for key, value in ENFORCE[current].items():
+                if line.startswith(key.encode() + b"="):
+                    out.append(key.encode() + b"=" + value.encode() + b"\n")
+                    seen[current].add(key)
+                    break
+            else:
+                out.append(line)
+        else:
+            out.append(line)
+
+    flush(current)
+    sys.stdout.buffer.write(b"".join(out))
+
+
+if __name__ == "__main__":
+    main()

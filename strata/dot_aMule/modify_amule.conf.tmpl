@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# aMule owns amule.conf and rewrites the whole file at runtime (server lists,
+# statistics, table widths, window geometry, generated Kad key, ...), so
+# tracking it as a plain/templated file always drifts: `chezmoi apply` would
+# roll back whatever aMule had written. This modify script is fed the current
+# file on stdin and only guarantees the two strata inbox paths; every other
+# line passes through untouched.
+#
+# machine-specific: the paths are built from `chezmoi homeDir`, so they follow
+# the user instead of pinning /home/<old-user>.
+#
+# secret handling: CryptoKadUDPKey is deliberately NOT enforced. It is
+# per-install state that aMule generates and stores itself, and passing the
+# live file through keeps it out of the repo. ([data.amule].kadUdpKey in
+# chezmoi.toml is now unused; left in place so no secret has to be touched.)
+#
+# idempotent: running this on its own output is a no-op, so `chezmoi status`
+# stays green between applies.
+
+set -eu
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp" "$tmp.new"' EXIT
+cat > "$tmp"
+
+ensure() {
+    local key="$1" value="$2"
+    local regex="^${key}="
+    awk -v re="$regex" -v kv="${key}=${value}" '
+        $0 ~ re { print kv; found=1; next }
+        { print }
+        END { if (!found) print kv }
+    ' "$tmp" > "$tmp.new"
+    mv "$tmp.new" "$tmp"
+}
+
+ensure IncomingDir "{{ .chezmoi.homeDir }}/strata/10-19_system/16_inbox/amule/incoming"
+ensure TempDir "{{ .chezmoi.homeDir }}/strata/10-19_system/16_inbox/amule/temp"
+
+cat "$tmp"
