@@ -11,11 +11,22 @@ current observed login order:
 ~/.local/bin → /usr/lib64/ccache → ~/.cargo/bin → ~/.opencode/bin → /usr/local/go/bin → /usr/local/bin → /usr/bin
 ```
 
-verify with:
+verify with nushell (the daily shell — `$env.PATH` is already a list by the time
+`config.nu` finishes):
+
+```nu
+$env.PATH | enumerate          # index + entry, in assembly order
+$env.PATH | uniq --repeated    # duplicates
+```
+
+in a bash login shell, tty, or rescue session:
 
 ```bash
 printf '%s\n' "$PATH" | tr ':' '\n' | nl -ba
+printf '%s\n' "$PATH" | tr ':' '\n' | sort | uniq -d
 ```
+
+empty output from the duplicate checks means no duplicates.
 
 `~/.bashrc` sources `~/.profile` once for non-login interactive bash, then loads
 `dot_bash/{exports,aliases,drift}.bash`.
