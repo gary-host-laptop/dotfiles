@@ -14,7 +14,7 @@ run anytime — idempotent, one directory per item, latest-wins:
 | `chezmoi/chezmoi.toml` | `~/.config/chezmoi/chezmoi.toml` | nicotine `passw`, aMule `kadUdpKey` — this machine's secret data values |
 | `ssh/` | `~/.ssh/` | `id_ed25519` (600 preserved) + pub + `known_hosts` — needed to push this repo (`git@github.com:`) |
 | `beets/` | `~/.config/beets/` | `library.db` + config + state (music metadata index) |
-| `firefox-profile/` | `~/.mozilla/firefox/*.default-release/` | `cookies.sqlite` (saved log-in sessions) + `places.sqlite` (bookmarks/history) |
+| `firefox-profile/` | `~/.mozilla/firefox/profile/` | `cookies.sqlite` (saved log-in sessions) + `places.sqlite` (bookmarks/history). **current gap:** the backup script searches `*.default-release`, which does not exist here, so Firefox is skipped — see [`backlog.md`](backlog.md) |
 | `fstab/fstab` | `/etc/fstab` | btrfs subvols + `/mnt/phaedra` `/mnt/valus` boot mounts |
 
 non-secret duplicates living in this repo: `docs/fstab.fedora`.
@@ -26,13 +26,14 @@ never committed to the repo: ssh keys, beets db, `chezmoi.toml`, firefox data.
 after a fresh install, copy these back before `chezmoi apply`:
 - `chezmoi/chezmoi.toml` → `~/.config/chezmoi/chezmoi.toml` (restores nicotine/amule secret data)
 - `ssh/` → `~/.ssh/` (chmod 600 the private key)
-- `firefox-profile/{cookies.sqlite,places.sqlite}` → your new firefox profile dir
+- `firefox-profile/{cookies.sqlite,places.sqlite}` → `~/.mozilla/firefox/profile/`
 - `beets/` → `~/.config/beets/`
 - `fstab/fstab` → `/etc/fstab` (or restore from `docs/fstab.fedora`, then `mount -a`)
 
 ## broader policy
 
-service exports (able to generate on demand): see `../14_backups/backup-policy.md`.
+service exports and the broader policy: see
+`~/strata/10-19_system/14_backups/backup-policy.md`.
 strata itself (media, obsidian, kdbx vault, self-hosted) is backed up out-of-band.
 explicitly **not** backed up (session/reset-able): chromium profile, dconf/GNOME settings,
 manicode/opencode histories, `~/.gnupg`.

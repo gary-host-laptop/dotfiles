@@ -6,11 +6,18 @@
 
 **`~/.profile`** — the bash/login/tty/rescue root. fedora's GDM also sources it at session start, so GUI processes see the same PATH as login shells.
 
-canonical order:
+current observed login order:
 ```
-~/.local/bin → ~/.cargo/bin → ~/.opencode/bin → /usr/lib64/ccache → /usr/local/bin → /usr/bin → /usr/local/go/bin
+~/.local/bin → /usr/lib64/ccache → ~/.cargo/bin → ~/.opencode/bin → /usr/local/go/bin → /usr/local/bin → /usr/bin
 ```
 
-`~/.bashrc` sources `~/.profile` once for non-login interactive bash, then `fedora-specific.bash` for fedora-only additions.
+verify with:
+
+```bash
+printf '%s\n' "$PATH" | tr ':' '\n' | nl -ba
+```
+
+`~/.bashrc` sources `~/.profile` once for non-login interactive bash, then loads
+`dot_bash/{exports,aliases,drift}.bash`.
 
 `nushell/env.nu` only normalizes the inherited PATH (dedup, string→list conversion) — it never adds entries. new paths always go into one of the two roots above.

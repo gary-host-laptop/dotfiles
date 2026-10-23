@@ -15,12 +15,15 @@
 
 | label | mount | use |
 |-------|-------|-----|
-| root | `/` | fedora install, strata |
-| valus | `/mnt/valus` | text, audio, images, games library |
-| phaedra | `/mnt/phaedra` | video, steam library |
+| root | `/` | fedora install + btrfs root |
+| home | `/home` | btrfs subvolume; strata and `31_text` live here |
+| valus | `/mnt/valus` | audio, images, game library |
+| phaedra | `/mnt/phaedra` | video, steam library — currently unavailable |
 
 ## ｐａｒｔｉｔｉｏｎｓ
 
-- strata lives on its own partition — survives os reinstalls
+- strata lives on the btrfs `/home` subvolume, not on a separate partition; it
+  survives an OS reinstall only when `/home` is preserved
+- `31_text` is now local on the SSD; the external HDDs hold the remaining media
 - hdds mounted via fstab at `/mnt/valus` and `/mnt/phaedra`
 - selinux: hdd paths use `security_opt: label:disable` in docker compose
