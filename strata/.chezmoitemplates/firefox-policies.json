@@ -1,0 +1,70 @@
+{
+  "policies": {
+    "ExtensionSettings": {
+      "chrome-gnome-shell@gnome.org": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/gnome-shell-integration/latest.xpi"
+      },
+      "addon@karakeep.app": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/karakeep/latest.xpi"
+      },
+      "newtaboverride@agenedia.com": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/new-tab-override/latest.xpi"
+      },
+      "7esoorv3@alefvanoon.anonaddy.me": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/libredirect/latest.xpi"
+      },
+      "{ae627955-50e3-431c-b6c5-7cd912f961cb}": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/etc2/latest.xpi"
+      },
+      "gdpr@cavi.au.dk": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/consent-o-matic/latest.xpi"
+      },
+      "uBlock0@raymondhill.net": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+      },
+      "{6b733b82-9261-47ee-a595-2dda294a4d08}": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/yomitan/latest.xpi"
+      },
+      "{43c6e9ce-a86a-4601-bbce-1e3608546335}": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/deepseek-in-sidebar/latest.xpi"
+      },
+      "addon@darkreader.org": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi"
+      },
+      "{506e023c-7f2b-40a3-8066-bc5deb40aebe}": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/gesturefy/latest.xpi"
+      },
+      "ATBC@EasonWong": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/adaptive-tab-bar-colour/latest.xpi"
+      },
+      "zotero@chnm.gmu.edu": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://download.zotero.org/connector/firefox/release/Zotero_Connector-5.0.217.xpi"
+      },
+      "monsender@leqwin": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/monsender/latest.xpi"
+      },
+      "{dab9a10d-f9c5-4e8d-9351-67531e85b508}": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/media-downloader-unleashed/latest.xpi"
+      },
+      "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/video-downloadhelper/latest.xpi"
+      }
+    }
+  }
+}

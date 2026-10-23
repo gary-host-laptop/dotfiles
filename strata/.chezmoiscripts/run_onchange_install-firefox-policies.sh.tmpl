@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+
+# hash: {{ includeTemplate "firefox-policies.json" . | sha256sum }}
+
+src="{{ .chezmoi.sourceDir }}/.chezmoitemplates/firefox-policies.json"
+dst="/etc/firefox/policies/policies.json"
+
+if [ ! -f "$src" ]; then
+  echo "firefox policies source missing: $src" >&2
+  exit 1
+fi
+
+if [ -f "$dst" ] && cmp -s "$src" "$dst"; then
+  exit 0
+fi
+
+if sudo -n install -Dm644 "$src" "$dst" 2>/dev/null; then
+  exit 0
+fi
+
+echo "Firefox policies are staged but need root to install:"
+echo "  sudo install -Dm644 '$src' '$dst'"
+exit 0

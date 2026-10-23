@@ -49,7 +49,7 @@ essential apps are installed by `run_onchange_install-packages.sh.tmpl`.
 | chromium | flatpak | internet | org.chromium.Chromium |
 | element | flatpak | internet | im.riot.Riot |
 | euphonica | flatpak | media | io.github.htkhiem.Euphonica — music client for mpd |
-| firefox | dnf | internet | |
+| firefox | dnf | internet | profile pinned at `~/.mozilla/firefox/profile` via tracked `profiles.ini` + `installs.ini` (and updated `Profile Groups` store path); curated `user.js` and tracked `handlers.json` in the profile. Extensions are policy-installed from `strata/.chezmoitemplates/firefox-policies.json` via `/etc/firefox/policies/policies.json` (sudo; `normal_installed`, so they remain removable). Cookies/logins/bookmarks/session are untracked; new-tab pins/wallpaper and extension internal settings are not restored |
 | flameshot | dnf | utilities | config + autostart tracked (save path templated) |
 | flatseal | flatpak | utilities | com.github.tchx84.Flatseal |
 | gimp | flatpak | creative | org.gimp.GIMP |
