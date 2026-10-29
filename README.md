@@ -1,6 +1,6 @@
 # ｄｏｔｆｉｌｅｓ
 
-<img src="banner.jpg" />
+![Banner](./banner.jpg)
 
 personal system configuration for fedora linux, managed by [chezmoi](https://www.chezmoi.io/) and organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system. templates support fedora (current) and nixos (planned).
 
