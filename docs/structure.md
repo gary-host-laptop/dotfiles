@@ -51,7 +51,6 @@ dotfiles/
     │   ├── rmpc/                       # mpd TUI client + theme
     │   ├── mpd/                        # music player daemon + playlists
     │   ├── flameshot/                  # screenshot tool
-    │   ├── calibre/                    # ebook manager config + plugins
     │   ├── vlc/                        # video player (modify_ script)
     │   ├── jagalite.superseedr/        # torrent client
     │   ├── antimicrox/                 # gamepad mapper (modify_ script)

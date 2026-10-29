@@ -52,7 +52,6 @@ last inventory pass: 2026-10-23 (`flatpak list --app`, `command -v`, `chezmoi ma
 | amule | manual | internet | org.amule.aMule — eD2k/Kad p2p client; flathub submission pending — install from https://amule-org.github.io/download (AppImage/.flatpak); config tracked `dot_aMule/modify_amule.conf.tmpl`, KAD key via `[data.amule]` |
 | anki | flatpak | productivity | net.ankiweb.Anki |
 | blanket | flatpak | media | com.rafaelmardojai.Blanket |
-| calibre | dnf | productivity | config subset tracked `dot_config/calibre/` (incl. OpenLibraryPlus plugin, templated library/db paths) |
 | chromium | flatpak | internet | org.chromium.Chromium |
 | element | flatpak | internet | im.riot.Riot |
 | euphonica | flatpak | media | io.github.htkhiem.Euphonica — music client for mpd |
@@ -117,7 +116,6 @@ managed by chezmoi (shortcuts aside, all in `~/strata/10-19_system/13_system-con
 | app | source → target | notes |
 |-----|-----------------|-------|
 | autostart | `dot_config/autostart/` → `~/.config/autostart/` | Flameshot only |
-| calibre | `dot_config/calibre/` → `~/.config/calibre/` | `global.py.json`/`customize.py.json` templated (`library_path`, plugin zip path); excluded: `gui.json`, `caches/`, `metadata-sources-cache.json`, `icons-any.rcc`, viewer annots |
 | flameshot | `dot_config/flameshot/flameshot.ini.tmpl` (save path templated) | |
 | gtk bookmarks | `dot_config/gtk-3.0/bookmarks.tmpl` | nautilus sidebar |
 | keepassxc | `dot_config/keepassxc/keepassxc.ini.tmpl` | native config (app runs via flatpak) — CompactMode, monochrome tray, 16-word pass generator, idle lock; KeeShare identity set to `Own=""` (unused feature — KeePassXC regenerates) |

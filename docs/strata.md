@@ -68,9 +68,7 @@ phaedra is absent; the path becomes usable again when the drive returns.
 - ids are two digits; groups own the whole ten range (`11–17` inside `10–19`)
 - a category may hold a `00_index.*` describing its contents; the top-level
   index is `~/strata/00_index.md`
-- `31_text` holds text/books and Zotero linked attachments; its Calibre library path
-  currently points at `31_text/calibre`, which is not present in the local tree —
-  see [#4](https://github.com/gary-host-laptop/dotfiles/issues/4)
+- `31_text` holds text/books and Zotero linked attachments; the local tree is canonical
 - `35_video-games` keeps game repos in `games-library/` and `steam/`
 
 ## ｉｎｄｅｘ　ｆｉｌｅｓ
