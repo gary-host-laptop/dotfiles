@@ -5,22 +5,26 @@ records work that still needs to be done.
 
 ## ｓｔｏｒａｇｅ　／　ｘｄｇ
 
-- [ ] make XDG paths declarative:
+- [x] make XDG paths declarative:
   - track `~/.config/user-dirs.dirs` with Documents → local `31_text`,
-    Music → `32_audio`, Videos → `34_video`
+    Pictures → `33_images`, Music → `32_audio`, Videos → `34_video`
   - track `~/.config/user-dirs.conf` with `enabled=False` so session
     `xdg-user-dirs-update` does not reset missing paths to `$HOME`
   - remove the generated `user-dirs.dirs` / `xdg-user-dirs-update` block from
     `run_once_setup-xdg.sh.tmpl`
-- [ ] make storage repair idempotent:
-  - keep `31_text` local; remove its `/mnt/valus/31_text` link from
-    `run_once_setup-storage.sh.tmpl`
-  - run the storage setup on every apply (or key it to mount state) so a replacement
-    phaedra relinks `34_video` and `35_video-games/steam`
-  - make `link_storage()` refuse to replace real directories, check `ln` failures,
-    and verify the final symlink
+- [x] make storage repair idempotent:
+  - keep `31_text` and `33_images` local; removed their `/mnt/valus` links from
+    `run_setup-storage.sh.tmpl`
+  - run the storage setup on every apply so a replacement phaedra relinks
+    `34_video` and `35_video-games/steam`
+  - `link_storage()` refuses to replace real directories or wrong symlinks,
+    checks `ln` failures, and verifies the final symlink
 - [ ] when replacing phaedra: update its UUID in `/etc/fstab` and
   `docs/fstab.fedora`, mount it, then apply
+- [ ] reconcile the duplicate `/mnt/valus/31_text` and `/mnt/valus/33_images`
+  copies after confirming the local trees are canonical
+- [ ] clean the nested `bibata-modern-*` symlinks inside the installed cursor
+  theme directories left by the old `ln -sf` behavior
 - [ ] decide the Calibre library path: local `31_text` has `books/`, while
   `dot_config/calibre/global.py.json.tmpl` points at `31_text/calibre`
 

@@ -9,25 +9,9 @@
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
 
-info "setting xdg user dirs..."
-
-cat > "$HOME/.config/user-dirs.dirs" << 'DIRS'
-# This file is written by xdg-user-dirs-update
-# If you want to change or add directories, just edit the line you're
-# interested in. All local changes will be retained on the next run.
-# Format is XDG_xxx_DIR="$HOME/..."
-XDG_DESKTOP_DIR="$HOME/Desktop"
-XDG_DOWNLOAD_DIR="$HOME/strata/10-19_system/16_inbox"
-XDG_TEMPLATES_DIR="$HOME/strata/10-19_system/13_system-config/templates"
-XDG_PUBLICSHARE_DIR="$HOME/Public"
-XDG_DOCUMENTS_DIR="$HOME/strata/30-39_media/31_text"
-XDG_MUSIC_DIR="$HOME/strata/30-39_media/32_audio"
-XDG_PICTURES_DIR="$HOME/Pictures"
-XDG_VIDEOS_DIR="$HOME/strata/30-39_media/34_video"
-DIRS
-
-xdg-user-dirs-update
-success "xdg user dirs set"
+# xdg user dirs are managed files (~/.config/user-dirs.dirs and
+# ~/.config/user-dirs.conf with enabled=False); nothing to do here.
+info "xdg user dirs managed by chezmoi"
 
 # cursor theme
 info "setting cursor theme..."

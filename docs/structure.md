@@ -30,6 +30,8 @@ dotfiles/
     │   └── drift.bash
     ├── dot_config/
     │   ├── environment.d/90-user.conf  # systemd --user PATH + XDG roots
+    │   ├── user-dirs.conf              # disables xdg-user-dirs-update
+    │   ├── user-dirs.dirs              # declarative XDG user directories
     │   ├── systemd/user/               # move-media, wallpaper, wallpaper.timer
     │   ├── nushell/                    # config.nu + env.nu.tmpl
     │   │   # history.txt / starship-init.nu / zoxide.nu are generated and ignored
@@ -77,15 +79,15 @@ dotfiles/
         ├── run_onchange_install-firefox-policies.sh.tmpl
         ├── run_onchange_install-packages.sh.tmpl
         ├── run_once_generate-nushell-init.sh.tmpl
-        ├── run_once_setup-storage.sh.tmpl
+        ├── run_setup-storage.sh.tmpl
         └── run_once_setup-xdg.sh.tmpl
 ```
 
 ## ｓｃｒｉｐｔｓ
 
 scripts execute in source/name order with respect to managed files. `run_once_` runs once
-per unique content; `run_onchange_` reruns when its content changes. pending changes to
-the storage/XDG scripts are tracked in [`backlog.md`](backlog.md).
+per unique content; `run_onchange_` reruns when its content changes; `run_` runs on every
+apply. storage repair uses `run_` so missing drives are relinked when they return.
 
 ## ｒｕｌｅｓ
 

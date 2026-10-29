@@ -37,22 +37,31 @@ this is the **strata filesystem**, not the [Strata file manager](apps.md).
 └── 30-39_media/
     ├── 31_text                    ← local on the home btrfs subvolume
     ├── 32_audio                   → /mnt/valus/32_audio
-    ├── 33_images                  → /mnt/valus/33_images
+    ├── 33_images                  ← local on the home btrfs subvolume
     ├── 34_video                   → /mnt/phaedra/34_video
     └── 35_video-games
         ├── games-library          → /mnt/valus/35_video-games/games-library
         └── steam                  → /mnt/phaedra/35_video-games/SteamLibrary
 ```
 
-most media lives on external drives; `31_text` is now local and canonical after being
-moved off valus. links are created by `run_once_setup-storage.sh.tmpl`:
+most media lives on external drives; `31_text` and `33_images` are now local and
+canonical after being moved off valus. links are created by
+`run_setup-storage.sh.tmpl`:
 
 | category | source location |
 |----------|-----------------|
-| 31_text | local: `~/strata/30-39_media/31_text` |
-| 32_audio, 33_images | → `/mnt/valus/{32_audio,33_images}` |
+| 31_text, 33_images | local: `~/strata/30-39_media/{31_text,33_images}` |
+| 32_audio | → `/mnt/valus/32_audio` |
 | 34_video | → `/mnt/phaedra/34_video` |
 | 35_video-games | local directory; `games-library/` → valus, `steam/` → phaedra |
+
+## ｘｄｇ　ｕｓｅｒ　ｄｉｒｓ
+
+`~/.config/user-dirs.dirs` is managed by chezmoi and maps Documents → `31_text`,
+Music → `32_audio`, Pictures → `33_images`, and Videos → `34_video`.
+`~/.config/user-dirs.conf` sets `enabled=False`, so a missing drive does not cause
+the session updater to reset those paths to `$HOME`. Videos stays mapped while
+phaedra is absent; the path becomes usable again when the drive returns.
 
 ## ｃｏｎｖｅｎｔｉｏｎｓ
 

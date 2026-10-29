@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Storage topology — maps physical drives into strata
-# Runs once via chezmoi init. Edit mount points for each machine.
+# Runs on every apply; links are idempotent and missing drives are skipped.
 # =============================================================================
 
 {{- if eq (.machine | default "fedora") "fedora" }}
@@ -11,30 +11,44 @@ STRATA="$HOME/strata"
 
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
+warn()    { echo "  [warn] $1"; }
 
 link_storage() {
     local src="$1"
     local dst="$2"
 
-    if [ ! -e "$src" ]; then
-        echo "  [warn] source not found, skipping: $src"
-        return
+    if [ ! -d "$src" ]; then
+        warn "source unavailable, leaving $dst alone: $src"
+        return 0
     fi
 
-    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
-        info "already linked: $dst"
-        return
+    if [ -L "$dst" ]; then
+        if [ "$(readlink "$dst")" = "$src" ]; then
+            info "already linked: $dst"
+            return 0
+        fi
+        warn "refusing to replace symlink: $dst -> $(readlink "$dst")"
+        return 1
     fi
 
-    mkdir -p "$(dirname "$dst")"
-    ln -sf "$src" "$dst"
+    if [ -e "$dst" ]; then
+        warn "refusing to replace existing path: $dst"
+        return 1
+    fi
+
+    mkdir -p "$(dirname "$dst")" || return 1
+    ln -s "$src" "$dst" || return 1
+
+    if [ "$(readlink "$dst")" != "$src" ]; then
+        warn "link verification failed: $dst"
+        return 1
+    fi
+
     success "linked $dst → $src"
 }
 
 # valus
-link_storage "/mnt/valus/31_text"              "$STRATA/30-39_media/31_text"
 link_storage "/mnt/valus/32_audio"             "$STRATA/30-39_media/32_audio"
-link_storage "/mnt/valus/33_images"            "$STRATA/30-39_media/33_images"
 link_storage "/mnt/valus/35_video-games/games-library" "$STRATA/30-39_media/35_video-games/games-library"
 
 # phaedra
@@ -49,5 +63,5 @@ link_storage "$HOME/strata/10-19_system/13_system-config/theming/cursor/bibata-m
 {{- else if eq .machine "nixos" }}
 # nixos: storage topology managed separately
 # edit this section for nixos-specific mount points
-echo "nixos: storage topology — edit run_once_setup-storage.sh for your nixos mounts"
+echo "nixos: storage topology — edit run_setup-storage.sh for your nixos mounts"
 {{- end }}
