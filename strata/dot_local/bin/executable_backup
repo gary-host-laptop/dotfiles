@@ -11,7 +11,7 @@ RESET='\033[0m'
 set -euo pipefail
 
 ROOT="${HOME}/strata/10-19_system/14_backups"
-FF_PROFILE="$(ls -d "${HOME}/.mozilla/firefox/"*.default-release 2>/dev/null | head -1 || true)"
+FF_PROFILE="${HOME}/.mozilla/firefox/ghost-profile"
 
 copied=()
 copy() {
@@ -38,6 +38,29 @@ copy_dir() {
     copied+=("$(basename "$src")/")
 }
 
+copy_sqlite() {
+    local src="$1"
+    local dst="$2"
+    local tmp="${dst}.tmp"
+    if [ ! -e "$src" ]; then
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (missing)"
+        return 1
+    fi
+    if ! command -v sqlite3 >/dev/null 2>&1; then
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (sqlite3 missing)"
+        return 1
+    fi
+    mkdir -p "$(dirname "$dst")"
+    rm -f "$tmp"
+    if ! sqlite3 "$src" ".backup '$tmp'"; then
+        rm -f "$tmp"
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (backup failed)"
+        return 1
+    fi
+    mv "$tmp" "$dst"
+    copied+=("$(basename "$src")")
+}
+
 echo ""
 echo -e "  ${CYAN}${BOLD}── essentials backup ──${RESET}  ${MUTED}→ ${ROOT}${RESET}"
 
@@ -46,9 +69,9 @@ for f in id_ed25519 id_ed25519.pub known_hosts known_hosts.old; do
     copy "${HOME}/.ssh/${f}"                     "${ROOT}/ssh/${f}" || true
 done
 copy_dir "${HOME}/.config/beets"                 "${ROOT}/beets" || true
-if [ -n "$FF_PROFILE" ]; then
-    copy "${FF_PROFILE}/cookies.sqlite"          "${ROOT}/firefox-profile/cookies.sqlite" || true
-    copy "${FF_PROFILE}/places.sqlite"           "${ROOT}/firefox-profile/places.sqlite" || true
+if [ -d "$FF_PROFILE" ]; then
+    copy_sqlite "${FF_PROFILE}/cookies.sqlite"    "${ROOT}/firefox-profile/cookies.sqlite" || true
+    copy_sqlite "${FF_PROFILE}/places.sqlite"     "${ROOT}/firefox-profile/places.sqlite" || true
 else
     echo -e "  ${YELLOW}skip${RESET}  ${MUTED}firefox profile${RESET}  (missing)"
 fi

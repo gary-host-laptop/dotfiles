@@ -14,7 +14,7 @@ personal system configuration for fedora linux, managed by [chezmoi](https://www
 | [`apps.md`](docs/apps.md) | installed/evaluated apps, file managers, tracked configs |
 | [`hardware.md`](docs/hardware.md) | machine, disks, mounts |
 | [`backup.md`](docs/backup.md) | machine-local state and restore steps |
-| [`backlog.md`](docs/backlog.md) | deferred fixes and known gaps |
+| [issues](https://github.com/gary-host-laptop/dotfiles/issues) | deferred fixes and known gaps |
 
 ---
 

@@ -15,10 +15,8 @@ if [ -f "$dst" ] && cmp -s "$src" "$dst"; then
   exit 0
 fi
 
-if sudo -n install -Dm644 "$src" "$dst" 2>/dev/null; then
-  exit 0
+if ! sudo install -Dm644 "$src" "$dst"; then
+  echo "Firefox policy install failed; run:" >&2
+  echo "  sudo install -Dm644 '$src' '$dst'" >&2
+  exit 1
 fi
-
-echo "Firefox policies are staged but need root to install:"
-echo "  sudo install -Dm644 '$src' '$dst'"
-exit 0

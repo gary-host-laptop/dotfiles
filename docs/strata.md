@@ -70,7 +70,7 @@ phaedra is absent; the path becomes usable again when the drive returns.
   index is `~/strata/00_index.md`
 - `31_text` holds text/books and Zotero linked attachments; its Calibre library path
   currently points at `31_text/calibre`, which is not present in the local tree —
-  see [`backlog.md`](backlog.md)
+  see [#4](https://github.com/gary-host-laptop/dotfiles/issues/4)
 - `35_video-games` keeps game repos in `games-library/` and `steam/`
 
 ## ｉｎｄｅｘ　ｆｉｌｅｓ

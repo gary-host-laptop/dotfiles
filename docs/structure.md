@@ -68,7 +68,7 @@ dotfiles/
     ├── dot_aMule/
     │   └── modify_amule.conf.tmpl      # aMule config (KAD key via [data.amule])
     ├── dot_mozilla/private_firefox/    # pinned Firefox profiles.ini/installs.ini
-    │   └── private_profile/            # user.js + handlers.json
+    │   └── private_ghost-profile/      # user.js + handlers.json
     ├── private_dot_zotero/             # pinned Zotero profile store
     ├── dot_local/
     │   ├── bin/                        # backup, bbit, clipclear, move-media,

@@ -12,12 +12,12 @@ success() { echo "  [ ok ] $1"; }
 warn()    { echo "  [warn] $1"; }
 
 require_sudo() {
-  sudo -v 2>/dev/null || {
+  sudo -v || {
     warn "sudo credentials unavailable — run 'sudo -v' first, then re-run 'chezmoi apply'"
-    exit 0
+    return 1
   }
 }
-require_sudo
+require_sudo || exit 1
 
 # ── copr repos ───────────────────────────────────────────────────────────────
 info "enabling copr repos..."
