@@ -17,35 +17,18 @@ personal system configuration organized within a [johnny decimal](https://johnny
 
 ## ｆｒｅｓｈ　ｉｎｓｔａｌｌ
 
-before running, create `~/.config/chezmoi/chezmoi.toml` (see [multi-machine](#ｍｕｌｔｉ‑ｍａｃｈｉｎｅ)).
+1. restore `~/.ssh` and `~/.config/chezmoi/chezmoi.toml` from backup (see [`backup.md`](docs/backup.md)). the repo is cloned over ssh and `sourceDir` is read from `chezmoi.toml`, so both must be in place before step 3. <!-- TODO: replace with real plakar steps once the backup method is settled -->
 
-```bash
-# install chezmoi
-sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+2. install chezmoi:
 
-# clone repo and apply everything
-chezmoi init --source ~/strata/10-19_system/13_system-config/dotfiles --apply gary-host-laptop
-```
+   ```bash
+   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+   ```
 
-chezmoi applies managed files and runs the `run_onchange_*` / `run_once_*` scripts as
-part of the apply: package installs, systemd units, nushell init, storage links, and
-XDG/theming. scripts run in source/name order; re-run `chezmoi apply` after changing
-machine-local data or mounting storage.
+3. clone the repo and apply:
 
-## ｍｕｌｔｉ‑ｍａｃｈｉｎｅ
+   ```bash
+   ~/.local/bin/chezmoi init --apply --ssh gary-host-laptop
+   ```
 
-on each machine, create `~/.config/chezmoi/chezmoi.toml`:
-
-```toml
-[data]
-machine = "fedora"   # or "nixos"
-
-# per-machine secrets — never stored in the repo
-# omitting these degrades gracefully (aMule regenerates its key, nicotine+ uses blank password)
-[data.amule]
-kadUdpKey = "0"
-[data.nicotine]
-password = "..."
-```
-
-`.tmpl` files use `{{ if eq (.machine | default "fedora") "..." }}` — the `| default "fedora"` fallback means the repo applies even without a `chezmoi.toml`.
+`apply` writes the managed files, then runs the `run_*` scripts in alphabetical order by target name: package installs, systemd units, nushell init, storage links, and xdg/theming. `run_before_` and `run_after_` scripts run before or after the file updates. `run_once_` scripts execute a single time, `run_onchange_` scripts re-run only when their contents change, and `run_always_` scripts run on every apply.
