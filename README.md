@@ -2,7 +2,7 @@
 
 ![Banner](./banner.jpg)
 
-personal system configuration for fedora linux, managed by [chezmoi](https://www.chezmoi.io/) and organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system. templates support fedora (current) and nixos (planned).
+personal system configuration organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system managed by [chezmoi](https://www.chezmoi.io/).
 
 ## ｄｏｃｓ
 
@@ -37,19 +37,6 @@ machine-local data or mounting storage.
 
 ---
 
-## ｕｓｉｎｇ　ｃｈｅｚｍｏｉ
-
-```bash
-chezmoi apply            # apply pending changes
-chezmoi edit <file>      # edit a managed file (opens in $EDITOR)
-chezmoi cd               # cd to the source directory
-chezmoi diff             # see what would change
-chezmoi status           # current state vs managed
-chezmoi forget <file>    # stop managing a file
-```
-
----
-
 ## ｍｕｌｔｉ‑ｍａｃｈｉｎｅ
 
 on each machine, create `~/.config/chezmoi/chezmoi.toml`:
@@ -67,9 +54,3 @@ password = "..."
 ```
 
 `.tmpl` files use `{{ if eq (.machine | default "fedora") "..." }}` — the `| default "fedora"` fallback means the repo applies even without a `chezmoi.toml`.
-
----
-
-## ｓｔｒａｔａ
-
-this repo lives at `~/strata/10-19_system/13_system-config/dotfiles`. full strata layout and drive mapping: [`docs/strata.md`](docs/strata.md).
