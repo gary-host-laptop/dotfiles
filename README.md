@@ -14,9 +14,6 @@ personal system configuration organized within a [johnny decimal](https://johnny
 | [`apps.md`](docs/apps.md) | installed/evaluated apps, file managers, tracked configs |
 | [`hardware.md`](docs/hardware.md) | machine, disks, mounts |
 | [`backup.md`](docs/backup.md) | machine-local state and restore steps |
-| [issues](https://github.com/gary-host-laptop/dotfiles/issues) | deferred fixes and known gaps |
-
----
 
 ## ｆｒｅｓｈ　ｉｎｓｔａｌｌ
 
@@ -34,8 +31,6 @@ chezmoi applies managed files and runs the `run_onchange_*` / `run_once_*` scrip
 part of the apply: package installs, systemd units, nushell init, storage links, and
 XDG/theming. scripts run in source/name order; re-run `chezmoi apply` after changing
 machine-local data or mounting storage.
-
----
 
 ## ｍｕｌｔｉ‑ｍａｃｈｉｎｅ
 
