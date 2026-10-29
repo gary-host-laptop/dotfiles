@@ -1,8 +1,8 @@
 # ｄｏｔｆｉｌｅｓ
 
-personal system configuration for fedora linux, managed by [chezmoi](https://www.chezmoi.io/) and organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system. templates support fedora (current) and nixos (planned).
+<img src=".banner.png" />
 
-→ [structure](docs/structure.md) · [strata](docs/strata.md) · [path architecture](docs/path-architecture.md) · [apps](docs/apps.md) · [hardware](docs/hardware.md) · [backup](docs/backup.md) · [backlog](docs/backlog.md)
+personal system configuration for fedora linux, managed by [chezmoi](https://www.chezmoi.io/) and organized within a [johnny decimal](https://johnnydecimal.com/) inspired strata file system. templates support fedora (current) and nixos (planned).
 
 ## ｄｏｃｓ
 
@@ -14,7 +14,7 @@ personal system configuration for fedora linux, managed by [chezmoi](https://www
 | [`apps.md`](docs/apps.md) | installed/evaluated apps, file managers, tracked configs |
 | [`hardware.md`](docs/hardware.md) | machine, disks, mounts |
 | [`backup.md`](docs/backup.md) | machine-local state and restore steps |
-| [issues](https://github.com/gary-host-laptop/dotfiles/issues) | deferred fixes and known gaps |
+| [`backlog.md`](docs/backlog.md) | deferred fixes and known gaps |
 
 ---
 
