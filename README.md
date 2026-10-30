@@ -1,6 +1,4 @@
-<img src="./ensō.jpg" width="128" />
-
-# ｄｏｔｆｉｌｅｓ
+# <img src="./ensō.jpg" width="128" /> ｄｏｔｆｉｌｅｓ
 
 ![Banner](./banner.jpg)
 
