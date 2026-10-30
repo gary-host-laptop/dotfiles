@@ -1,20 +1,16 @@
 # ｓｔｒａｔａ
 
-personal filesystem organized with a [johnny decimal](https://johnnydecimal.com/)-inspired
-scheme: every folder gets a two-digit id, ids are grouped into ten-wide categories
-(`10–19`, `20–29`, `30–39`), and each item has a unique, predictable location.
+strata is a personal organization system adapted from [johnny decimal](https://johnnydecimal.com/). it keeps his core idea: numbers divide everything into areas, categories, and ids. every item has a unique, predictable location.
 
-`docs/strata.md` is the canonical description — `~/strata/00_index.md` mirrors this
-tree (drive layout: [`hardware.md`](hardware.md); backups: [`backup.md`](backup.md)).
-this is the **strata filesystem**, not the [Strata file manager](apps.md).
+- **areas** are the broad top-level directories, each spanning ten numbers (`10–19`, `20–29`, `30–39`, etc).
+- **categories** live inside areas (`11`, `12`, `13`, etc).
+- **ids** identify individual items inside a category (`11.01`, `11.02`, `11.03`, etc).
 
-## ｃａｔｅｇｏｒｉｅｓ
+where strata departs from johnny decimal is in how it divides the top level. instead of grouping by topic, its three areas follow three roles a file can play: **infrastructure**, **creation**, and **collection**.
 
-```
-10-19_system       the machine you live in
-20-29_praxis       what you make
-30-39_media        what you keep
-```
+- **system** holds the foundation: how everything is set up, documented, and kept running.
+- **praxis** holds the work: what you build, write, and design.
+- **media** holds the archive: what you gather and preserve.
 
 ## ｔｒｅｅ
 
