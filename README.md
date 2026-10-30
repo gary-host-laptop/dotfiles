@@ -1,4 +1,4 @@
-<img src="./ensō.jpg" width="64" />
+<img src="./ensō.jpg" width="128" />
 
 # ｄｏｔｆｉｌｅｓ
 
