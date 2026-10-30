@@ -20,7 +20,7 @@ where strata departs from johnny decimal is in how it divides the top level. ins
 ├── 10-19_system/
 │   ├── 11_personal
 │   ├── 12_professional
-│   ├── 13_system-config          ← this repo (dotfiles) lives here
+│   ├── 13_system-config          
 │   ├── 14_backups
 │   ├── 15_self-hosted
 │   ├── 16_inbox
@@ -31,18 +31,13 @@ where strata departs from johnny decimal is in how it divides the top level. ins
 │   ├── 23_video-production
 │   └── 24_development
 └── 30-39_media/
-    ├── 31_text                    ← local on the home btrfs subvolume
-    ├── 32_audio                   → /mnt/valus/32_audio
-    ├── 33_images                  ← local on the home btrfs subvolume
-    ├── 34_video                   → /mnt/phaedra/34_video
+    ├── 31_text
+    ├── 32_audio
+    ├── 33_images
+    ├── 34_video
     └── 35_video-games
-        ├── games-library          → /mnt/valus/35_video-games/games-library
-        └── steam                  → /mnt/phaedra/35_video-games/SteamLibrary
 ```
 
-most media lives on external drives; `31_text` and `33_images` are now local and
-canonical after being moved off valus. links are created by
-`run_setup-storage.sh.tmpl`:
 
 | category | source location |
 |----------|-----------------|
