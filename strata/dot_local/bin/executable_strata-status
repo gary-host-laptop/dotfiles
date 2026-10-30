@@ -21,35 +21,35 @@ bar() {
     else color=$GREEN
     fi
 
-    printf "${color}"
+    printf '%b' "$color"
     for ((i=0; i<filled; i++)); do printf '█'; done
-    printf "${MUTED}"
+    printf '%b' "$MUTED"
     for ((i=0; i<empty; i++)); do printf '░'; done
-    printf "${RESET} ${color}${pct}%%${RESET}"
+    printf '%b %b%s%%%b' "$RESET" "$color" "$pct" "$RESET"
 }
 
 not_mounted_bar() {
     local width=20
-    printf "${MUTED}"
+    printf '%b' "$MUTED"
     for ((i=0; i<width; i++)); do printf '█'; done
-    printf "${RESET}"
+    printf '%b' "$RESET"
 }
 
 disk_info() {
     local mount=$1
     local label=$2
     if ! mountpoint -q "$mount" 2>/dev/null; then
-        printf "  ${CYAN}%-10s${RESET}  " "$label"
+        printf '  %b%-10s%b  ' "$CYAN" "$label" "$RESET"
         not_mounted_bar
-        printf " ${RED}not mounted${RESET}\n"
+        printf ' %bnot mounted%b\n' "$RED" "$RESET"
         return
     fi
     local info
     info=$(df -BG "$mount" 2>/dev/null | tail -1)
     if [ -z "$info" ]; then
-        printf "  ${CYAN}%-10s${RESET}  " "$label"
+        printf '  %b%-10s%b  ' "$CYAN" "$label" "$RESET"
         not_mounted_bar
-        printf " ${RED}not mounted${RESET}\n"
+        printf ' %bnot mounted%b\n' "$RED" "$RESET"
         return
     fi
     local total
@@ -59,9 +59,9 @@ disk_info() {
     local avail
     avail=$(echo "$info" | awk '{print $4}' | tr -d 'G')
 
-    printf "  ${CYAN}%-10s${RESET}  " "$label"
-    bar $used $total
-    printf "  ${MUTED}${used}G / ${total}G  (${avail}G free)${RESET}\n"
+    printf '  %b%-10s%b  ' "$CYAN" "$label" "$RESET"
+    bar "$used" "$total"
+    printf '  %b%sG / %sG  (%sG free)%b\n' "$MUTED" "$used" "$total" "$avail" "$RESET"
 }
 
 echo ""

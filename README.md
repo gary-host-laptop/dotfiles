@@ -10,7 +10,7 @@ system configuration, organized in a [johnny decimal](https://johnnydecimal.com/
 |-----|-------------------|
 | [`structure.md`](docs/structure.md) | chezmoi source map and conventions |
 | [`strata.md`](docs/strata.md) | filesystem tree and storage topology |
-| [`path-architecture.md`](docs/path-architecture.md) | PATH assembly |
+| [`path.md`](docs/path.md) | PATH assembly |
 | [`apps.md`](docs/apps.md) | installed/evaluated apps, file managers, tracked configs |
 | [`hardware.md`](docs/hardware.md) | machine, disks, mounts |
 | [`backup.md`](docs/backup.md) | machine-local state and restore steps |

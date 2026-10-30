@@ -1,4 +1,4 @@
-# ｐａｔｈ　ａｒｃｈｉｔｅｃｔｕｒｅ
+# ｐａｔｈ
 
 `PATH` is assembled at two converging roots. both are add-once, so entries never duplicate across sessions.
 

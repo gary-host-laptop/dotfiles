@@ -92,7 +92,7 @@ for dir in "$ROM_ROOT"/*/; do
     first=1
     for f in "${files[@]}"; do
         label="$(basename "$f")"; label="${label%.*}"
-        (($first)) || echo "    },"
+        ((first)) || echo "    },"
         first=0
         printf '    {\n      "path": "%s",\n      "label": "%s",\n      "core_path": "DETECT",\n      "core_name": "DETECT",\n      "crc32": "DETECT",\n      "db_name": ""\n' \
             "$(json_escape "$f")" "$(json_escape "$label")"

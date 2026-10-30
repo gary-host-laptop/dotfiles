@@ -4,10 +4,10 @@
 # thumbnails.cache    → clear thumbnail cache
 # journald.clean      → journal maintenance
 
-CLEANERS="dnf.clean_all thumbnails.cache journald.clean"
+CLEANERS=(dnf.clean_all thumbnails.cache journald.clean)
 
-echo -e "\nbleachbit: about to run (as root): ${CLEANERS}\n"
+echo -e "\nbleachbit: about to run (as root): ${CLEANERS[*]}\n"
 read -r -p "continue? [y/N] " answer
 [[ "$answer" =~ ^[Yy]$ ]] || { echo "aborted"; exit 0; }
 
-sudo bleachbit -c $CLEANERS
+sudo bleachbit -c "${CLEANERS[@]}"

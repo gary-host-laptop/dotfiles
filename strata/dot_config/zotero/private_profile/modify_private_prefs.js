@@ -17,10 +17,6 @@ MANAGED = [
     ("extensions.zotero.baseAttachmentPath", json.dumps(base_dir)),
     ("extensions.zotero.saveRelativeAttachmentPath", "true"),
     ("extensions.zotmoov.dst_dir", json.dumps(dst_dir)),
-    ("extensions.zotmoov.enable_automove", "true"),
-    ("extensions.zotmoov.file_behavior", json.dumps("move")),
-    ("extensions.zotmoov.enable_subdir_move", "false"),
-    ("extensions.zotmoov.delete_files", "false"),
 ]
 MANAGED_KEYS = {key for key, _ in MANAGED}
 MANAGED_VALUES = dict(MANAGED)

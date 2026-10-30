@@ -15,3 +15,6 @@ __pycache__/
 strata/dot_config/nushell/starship-init.nu
 strata/dot_config/nushell/zoxide.nu
 strata/dot_config/nushell/history.txt
+
+# chat exports
+freebuff-chat-*.md
