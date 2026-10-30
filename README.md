@@ -1,4 +1,7 @@
-# <img src="./ensō.png" width="64" /> ｄｏｔｆｉｌｅｓ
+<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+  <h1>ｄｏｔｆｉｌｅｓ</h1>
+  <img src="./ensō.png" width="64" />
+</div>
 
 ![Banner](./banner.jpg)
 
