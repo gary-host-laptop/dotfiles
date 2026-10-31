@@ -1,4 +1,6 @@
-# ｓｔｒａｔａ
+# about
+
+![babel](../strata.png)
 
 strata is a personal organization system adapted from [johnny decimal](https://johnnydecimal.com/). it keeps his core idea: numbers divide everything into areas, categories, and ids. every item has a unique, predictable location.
 
