@@ -22,6 +22,8 @@ dotfiles/
     ├── dot_gemrc.tmpl                  # ~/.gemrc
     ├── .chezmoiignore                  # generated/runtime files chezmoi must not own
     ├── .chezmoitemplates/
+    │   ├── strata-backup.service       # system Plakar backup unit
+    │   ├── strata-backup.timer         # system Plakar timer unit
     │   └── firefox-policies.json       # Firefox extension policy payload
     ├── dot_bash/
     │   ├── aliases.bash
@@ -70,11 +72,12 @@ dotfiles/
     │   └── private_ghost-profile/      # user.js + handlers.json
     ├── private_dot_zotero/             # pinned Zotero profile store
     ├── dot_local/
-    │   ├── bin/                        # backup, bbit, clipclear, move-media,
+    │   ├── bin/                        # strata-backup, bbit, clipclear, move-media,
     │   │                               # retroarch-playlists, strata-status, wallpaper
     │   └── share/icons/                # hicolor app-grid icons
     └── .chezmoiscripts/
         ├── run_onchange_enable-units.sh
+        ├── run_onchange_install-strata-backup-units.sh.tmpl
         ├── run_onchange_install-firefox-policies.sh.tmpl
         ├── run_onchange_install-packages.sh.tmpl
         ├── run_once_generate-nushell-init.sh.tmpl

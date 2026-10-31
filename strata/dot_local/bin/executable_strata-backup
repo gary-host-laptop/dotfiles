@@ -10,8 +10,35 @@ RESET='\033[0m'
 
 set -euo pipefail
 
-ROOT="${HOME}/strata/10-19_system/14_backups"
+ROOT="${HOME}/strata/10-19_system/14_backups/data"
+STORE="${HOME}/strata/10-19_system/14_backups/plakar-store"
+PLAKAR="${PLAKAR:-}"
+if [ -z "$PLAKAR" ] || [ ! -x "$PLAKAR" ]; then
+    for candidate in /usr/bin/plakar /usr/local/bin/plakar; do
+        if [ -x "$candidate" ]; then
+            PLAKAR="$candidate"
+            break
+        fi
+    done
+fi
+if [ -z "$PLAKAR" ] || [ ! -x "$PLAKAR" ]; then
+    if [ -z "${CREDENTIALS_DIRECTORY:-}" ] && [ -x "${HOME}/.local/bin/plakar" ]; then
+        PLAKAR="${HOME}/.local/bin/plakar"
+    fi
+fi
+if [ -z "$PLAKAR" ] || [ ! -x "$PLAKAR" ]; then
+    echo "plakar not found" >&2
+    exit 1
+fi
 FF_PROFILE="${HOME}/.mozilla/firefox/ghost-profile"
+
+LOCK_DIR="${HOME}/.cache"
+mkdir -p "$LOCK_DIR"
+exec 9>"${LOCK_DIR}/strata-backup.lock"
+if ! flock -n 9; then
+    echo "strata-backup already running"
+    exit 0
+fi
 
 copied=()
 copy() {
@@ -42,6 +69,7 @@ copy_sqlite() {
     local src="$1"
     local dst="$2"
     local tmp="${dst}.tmp"
+    local snapdir
     if [ ! -e "$src" ]; then
         echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (missing)"
         return 1
@@ -50,13 +78,32 @@ copy_sqlite() {
         echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (sqlite3 missing)"
         return 1
     fi
+    snapdir="$(mktemp -d "${TMPDIR:-/tmp}/strata-sqlite.XXXXXX")" || {
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (temp dir failed)"
+        return 1
+    }
+    if ! cp -p "$src" "$snapdir/db"; then
+        rm -rf "$snapdir"
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (copy failed)"
+        return 1
+    fi
+    if [ -e "${src}-wal" ]; then
+        cp -p "${src}-wal" "$snapdir/db-wal" || true
+    fi
+    if ! sqlite3 "$snapdir/db" "PRAGMA integrity_check;" >/dev/null 2>&1; then
+        rm -rf "$snapdir"
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (integrity check failed)"
+        return 1
+    fi
     mkdir -p "$(dirname "$dst")"
     rm -f "$tmp"
-    if ! sqlite3 "$src" ".backup '$tmp'"; then
+    if ! sqlite3 "$snapdir/db" ".backup '$tmp'"; then
+        rm -rf "$snapdir"
         rm -f "$tmp"
         echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (backup failed)"
         return 1
     fi
+    rm -rf "$snapdir"
     mv "$tmp" "$dst"
     copied+=("$(basename "$src")")
 }
@@ -79,4 +126,25 @@ copy "/etc/fstab"                                 "${ROOT}/fstab/fstab" || true
 
 echo ""
 echo -e "  ${GREEN}${BOLD}${#copied[@]} file(s) backed up${RESET}: ${LAVENDER}${copied[*]}${RESET}"
+
+keyfile_args=()
+if [[ -n "${CREDENTIALS_DIRECTORY:-}" ]]; then
+    keyfile_args=(-keyfile "${CREDENTIALS_DIRECTORY}/plakar-passphrase")
+elif [[ -n "${PLAKAR_KEYFILE:-}" ]]; then
+    keyfile_args=(-keyfile "${PLAKAR_KEYFILE}")
+fi
+
+echo ""
+echo -e "  ${CYAN}${BOLD}── plakar snapshot ──${RESET}  ${MUTED}→ ${STORE}${RESET}"
+"$PLAKAR" "${keyfile_args[@]}" at "$STORE" backup -check -tag essentials -name essentials "$ROOT"
+
+echo ""
+echo -e "  ${CYAN}${BOLD}── plakar retention ──${RESET}  ${MUTED}7 daily / 4 weekly / 12 monthly${RESET}"
+"$PLAKAR" "${keyfile_args[@]}" at "$STORE" prune \
+    -tag essentials \
+    -days 7 -per-day 1 \
+    -weeks 4 -per-week 1 \
+    -months 12 -per-month 1 \
+    -apply
+"$PLAKAR" "${keyfile_args[@]}" at "$STORE" maintenance
 echo ""

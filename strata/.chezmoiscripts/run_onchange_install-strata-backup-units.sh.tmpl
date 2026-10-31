@@ -1,0 +1,30 @@
+#!/bin/sh
+set -eu
+
+# hash: {{ include "dot_local/bin/executable_strata-backup" | sha256sum }}
+# hash: {{ includeTemplate "strata-backup.service" . | sha256sum }}
+# hash: {{ includeTemplate "strata-backup.timer" . | sha256sum }}
+
+src="{{ .chezmoi.sourceDir }}"
+dst="/etc/systemd/system"
+
+rm -f "$HOME/.local/bin/backup"
+
+sudo systemctl disable --now backup.timer 2>/dev/null || true
+sudo rm -f "$dst/backup.service" "$dst/backup.timer"
+sudo rm -f "/etc/systemd/system/timers.target.wants/backup.timer"
+
+sudo install -Dm755 "$src/dot_local/bin/executable_strata-backup" /usr/local/bin/strata-backup
+
+if [ -x "$HOME/.local/bin/plakar" ]; then
+    sudo install -Dm755 "$HOME/.local/bin/plakar" /usr/local/bin/plakar
+fi
+
+sudo install -Dm644 "$src/.chezmoitemplates/strata-backup.service" "$dst/strata-backup.service"
+sudo install -Dm644 "$src/.chezmoitemplates/strata-backup.timer" "$dst/strata-backup.timer"
+
+sudo restorecon -F /usr/local/bin/strata-backup /usr/local/bin/plakar 2>/dev/null || true
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now strata-backup.timer
+sudo systemctl restart strata-backup.timer

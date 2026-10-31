@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily Strata Plakar essentials backup
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+RandomizedDelaySec=15min
+AccuracySec=1min
+Unit=strata-backup.service
+
+[Install]
+WantedBy=timers.target
