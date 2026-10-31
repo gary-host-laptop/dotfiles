@@ -1,4 +1,4 @@
-# <img src="./ensō.png" width="64" /> ｄｏｔｆｉｌｅｓ
+# ![enso](./ensō.png) ｄｏｔｆｉｌｅｓ
 
 ![Banner](./banner.jpg)
 
