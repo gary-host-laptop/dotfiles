@@ -40,7 +40,7 @@ the script refreshes these items, then snapshots all of `data/`:
 other directories in `data/` are manual service exports; they are snapshotted but
 not refreshed by the script.
 
-non-secret duplicates living in this repo: `docs/fstab.fedora`.
+non-secret duplicate living in this repo: the fstab reference in `docs/hardware.md`.
 
 never committed to the repo: ssh keys, beets db, `chezmoi.toml`, firefox data.
 
@@ -175,7 +175,7 @@ after restoring, copy these back before `chezmoi apply`:
 - `ssh/` → `~/.ssh/` (chmod 600 the private key)
 - `firefox-profile/{cookies.sqlite,places.sqlite}` → `~/.mozilla/firefox/ghost-profile/`
 - `beets/` → `~/.config/beets/`
-- `fstab/fstab` → `/etc/fstab` (or restore from `docs/fstab.fedora`, then `mount -a`)
+- `fstab/fstab` → `/etc/fstab` (or restore from the fstab reference in `docs/hardware.md`, then `mount -a`)
 
 ## broader policy
 
