@@ -47,7 +47,7 @@ system configuration, organized in a [johnny decimal](https://johnnydecimal.com/
    sudo plakar -keyfile /etc/plakar/passphrase \
      at ~/strata/10-19_system/14_backups/plakar-store \
      restore -to /tmp/plakar-restore "$snapshot_id"
-   sudo chown -R ghost_user:ghost_user /tmp/plakar-restore
+   sudo chown -R "$(id -un):$(id -gn)" /tmp/plakar-restore
    install -d -m700 ~/.ssh
    cp -a /tmp/plakar-restore/ssh/. ~/.ssh/
    install -Dm600 /tmp/plakar-restore/chezmoi/chezmoi.toml ~/.config/chezmoi/chezmoi.toml

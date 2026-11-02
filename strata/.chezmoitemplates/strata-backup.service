@@ -4,9 +4,8 @@ After=local-fs.target
 
 [Service]
 Type=oneshot
-User=ghost_user
-Group=ghost_user
-Environment=HOME=/home/ghost_user
+User={{ .chezmoi.username }}
+Environment="HOME={{ .chezmoi.homeDir }}"
 ExecStart=/usr/local/bin/strata-backup
 LoadCredential=plakar-passphrase:/etc/plakar/passphrase
 Nice=10

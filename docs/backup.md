@@ -61,7 +61,7 @@ inspect the store as root:
 ```bash
 sudo plakar \
   -keyfile /etc/plakar/passphrase \
-  at /home/ghost_user/strata/10-19_system/14_backups/plakar-store ls
+  at ~/strata/10-19_system/14_backups/plakar-store ls
 ```
 
 verify integrity:
@@ -69,7 +69,7 @@ verify integrity:
 ```bash
 sudo plakar \
   -keyfile /etc/plakar/passphrase \
-  at /home/ghost_user/strata/10-19_system/14_backups/plakar-store check
+  at ~/strata/10-19_system/14_backups/plakar-store check
 ```
 
 ### retention
@@ -90,7 +90,7 @@ with:
 ```bash
 sudo plakar \
   -keyfile /etc/plakar/passphrase \
-  at /home/ghost_user/strata/10-19_system/14_backups/plakar-store \
+  at ~/strata/10-19_system/14_backups/plakar-store \
   prune -tag essentials \
   -days 7 -per-day 1 \
   -weeks 4 -per-week 1 \
@@ -133,13 +133,13 @@ sudo install -d -m700 -o root -g root /etc/plakar
 sudo install -m600 -o root -g root /path/to/recovered-passphrase /etc/plakar/passphrase
 sudo plakar \
   -keyfile /etc/plakar/passphrase \
-  at /home/ghost_user/strata/10-19_system/14_backups/plakar-store ls
+  at ~/strata/10-19_system/14_backups/plakar-store ls
 snapshot_id=PASTE_ID_FROM_LS
 sudo plakar \
   -keyfile /etc/plakar/passphrase \
-  at /home/ghost_user/strata/10-19_system/14_backups/plakar-store \
+  at ~/strata/10-19_system/14_backups/plakar-store \
   restore -to /tmp/plakar-restore "$snapshot_id"
-sudo chown -R ghost_user:ghost_user /tmp/plakar-restore
+sudo chown -R "$(id -un):$(id -gn)" /tmp/plakar-restore
 install -d -m700 ~/.ssh
 cp -a /tmp/plakar-restore/ssh/. ~/.ssh/
 install -Dm600 /tmp/plakar-restore/chezmoi/chezmoi.toml ~/.config/chezmoi/chezmoi.toml
@@ -155,13 +155,13 @@ restore a snapshot to a temporary directory, then copy the files you need:
 sudo mkdir -p /tmp/plakar-restore
 sudo plakar \
   -keyfile /etc/plakar/passphrase \
-  at /home/ghost_user/strata/10-19_system/14_backups/plakar-store ls
+  at ~/strata/10-19_system/14_backups/plakar-store ls
 snapshot_id=PASTE_ID_FROM_LS
 sudo plakar \
   -keyfile /etc/plakar/passphrase \
-  at /home/ghost_user/strata/10-19_system/14_backups/plakar-store \
+  at ~/strata/10-19_system/14_backups/plakar-store \
   restore -to /tmp/plakar-restore "$snapshot_id"
-sudo chown -R ghost_user:ghost_user /tmp/plakar-restore
+sudo chown -R "$(id -un):$(id -gn)" /tmp/plakar-restore
 ```
 
 `/tmp` contains the restored secrets. delete it when finished:

@@ -7,8 +7,26 @@ set -eu
 
 src="{{ .chezmoi.sourceDir }}"
 dst="/etc/systemd/system"
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
 
-rm -f "$HOME/.local/bin/backup"
+cat > "$tmpdir/strata-backup.service" <<'EOF'
+{{ includeTemplate "strata-backup.service" . }}
+EOF
+cat > "$tmpdir/strata-backup.timer" <<'EOF'
+{{ includeTemplate "strata-backup.timer" . }}
+EOF
+
+legacy="$HOME/.local/bin/backup"
+candidate="$legacy"
+if [ -L "$legacy" ]; then
+    candidate="$(readlink -f -- "$legacy" 2>/dev/null || true)"
+fi
+if [ -n "$candidate" ] && [ -f "$candidate" ] &&
+   grep -Fq 'strata/10-19_system/14_backups' "$candidate" 2>/dev/null &&
+   grep -Fq 'essentials backup' "$candidate" 2>/dev/null; then
+    rm -f -- "$legacy"
+fi
 
 sudo systemctl disable --now backup.timer 2>/dev/null || true
 sudo rm -f "$dst/backup.service" "$dst/backup.timer"
@@ -20,8 +38,8 @@ if [ -x "$HOME/.local/bin/plakar" ]; then
     sudo install -Dm755 "$HOME/.local/bin/plakar" /usr/local/bin/plakar
 fi
 
-sudo install -Dm644 "$src/.chezmoitemplates/strata-backup.service" "$dst/strata-backup.service"
-sudo install -Dm644 "$src/.chezmoitemplates/strata-backup.timer" "$dst/strata-backup.timer"
+sudo install -Dm644 "$tmpdir/strata-backup.service" "$dst/strata-backup.service"
+sudo install -Dm644 "$tmpdir/strata-backup.timer" "$dst/strata-backup.timer"
 
 sudo restorecon -F /usr/local/bin/strata-backup /usr/local/bin/plakar 2>/dev/null || true
 
