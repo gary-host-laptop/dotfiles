@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# =============================================================================
+# Generate nushell init files (starship, zoxide)
+# Runs once after chezmoi updates files and installs packages
+# =============================================================================
+
+{{- if eq (.machine | default "fedora") "fedora" }}
+
+NU_DIR="$HOME/.config/nushell"
+
+info()    { echo "  [ .. ] $1"; }
+success() { echo "  [ ok ] $1"; }
+warn()    { echo "  [warn] $1"; }
+
+for tool in starship zoxide; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        warn "$tool not found — package installation may have failed"
+        exit 1
+    fi
+done
+
+mkdir -p "$NU_DIR" || exit 1
+
+info "generating nushell init files (starship, zoxide)..."
+
+starship init nu > "$NU_DIR/starship-init.nu" || {
+    warn "failed to generate starship init for nushell"
+    exit 1
+}
+success "wrote $NU_DIR/starship-init.nu"
+
+zoxide init nushell > "$NU_DIR/zoxide.nu" || {
+    warn "failed to generate zoxide init for nushell"
+    exit 1
+}
+success "wrote $NU_DIR/zoxide.nu"
+
+{{- else if eq .machine "nixos" }}
+echo "nixos: nushell init managed by home.nix — skipping"
+{{- end }}

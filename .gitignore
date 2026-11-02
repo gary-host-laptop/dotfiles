@@ -11,9 +11,7 @@ strata/dot_config/zellij/*.bak
 __pycache__/
 *.pyc
 
-# nushell generated init + history
-strata/dot_config/nushell/starship-init.nu
-strata/dot_config/nushell/zoxide.nu
+# nushell generated history
 strata/dot_config/nushell/history.txt
 
 # chat exports

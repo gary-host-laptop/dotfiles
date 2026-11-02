@@ -49,7 +49,7 @@ dotfiles/
 - `run_onchange_install-firefox-policies.sh.tmpl` — installs the Firefox policy.
 - `run_onchange_install-packages.sh.tmpl` — installs packages, Flatpaks, and app installers.
 - `run_onchange_install-strata-backup-units.sh.tmpl` — installs the backup service, timer, and binaries.
-- `run_once_generate-nushell-init.sh.tmpl` — generates the Nushell starship/zoxide init files.
+- `run_once_after_generate-nushell-init.sh.tmpl` — generates the Nushell starship/zoxide init files after packages are installed.
 - `run_once_setup-xdg.sh.tmpl` — applies XDG user directories and GNOME theming.
 - `run_setup-storage.sh.tmpl` — creates or repairs storage links on each apply.
 
