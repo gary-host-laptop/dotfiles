@@ -10,6 +10,7 @@
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
 warn()    { echo "  [warn] $1"; }
+fail()    { warn "$1"; exit 1; }
 
 require_sudo() {
   sudo -v || {
@@ -21,9 +22,9 @@ require_sudo || exit 1
 
 # ── copr repos ───────────────────────────────────────────────────────────────
 info "enabling copr repos..."
-sudo dnf copr enable -y atim/starship
-sudo dnf copr enable -y dejan/lazygit
-sudo dnf copr enable -y scottames/ghostty
+sudo dnf copr enable -y atim/starship || fail "failed to enable atim/starship copr"
+sudo dnf copr enable -y dejan/lazygit || fail "failed to enable dejan/lazygit copr"
+sudo dnf copr enable -y scottames/ghostty || fail "failed to enable scottames/ghostty copr"
 success "copr repos enabled"
 
 # ── dnf ──────────────────────────────────────────────────────────────────────
@@ -43,17 +44,19 @@ DNF_PACKAGES=(
     eza
     fastfetch
     glow
+    golang
     inotify-tools
     mpd
     nushell
     retroarch
     retroarch-assets
+    sqlite
 )
 
 # glow ships from the charm yum repo
 if ! rpm -q glow &>/dev/null; then
     info "enabling charm repo for glow..."
-    cat <<'EOF' | sudo tee /etc/yum.repos.d/charm.repo >/dev/null
+    cat <<'EOF' | sudo tee /etc/yum.repos.d/charm.repo >/dev/null || fail "failed to write charm repo"
 [charm]
 name=Charm
 baseurl=https://repo.charm.sh/yum/
@@ -61,7 +64,7 @@ enabled=1
 gpgcheck=1
 gpgkey=https://repo.charm.sh/yum/gpg.key
 EOF
-    sudo dnf install -y glow || warn "glow install failed"
+    sudo dnf install -y glow || fail "glow install failed"
 else
     info "glow already installed ($(rpm -q glow))"
 fi
@@ -72,7 +75,18 @@ COPR_PACKAGES=(
     ghostty
 )
 
-sudo dnf install -y --refresh "${DNF_PACKAGES[@]}" "${COPR_PACKAGES[@]}"
+if ! sudo dnf install -y --refresh "${DNF_PACKAGES[@]}" "${COPR_PACKAGES[@]}"; then
+    fail "dnf package installation failed"
+fi
+
+for pkg in golang sqlite; do
+    rpm -q "$pkg" >/dev/null 2>&1 || fail "package missing after dnf install: $pkg"
+done
+
+for cmd in go sqlite3; do
+    command -v "$cmd" >/dev/null 2>&1 || fail "command missing after dnf install: $cmd"
+done
+
 success "dnf packages installed"
 
 # bat >=0.26 only reads custom themes through its binary asset cache
@@ -268,8 +282,10 @@ mkdir -p "$ZOTERO_LIB"
 # ── drift ─────────────────────────────────────────────────────────
 if ! command -v drift &>/dev/null; then
     info "installing drift (idle terminal screensaver)…"
-    GOBIN="$HOME/.local/bin" go install github.com/phlx0/drift@latest \
-        || warn "drift install failed — retry with 'GOBIN=~/.local/bin go install github.com/phlx0/drift@latest'"
+    if ! GOBIN="$HOME/.local/bin" go install github.com/phlx0/drift@latest; then
+        fail "drift install failed — retry with 'GOBIN=~/.local/bin go install github.com/phlx0/drift@latest'"
+    fi
+    command -v drift >/dev/null 2>&1 || fail "drift command missing after install"
 else
     info "drift already installed ($(drift version 2>/dev/null | head -1))"
 fi
