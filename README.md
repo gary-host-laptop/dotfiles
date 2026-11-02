@@ -1,6 +1,6 @@
-# ![](./ensō.png) ｄｏｔｆｉｌｅｓ
+# ![](./docs/assets/ensō.png) ｄｏｔｆｉｌｅｓ
 
-![](./banner.jpg)
+![](./docs/assets/banner.jpg)
 
 system configuration, organized in a [johnny decimal](https://johnnydecimal.com/)-inspired strata layout and managed with [chezmoi](https://www.chezmoi.io/).
 
