@@ -45,7 +45,7 @@ dotfiles/
 
 ### `.chezmoiscripts/`
 
-- `run_onchange_enable-units.sh` — enables the user services and timers.
+- `run_onchange_after_enable-units.sh` — enables move-media and the wallpaper timer after unit files are applied; wallpaper.service stays timer-triggered.
 - `run_onchange_install-firefox-policies.sh.tmpl` — installs the Firefox policy.
 - `run_onchange_install-packages.sh.tmpl` — installs packages, Flatpaks, and app installers.
 - `run_onchange_install-strata-backup-units.sh.tmpl` — installs the backup service, timer, and binaries.
