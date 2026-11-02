@@ -39,13 +39,3 @@ where strata departs from johnny decimal is in how it divides the top level. ins
     ├── 34_video
     └── 35_video-games
 ```
-
-
-| category | source location |
-|----------|-----------------|
-| 31_text, 33_images | local: `~/strata/30-39_media/{31_text,33_images}` |
-| 32_audio | → `/mnt/valus/32_audio` |
-| 34_video | → `/mnt/phaedra/34_video` |
-| 35_video-games | local directory; `games-library/` → valus, `steam/` → phaedra |
-
-
