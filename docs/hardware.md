@@ -5,7 +5,7 @@
 | component | model |
 |-----------|-------|
 | monitor | ViewSonic Omni VX2418C 24" FHD Curved |
-| motherboard | MSI H110M PRO-VH PLUS |
+| motherboard | ASUSTeK COMPUTER INC. PRIME A320M-K |
 | cpu | AMD Ryzen 5 5600G — 6c/12t @ 4.4GHz |
 | ram | Corsair Vengeance LPX 8GB DDR4 3000MHz C16 |
 | case | Sentey Slim SS1-2426 |
