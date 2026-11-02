@@ -1,4 +1,4 @@
-# ![](./docs/assets/ensō.png) ｄｏｔｆｉｌｅｓ
+# ![](./docs/assets/ensō.png) ．ｄｏｔｆｉｌｅｓ
 
 ![](./docs/assets/banner.jpg)
 
@@ -8,12 +8,12 @@ system configuration, organized in a [johnny decimal](https://johnnydecimal.com/
 
 | doc | authoritative for |
 |-----|-------------------|
-| [`structure.md`](docs/structure.md) | chezmoi source map and conventions |
 | [`strata.md`](docs/strata.md) | filesystem tree and storage topology |
-| [`path.md`](docs/path.md) | PATH assembly |
-| [`apps.md`](docs/apps.md) | installed/evaluated apps, file managers, tracked configs |
-| [`hardware.md`](docs/hardware.md) | machine, disks, mounts |
+| [`structure.md`](docs/structure.md) | chezmoi source map |
+| [`apps.md`](docs/apps.md) | list of apps including details and notes |
 | [`backup.md`](docs/backup.md) | machine-local state and restore steps |
+| [`hardware.md`](docs/hardware.md) | machine, disks, mounts |
+| [`path.md`](docs/path.md) | PATH assembly |
 
 ## ｆｒｅｓｈ　ｉｎｓｔａｌｌ
 
