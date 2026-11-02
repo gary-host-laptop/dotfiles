@@ -1,6 +1,6 @@
-# about
+# ａｂｏｕｔ
 
-![babel](../strata.png)
+![](../strata.jpg)
 
 strata is a personal organization system adapted from [johnny decimal](https://johnnydecimal.com/). it keeps his core idea: numbers divide everything into areas, categories, and ids. every item has a unique, predictable location.
 
@@ -48,23 +48,4 @@ where strata departs from johnny decimal is in how it divides the top level. ins
 | 34_video | → `/mnt/phaedra/34_video` |
 | 35_video-games | local directory; `games-library/` → valus, `steam/` → phaedra |
 
-## ｘｄｇ　ｕｓｅｒ　ｄｉｒｓ
 
-`~/.config/user-dirs.dirs` is managed by chezmoi and maps Documents → `31_text`,
-Music → `32_audio`, Pictures → `33_images`, and Videos → `34_video`.
-`~/.config/user-dirs.conf` sets `enabled=False`, so a missing drive does not cause
-the session updater to reset those paths to `$HOME`. Videos stays mapped while
-phaedra is absent; the path becomes usable again when the drive returns.
-
-## ｃｏｎｖｅｎｔｉｏｎｓ
-
-- ids are two digits; groups own the whole ten range (`11–17` inside `10–19`)
-- a category may hold a `00_index.*` describing its contents; the top-level
-  index is `~/strata/00_index.md`
-- `31_text` holds text/books and Zotero linked attachments; the local tree is canonical
-- `35_video-games` keeps game repos in `games-library/` and `steam/`
-
-## ｉｎｄｅｘ　ｆｉｌｅｓ
-
-`00_index.md` lives at `~/strata/`. update [`strata.md`](strata.md) first when the tree
-changes, then refresh the index. other `00_index.*` files are optional per category.
