@@ -7,10 +7,17 @@
 
 {{- if eq (.machine | default "fedora") "fedora" }}
 
+set -o pipefail
+
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
 warn()    { echo "  [warn] $1"; }
 fail()    { warn "$1"; exit 1; }
+optional_failures=0
+optional_warn() {
+  optional_failures=$((optional_failures + 1))
+  warn "$1"
+}
 
 require_sudo() {
   sudo -v || {
@@ -95,12 +102,14 @@ success "dnf packages installed"
 # pins the bat version, so re-run this after a bat upgrade or bat fails
 # with an incompatible-cache error.
 info "building bat asset cache (custom themes)..."
-bat cache --build || warn "bat cache --build failed — custom themes won't load until re-run"
+bat cache --build || optional_warn "bat cache --build failed — custom themes won't load until re-run"
 
 # ── flatpak ──────────────────────────────────────────────────────────────────
 info "installing flatpak packages..."
 
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+if ! flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; then
+    optional_warn "flatpak flathub remote add failed"
+fi
 
 FLATPAK_PACKAGES=(
     net.ankiweb.Anki
@@ -134,66 +143,80 @@ done
 
 if [ ${#to_install[@]} -eq 0 ]; then
     info "all flatpaks already installed"
+    success "flatpak packages installed"
+elif flatpak install -y flathub "${to_install[@]}"; then
+    success "flatpak packages installed"
 else
-    flatpak install -y flathub "${to_install[@]}" \
-        || warn "flatpak install failed — check ids in the FLATPAK_PACKAGES list"
+    optional_warn "flatpak install failed — check ids in the FLATPAK_PACKAGES list"
 fi
-success "flatpak packages installed"
 
 # ── install scripts ─────────────────────────────────────────────────────────
 info "installing via install scripts..."
 
 if ! command -v spf &>/dev/null; then
-    bash -c "$(curl -sLo- https://superfile.dev/install.sh)" \
-        || warn "superfile install failed — retry from https://superfile.dev/getting-started/installation/"
+    if curl -fsSL https://superfile.dev/install.sh | bash; then
+        if command -v spf >/dev/null 2>&1; then
+            success "superfile installed"
+        else
+            optional_warn "superfile installer completed but spf is not on PATH"
+        fi
+    else
+        optional_warn "superfile install failed — retry from https://superfile.dev/getting-started/installation/"
+    fi
 else
     info "superfile already installed"
 fi
 
 # ── rust toolchain ──────────────────────────────────────────────────────────
+export PATH="$HOME/.cargo/bin:$PATH"
 info "installing rust toolchain (rustup, non-distro cargo)…"
 
 if ! command -v rustup &>/dev/null; then
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-        | sh -s -- -y --default-toolchain stable \
-        || warn "rustup install failed — retry from https://rustup.rs"
+    if curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable; then
+        if command -v rustup >/dev/null 2>&1; then
+            success "rustup installed"
+        else
+            optional_warn "rustup installer completed but rustup is not on PATH"
+        fi
+    else
+        optional_warn "rustup install failed — retry from https://rustup.rs"
+    fi
 else
     info "rustup already installed"
 fi
-export PATH="$HOME/.cargo/bin:$PATH"
 
 # ── cargo binaries ──────────────────────────────────────────────────────────
 info "installing cargo binaries..."
 
 if ! command -v cargo-binstall &>/dev/null; then
-    cargo install cargo-binstall || warn "cargo-binstall install failed"
+    cargo install cargo-binstall || optional_warn "cargo-binstall install failed"
 else
     info "cargo-binstall already installed"
 fi
 
 if ! command -v zellij &>/dev/null; then
-    cargo binstall -y zellij || warn "zellij install failed — retry with 'cargo binstall zellij'"
+    cargo binstall -y zellij || optional_warn "zellij install failed — retry with 'cargo binstall zellij'"
 else
     info "zellij already installed ($(zellij --version 2>/dev/null | head -1))"
 fi
 
 if ! command -v topgrade &>/dev/null || ! command -v zoxide &>/dev/null; then
     cargo install --locked topgrade zoxide \
-        || warn "topgrade/zoxide install failed — retry with 'cargo install topgrade zoxide'"
+        || optional_warn "topgrade/zoxide install failed — retry with 'cargo install topgrade zoxide'"
 else
     info "topgrade/zoxide already installed"
 fi
 
 if ! command -v croft &>/dev/null; then
     cargo install --locked croft-software \
-        || warn "croft install failed — retry with 'cargo install croft-software'"
+        || optional_warn "croft install failed — retry with 'cargo install croft-software'"
 else
     info "croft already installed"
 fi
 
 if ! command -v rmpc &>/dev/null || ! command -v superseedr &>/dev/null; then
     cargo install --locked rmpc superseedr \
-        || warn "rmpc/superseedr install failed — retry with 'cargo install rmpc superseedr'"
+        || optional_warn "rmpc/superseedr install failed — retry with 'cargo install rmpc superseedr'"
 else
     info "rmpc/superseedr already installed"
 fi
@@ -203,13 +226,23 @@ YAZI_VER="26.9.1"
 
 if ! command -v yazi &>/dev/null || [ "$(yazi --version | awk '{print $2}')" != "$YAZI_VER" ]; then
     info "installing yazi from GitHub release (v$YAZI_VER)…"
-    tmp="$(mktemp -d)"
-    curl -L -o "$tmp/yazi.zip" \
-        "https://github.com/sxyazi/yazi/releases/download/v${YAZI_VER}/yazi-x86_64-unknown-linux-gnu.zip"
-    unzip -o "$tmp/yazi.zip" -d "$tmp" >/dev/null
-    cp "$tmp"/yazi-x86_64-unknown-linux-gnu/{yazi,ya} ~/.cargo/bin/ && chmod +x ~/.cargo/bin/{yazi,ya}
-    rm -rf "$tmp"
-    success "yazi $(yazi --version | head -1) installed"
+    if ! tmp="$(mktemp -d)"; then
+        optional_warn "yazi install failed — temp dir creation failed"
+    elif ! mkdir -p "${HOME}/.cargo/bin"; then
+        optional_warn "yazi install failed — could not create ~/.cargo/bin"
+    else
+        if curl -fL -o "$tmp/yazi.zip" \
+                "https://github.com/sxyazi/yazi/releases/download/v${YAZI_VER}/yazi-x86_64-unknown-linux-gnu.zip" \
+            && unzip -o "$tmp/yazi.zip" -d "$tmp" >/dev/null \
+            && cp "$tmp"/yazi-x86_64-unknown-linux-gnu/{yazi,ya} "${HOME}/.cargo/bin/" \
+            && chmod +x "${HOME}/.cargo/bin/"{yazi,ya} \
+            && [ "$("${HOME}/.cargo/bin/yazi" --version | awk '{print $2}')" = "$YAZI_VER" ]; then
+            success "yazi $("${HOME}/.cargo/bin/yazi" --version | head -1) installed"
+        else
+            optional_warn "yazi install failed — retry from https://github.com/sxyazi/yazi/releases/tag/v${YAZI_VER}"
+        fi
+        rm -rf "$tmp"
+    fi
 else
     info "yazi already installed"
 fi
@@ -231,53 +264,73 @@ ZOTERO_LIB="${HOME}/strata/30-39_media/31_text/zotero"
 
 if [ ! -x "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}/zotero" ]; then
     info "installing zotero v${ZOTERO_VER} from the official tarball…"
-    tmp="$(mktemp -d)"
-    if curl -fL -o "${tmp}/zotero.tar.xz" "$ZOTERO_URL"; then
-        mkdir -p "$ZOTERO_OPT"
-        # the tarball unpacks to a fixed Zotero_linux-x86_64/ name regardless of
-        # version, so rename it rather than trusting --strip-components
-        tar -xJf "${tmp}/zotero.tar.xz" -C "$ZOTERO_OPT"
-        mv "${ZOTERO_OPT}/Zotero_linux-x86_64" "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}"
-        ln -sfn "Zotero-${ZOTERO_VER}" "${ZOTERO_OPT}/Zotero"
+    if ! tmp="$(mktemp -d)"; then
+        optional_warn "zotero install failed — temp dir creation failed"
+    else
+        extract_dir="${tmp}/extract"
+        if ! mkdir -p "$extract_dir"; then
+            optional_warn "zotero install failed — could not create temp extract dir"
+        elif ! curl -fL -o "${tmp}/zotero.tar.xz" "$ZOTERO_URL"; then
+            optional_warn "zotero download failed — retry: curl -fL -O ${ZOTERO_URL}"
+        elif ! tar -xJf "${tmp}/zotero.tar.xz" -C "$extract_dir"; then
+            optional_warn "zotero extraction failed — retry: curl -fL -O ${ZOTERO_URL}"
+        elif [ ! -x "${extract_dir}/Zotero_linux-x86_64/zotero" ]; then
+            optional_warn "zotero archive did not contain the expected executable"
+        elif ! (
+            set -e
+            mkdir -p "$ZOTERO_OPT"
+            rm -rf "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}"
+            # the tarball unpacks to a fixed Zotero_linux-x86_64/ name regardless of
+            # version, so rename it rather than trusting --strip-components
+            mv "${extract_dir}/Zotero_linux-x86_64" "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}"
+            ln -sfn "Zotero-${ZOTERO_VER}" "${ZOTERO_OPT}/Zotero"
 
-        # PATH launcher, so `zotero` and the desktop entry survive upgrades
-        mkdir -p "${HOME}/.local/bin"
-        cat > "${HOME}/.local/bin/zotero" <<EOF
+            # PATH launcher, so `zotero` and the desktop entry survive upgrades
+            mkdir -p "${HOME}/.local/bin"
+            cat > "${HOME}/.local/bin/zotero" <<EOF
 #!/bin/sh
 # Zotero launcher — official tarball install at ~/.local/opt/Zotero (symlink to
 # the current versioned dir). Kept so \`zotero\` resolves from PATH; the desktop
 # entry calls this too.
 exec "\$HOME/.local/opt/Zotero/zotero" "\$@"
 EOF
-        chmod 0755 "${HOME}/.local/bin/zotero"
+            chmod 0755 "${HOME}/.local/bin/zotero"
 
-        # desktop entry — the stock one uses a realpath hack and references a
-        # zotero.ico the tarball doesn't ship, so rewrite both
-        mkdir -p "${HOME}/.local/share/applications" "${HOME}/.local/share/icons/hicolor"
-        sed 's|^Exec=.*|Exec=zotero %U|; s|^Icon=.*|Icon=zotero|' \
-            "${ZOTERO_OPT}/Zotero/zotero.desktop" \
-            > "${HOME}/.local/share/applications/zotero.desktop"
-        for size in 128 64; do
-            mkdir -p "${HOME}/.local/share/icons/hicolor/${size}x${size}/apps"
-            cp "${ZOTERO_OPT}/Zotero/icons/icon${size}.png" \
-               "${HOME}/.local/share/icons/hicolor/${size}x${size}/apps/zotero.png"
-        done
-        mkdir -p "${HOME}/.local/share/icons/hicolor/scalable/apps"
-        cp "${ZOTERO_OPT}/Zotero/icons/symbolic.svg" \
-           "${HOME}/.local/share/icons/hicolor/scalable/apps/zotero-symbolic.svg"
-
-        success "zotero ${ZOTERO_VER} installed"
-    else
-        warn "zotero download failed — retry: curl -fL -O ${ZOTERO_URL}"
+            # desktop entry — the stock one uses a realpath hack and references a
+            # zotero.ico the tarball doesn't ship, so rewrite both
+            mkdir -p "${HOME}/.local/share/applications" "${HOME}/.local/share/icons/hicolor"
+            sed 's|^Exec=.*|Exec=zotero %U|; s|^Icon=.*|Icon=zotero|' \
+                "${ZOTERO_OPT}/Zotero/zotero.desktop" \
+                > "${HOME}/.local/share/applications/zotero.desktop"
+            for size in 128 64; do
+                mkdir -p "${HOME}/.local/share/icons/hicolor/${size}x${size}/apps"
+                cp "${ZOTERO_OPT}/Zotero/icons/icon${size}.png" \
+                   "${HOME}/.local/share/icons/hicolor/${size}x${size}/apps/zotero.png"
+            done
+            mkdir -p "${HOME}/.local/share/icons/hicolor/scalable/apps"
+            cp "${ZOTERO_OPT}/Zotero/icons/symbolic.svg" \
+               "${HOME}/.local/share/icons/hicolor/scalable/apps/zotero-symbolic.svg"
+            [ -x "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}/zotero" ]
+            [ -x "${HOME}/.local/bin/zotero" ]
+            [ -f "${HOME}/.local/share/applications/zotero.desktop" ]
+        ); then
+            optional_warn "zotero install failed — retry: curl -fL -O ${ZOTERO_URL}"
+            rm -rf "${ZOTERO_OPT}/Zotero-${ZOTERO_VER}"
+            if [ "$(readlink "${ZOTERO_OPT}/Zotero" 2>/dev/null)" = "Zotero-${ZOTERO_VER}" ]; then
+                rm -f "${ZOTERO_OPT}/Zotero"
+            fi
+        else
+            success "zotero ${ZOTERO_VER} installed"
+        fi
+        rm -rf "$tmp"
     fi
-    rm -rf "$tmp"
 else
     info "zotero already installed (v${ZOTERO_VER})"
 fi
 
 # the library dir is created but left empty — zotero.sqlite is written by the app
 # itself on first run, and the data dir location is set inside zotero, not here
-mkdir -p "$ZOTERO_LIB"
+mkdir -p "$ZOTERO_LIB" || optional_warn "zotero library directory could not be created"
 
 # ── drift ─────────────────────────────────────────────────────────
 if ! command -v drift &>/dev/null; then
@@ -294,13 +347,19 @@ fi
 if ! rpm -q bleachbit &>/dev/null; then
     info "installing bleachbit upstream rpm…"
     BB_VER="6.0.3"
-    tmp="$(mktemp -d)"
-    curl -L -o "$tmp/bleachbit.rpm" \
-        "https://github.com/bleachbit/bleachbit/releases/download/v${BB_VER}/bleachbit-${BB_VER}-1.1.fc$(rpm -E %fedora).noarch.rpm" \
-        || warn "bleachbit download failed"
-    sudo dnf install -y "$tmp/bleachbit.rpm" \
-        || warn "bleachbit install failed — manual: https://www.bleachbit.org/download/linux"
-    rm -rf "$tmp"
+    if ! tmp="$(mktemp -d)"; then
+        optional_warn "bleachbit install failed — temp dir creation failed"
+    else
+        if curl -fL -o "$tmp/bleachbit.rpm" \
+                "https://github.com/bleachbit/bleachbit/releases/download/v${BB_VER}/bleachbit-${BB_VER}-1.1.fc$(rpm -E %fedora).noarch.rpm" \
+            && sudo dnf install -y "$tmp/bleachbit.rpm" \
+            && rpm -q bleachbit &>/dev/null; then
+            success "bleachbit installed"
+        else
+            optional_warn "bleachbit install failed — manual: https://www.bleachbit.org/download/linux"
+        fi
+        rm -rf "$tmp"
+    fi
 else
     info "bleachbit already installed ($(rpm -q bleachbit))"
 fi
@@ -309,27 +368,43 @@ fi
 info "installing rpm packages..."
 
 # steam — ships from rpmfusion-nonfree-steam, not the (dead) valve repo
+steam_ok=0
 if ! rpm -q steam &>/dev/null; then
-    sudo dnf install -y \
+    if ! sudo dnf install -y \
         https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-        https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-        || warn "rpmfusion release install failed"
-    sudo dnf install -y \
-        https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-steam-release-$(rpm -E %fedora).noarch.rpm \
-        || warn "rpmfusion steam repo install failed"
-    sudo dnf install -y steam || warn "steam install failed"
+        https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm; then
+        optional_warn "rpmfusion release install failed"
+    elif ! sudo dnf install -y \
+        https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-steam-release-$(rpm -E %fedora).noarch.rpm; then
+        optional_warn "rpmfusion steam repo install failed"
+    elif ! sudo dnf install -y steam; then
+        optional_warn "steam install failed"
+    elif rpm -q steam &>/dev/null; then
+        steam_ok=1
+    else
+        optional_warn "steam package missing after install"
+    fi
 else
     info "steam already installed ($(rpm -q steam))"
+    steam_ok=1
+fi
+
+if [ "$steam_ok" -eq 1 ]; then
+    success "steam installed"
 fi
 
 warn "veracrypt: download rpm from https://www.veracrypt.fr/en/Downloads.html and install manually"
 warn "zed: install via 'curl -f https://zed.dev/install.sh | sh' or flatpak from flathub (dev.zed.Zed)"
 warn "amule: flathub submission pending — install manually from https://amule-org.github.io/download (AppImage/.flatpak)"
 
-success "rpm section done"
+info "rpm section done"
 
 echo ""
-success "packages done. check warnings above for any manual steps needed."
+if [ "$optional_failures" -eq 0 ]; then
+    success "packages done. check warnings above for any manual steps needed."
+else
+    warn "packages done with ${optional_failures} optional install failure(s) — see warnings above."
+fi
 echo ""
 
 {{- else if eq .machine "nixos" }}
