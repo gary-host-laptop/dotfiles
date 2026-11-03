@@ -16,8 +16,8 @@ move_file() {
     name=$(basename "$src")
 
     if [ ! -e "$dest/$name" ]; then
-        mv "$src" "$dest/" || { echo "mv failed: $src -> $dest/" >&2; return; }
-        return
+        mv "$src" "$dest/" || { echo "mv failed: $src -> $dest/" >&2; return 1; }
+        return 0
     fi
 
     if [[ "$name" == *.* ]]; then
@@ -30,22 +30,58 @@ move_file() {
     while [ -e "$dest/$base ($n)$ext" ]; do
         n=$((n + 1))
     done
-    mv "$src" "$dest/$base ($n)$ext" || { echo "mv failed: $src -> $dest/$base ($n)$ext" >&2; return; }
+    mv "$src" "$dest/$base ($n)$ext" || { echo "mv failed: $src -> $dest/$base ($n)$ext" >&2; return 1; }
+    return 0
 }
 
-inotifywait -m -e close_write -e moved_to --format '%w%f' \
-    "$INBOX" "$SCREENSHOTS" | while read -r filepath; do
+tmpdir=$(mktemp -d "${TMPDIR:-/tmp}/move-media.XXXXXX") || exit 1
+watcher_pid=""
 
+cleanup() {
+    if [ -n "$watcher_pid" ] && kill -0 "$watcher_pid" 2>/dev/null; then
+        kill "$watcher_pid" 2>/dev/null || true
+        wait "$watcher_pid" 2>/dev/null || true
+    fi
+    rm -rf "$tmpdir"
+}
+trap cleanup EXIT
+
+fifo="$tmpdir/watch"
+mkfifo "$fifo" || exit 1
+
+inotifywait -m -e close_write -e moved_to --format '%w%f' \
+    "$INBOX" "$SCREENSHOTS" >"$fifo" &
+watcher_pid=$!
+
+move_failed=0
+while IFS= read -r filepath; do
     filename=$(basename "$filepath")
     dir=$(dirname "$filepath")
 
     case "${filename,,}" in
         *.jpg|*.jpeg|*.png|*.webp|*.gif)
             if [ "$dir" = "$SCREENSHOTS" ]; then
-                move_file "$filepath" "$SCREENSHOTS_DST"
+                if ! move_file "$filepath" "$SCREENSHOTS_DST"; then
+                    move_failed=1
+                    break
+                fi
             else
-                move_file "$filepath" "$IMAGES"
+                if ! move_file "$filepath" "$IMAGES"; then
+                    move_failed=1
+                    break
+                fi
             fi
             ;;
     esac
-done
+done <"$fifo"
+
+watcher_status=0
+if [ "$move_failed" -eq 0 ]; then
+    wait "$watcher_pid"
+    watcher_status=$?
+    watcher_pid=""
+fi
+
+if [ "$move_failed" -ne 0 ] || [ "$watcher_status" -ne 0 ]; then
+    exit 1
+fi
