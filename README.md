@@ -2,7 +2,7 @@
 
 ![](./docs/assets/banner.jpg)
 
-system configuration, organized in a [johnny decimal](https://johnnydecimal.com/)-inspired strata layout and managed with [chezmoi](https://www.chezmoi.io/).
+system configuration, organized in a [johnny decimal](https://johnnydecimal.com/)-inspired [strata](./docs/strata.md) layout and managed with [chezmoi](https://www.chezmoi.io/).
 
 ## ｄｏｃｓ
 
