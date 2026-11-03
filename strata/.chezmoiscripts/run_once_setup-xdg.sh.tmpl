@@ -8,22 +8,31 @@
 
 info()    { echo "  [ .. ] $1"; }
 success() { echo "  [ ok ] $1"; }
+fail()    { echo "  [fail] $1" >&2; exit 1; }
 
 # xdg user dirs are managed files (~/.config/user-dirs.dirs and
 # ~/.config/user-dirs.conf with enabled=False); nothing to do here.
 info "xdg user dirs managed by chezmoi"
 
+command -v gsettings >/dev/null 2>&1 \
+    || fail "gsettings not found — cannot apply GNOME theming"
+
 # cursor theme
 info "setting cursor theme..."
-gsettings set org.gnome.desktop.interface cursor-theme 'bibata-modern-classic'
-gsettings set org.gnome.desktop.interface cursor-size 24
+gsettings set org.gnome.desktop.interface cursor-theme 'bibata-modern-classic' \
+    || fail "failed to set cursor theme"
+gsettings set org.gnome.desktop.interface cursor-size 24 \
+    || fail "failed to set cursor size"
 success "cursor theme set"
 
 # system font
 info "setting system font..."
-gsettings set org.gnome.desktop.interface font-name 'Inter 11'
-gsettings set org.gnome.desktop.interface document-font-name 'Inter 11'
-gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 11'
+gsettings set org.gnome.desktop.interface font-name 'Inter 11' \
+    || fail "failed to set font name"
+gsettings set org.gnome.desktop.interface document-font-name 'Inter 11' \
+    || fail "failed to set document font name"
+gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 11' \
+    || fail "failed to set monospace font name"
 success "fonts set"
 
 {{- else if eq .machine "nixos" }}
