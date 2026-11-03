@@ -41,28 +41,48 @@ if ! flock -n 9; then
 fi
 
 copied=()
+report_fail() {
+    echo -e "  ${YELLOW}fail${RESET}  ${MUTED}$1${RESET}  ($2)" >&2
+}
+
 copy() {
     local src="$1"
     local dst="$2"
+    local name
+    name="$(basename "$src")"
     if [ ! -e "$src" ]; then
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (missing)"
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}${name}${RESET}  (missing)"
+        return 0
+    fi
+    if ! mkdir -p "$(dirname "$dst")"; then
+        report_fail "$name" "mkdir failed"
         return 1
     fi
-    mkdir -p "$(dirname "$dst")"
-    cp -p "$src" "$dst"
-    copied+=("$(basename "$src")")
+    if ! cp -p "$src" "$dst"; then
+        report_fail "$name" "copy failed"
+        return 1
+    fi
+    copied+=("$name")
 }
 
 copy_dir() {
     local src="$1"
     local dst="$2"
+    local name
+    name="$(basename "$src")"
     if [ ! -d "$src" ]; then
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (missing)"
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}${name}${RESET}  (missing)"
+        return 0
+    fi
+    if ! mkdir -p "$dst"; then
+        report_fail "${name}/" "mkdir failed"
         return 1
     fi
-    mkdir -p "$dst"
-    cp -pR "$src"/. "$dst"/
-    copied+=("$(basename "$src")/")
+    if ! cp -pR "$src"/. "$dst"/; then
+        report_fail "${name}/" "copy failed"
+        return 1
+    fi
+    copied+=("${name}/")
 }
 
 copy_sqlite() {
@@ -70,59 +90,71 @@ copy_sqlite() {
     local dst="$2"
     local tmp="${dst}.tmp"
     local snapdir
+    local name
+    name="$(basename "$src")"
     if [ ! -e "$src" ]; then
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (missing)"
-        return 1
+        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}${name}${RESET}  (missing)"
+        return 0
     fi
     if ! command -v sqlite3 >/dev/null 2>&1; then
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (sqlite3 missing)"
+        report_fail "$name" "sqlite3 missing"
         return 1
     fi
-    snapdir="$(mktemp -d "${TMPDIR:-/tmp}/strata-sqlite.XXXXXX")" || {
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (temp dir failed)"
+    if ! snapdir="$(mktemp -d "${TMPDIR:-/tmp}/strata-sqlite.XXXXXX")"; then
+        report_fail "$name" "temp dir failed"
         return 1
-    }
+    fi
     if ! cp -p "$src" "$snapdir/db"; then
         rm -rf "$snapdir"
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (copy failed)"
+        report_fail "$name" "copy failed"
         return 1
     fi
-    if [ -e "${src}-wal" ]; then
-        cp -p "${src}-wal" "$snapdir/db-wal" || true
+    if [ -e "${src}-wal" ] && ! cp -p "${src}-wal" "$snapdir/db-wal"; then
+        rm -rf "$snapdir"
+        report_fail "$name" "WAL copy failed"
+        return 1
     fi
     if ! sqlite3 "$snapdir/db" "PRAGMA integrity_check;" >/dev/null 2>&1; then
         rm -rf "$snapdir"
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (integrity check failed)"
+        report_fail "$name" "integrity check failed"
         return 1
     fi
-    mkdir -p "$(dirname "$dst")"
+    if ! mkdir -p "$(dirname "$dst")"; then
+        rm -rf "$snapdir"
+        report_fail "$name" "mkdir failed"
+        return 1
+    fi
     rm -f "$tmp"
     if ! sqlite3 "$snapdir/db" ".backup '$tmp'"; then
         rm -rf "$snapdir"
         rm -f "$tmp"
-        echo -e "  ${YELLOW}skip${RESET}  ${MUTED}$(basename "$src")${RESET}  (backup failed)"
+        report_fail "$name" "backup failed"
         return 1
     fi
     rm -rf "$snapdir"
-    mv "$tmp" "$dst"
-    copied+=("$(basename "$src")")
+    if ! mv "$tmp" "$dst"; then
+        rm -f "$tmp"
+        report_fail "$name" "move failed"
+        return 1
+    fi
+    copied+=("$name")
 }
 
 echo ""
 echo -e "  ${CYAN}${BOLD}── essentials backup ──${RESET}  ${MUTED}→ ${ROOT}${RESET}"
 
-copy "${HOME}/.config/chezmoi/chezmoi.toml"      "${ROOT}/chezmoi/chezmoi.toml" || true
+copy "${HOME}/.config/chezmoi/chezmoi.toml"      "${ROOT}/chezmoi/chezmoi.toml"
 for f in id_ed25519 id_ed25519.pub known_hosts known_hosts.old; do
-    copy "${HOME}/.ssh/${f}"                     "${ROOT}/ssh/${f}" || true
+    copy "${HOME}/.ssh/${f}"                     "${ROOT}/ssh/${f}"
 done
-copy_dir "${HOME}/.config/beets"                 "${ROOT}/beets" || true
+copy_dir "${HOME}/.config/beets"                 "${ROOT}/beets"
 if [ -d "$FF_PROFILE" ]; then
-    copy_sqlite "${FF_PROFILE}/cookies.sqlite"    "${ROOT}/firefox-profile/cookies.sqlite" || true
-    copy_sqlite "${FF_PROFILE}/places.sqlite"     "${ROOT}/firefox-profile/places.sqlite" || true
+    copy_sqlite "${FF_PROFILE}/cookies.sqlite"    "${ROOT}/firefox-profile/cookies.sqlite"
+    copy_sqlite "${FF_PROFILE}/places.sqlite"     "${ROOT}/firefox-profile/places.sqlite"
 else
     echo -e "  ${YELLOW}skip${RESET}  ${MUTED}firefox profile${RESET}  (missing)"
 fi
-copy "/etc/fstab"                                 "${ROOT}/fstab/fstab" || true
+copy "/etc/fstab"                                 "${ROOT}/fstab/fstab"
 
 echo ""
 echo -e "  ${GREEN}${BOLD}${#copied[@]} file(s) backed up${RESET}: ${LAVENDER}${copied[*]}${RESET}"
