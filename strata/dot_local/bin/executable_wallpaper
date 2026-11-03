@@ -20,6 +20,17 @@ ask_yn() {
     done
 }
 
+require_gsettings() {
+    if ! command -v gsettings >/dev/null 2>&1; then
+        echo "gsettings not found — cannot apply wallpaper settings" >&2
+        return 1
+    fi
+    if ! gsettings get org.gnome.desktop.background picture-uri >/dev/null 2>&1; then
+        echo "gsettings cannot read desktop background settings" >&2
+        return 1
+    fi
+}
+
 set_random() {
     local files=()
     while IFS= read -r -d '' f; do
@@ -29,15 +40,23 @@ set_random() {
            -o -iname "*.webp" -o -iname "*.gif" \) -print0)
 
     if [ ${#files[@]} -eq 0 ]; then
-        echo "no wallpapers found in $WALLPAPER_DIR"
-        exit 1
+        echo "no wallpapers found in $WALLPAPER_DIR" >&2
+        return 1
     fi
+
+    require_gsettings || return 1
 
     local chosen="${files[$RANDOM % ${#files[@]}]}"
     local uri="file://$chosen"
 
-    gsettings set org.gnome.desktop.background picture-uri "$uri"
-    gsettings set org.gnome.desktop.background picture-uri-dark "$uri"
+    if ! gsettings set org.gnome.desktop.background picture-uri "$uri"; then
+        echo "failed to set picture-uri" >&2
+        return 1
+    fi
+    if ! gsettings set org.gnome.desktop.background picture-uri-dark "$uri"; then
+        echo "failed to set picture-uri-dark" >&2
+        return 1
+    fi
     echo "$chosen"
 }
 
@@ -47,10 +66,15 @@ if [ "$1" = "--setup" ]; then
     echo -e "${MUTED}$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | wc -l) wallpapers found${RESET}\n"
 
     if ! ask_yn "enable wallpaper rotation?"; then
-        systemctl --user disable --now wallpaper.timer 2>/dev/null
+        if ! systemctl --user disable --now wallpaper.timer; then
+            echo "failed to disable wallpaper.timer" >&2
+            exit 1
+        fi
         echo -e "\n${MUTED}wallpaper rotation disabled — run 'wallpaper --setup' to re-enable${RESET}\n"
         exit 0
     fi
+
+    require_gsettings || exit 1
 
     while true; do
         echo -e "${CYAN}time interval? (hours, default 6):${RESET} "
@@ -67,17 +91,33 @@ if [ "$1" = "--setup" ]; then
     # interval is machine-local → keep it out of the versioned unit file
     # a drop-in overrides the repo's 6h default without touching the symlink
     # (removing it reverts to the versioned default)
-    mkdir -p "$HOME/.config/systemd/user/wallpaper.timer.d"
-    cat > "$HOME/.config/systemd/user/wallpaper.timer.d/interval.conf" <<EOF
+    timer_dir="$HOME/.config/systemd/user/wallpaper.timer.d"
+    if ! mkdir -p "$timer_dir"; then
+        echo "failed to create $timer_dir" >&2
+        exit 1
+    fi
+    if ! cat > "$timer_dir/interval.conf" <<EOF
 [Timer]
 OnUnitActiveSec=${interval_sec}s
 EOF
+    then
+        echo "failed to write $timer_dir/interval.conf" >&2
+        exit 1
+    fi
 
-    systemctl --user daemon-reload
-    systemctl --user enable --now wallpaper.timer
+    if ! systemctl --user daemon-reload; then
+        echo "failed to reload systemd user units" >&2
+        exit 1
+    fi
+    if ! systemctl --user enable --now wallpaper.timer; then
+        echo "failed to enable wallpaper.timer" >&2
+        exit 1
+    fi
 
     if ask_yn "set a wallpaper right now?"; then
-        chosen=$(set_random)
+        if ! chosen="$(set_random)"; then
+            exit 1
+        fi
         echo -e "${CYAN}set:${RESET} $(basename "$chosen")"
     fi
 
@@ -86,4 +126,4 @@ EOF
 fi
 
 # ── called by timer or directly ──────────────────────────────────────────────
-set_random
+set_random || exit 1
