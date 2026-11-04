@@ -2,8 +2,8 @@
 # file during session start (verified), so GUI-launched processes inherit the same
 # PATH. Runs via ~/.bash_profile (login), a display/session manager that sources
 # ~/.profile (GDM verified), or the ~/.bashrc guard (non-login bash). The session
-# tree's boot-time root is environment.d/90-user.conf; this is the independent
-# fallback and the tty/ssh/rescue assembler. Keep the two convergent.
+# tree's systemd --user baseline is environment.d/90-user.conf; this file is the
+# login/tty/ssh/rescue assembler and also runs in the GUI via GDM. Keep the two convergent.
 export _DOTFILES_PROFILE_SOURCED=1
 
 # opencode — add once, never stack (no-op if not installed)

@@ -15,14 +15,14 @@ dotfiles/
 └── strata/                             # chezmoi source root
     ├── private_dot_bashrc.tmpl         # interactive bash config
     ├── private_dot_bash_profile        # login shell config
-    ├── private_dot_profile.tmpl        # login/tty PATH fallback
+    ├── private_dot_profile.tmpl        # login/tty PATH entry point
     ├── private_dot_gitconfig           # git defaults
     ├── dot_gemrc.tmpl
     ├── .chezmoiignore                  # runtime paths chezmoi leaves alone
     ├── .chezmoitemplates/              # system-level file templates
     ├── dot_bash/                       # shell helpers
     ├── dot_config/                     # per-app XDG config
-    │   ├── environment.d/90-user.conf  # session PATH and XDG roots
+    │   ├── environment.d/90-user.conf  # session PATH baseline and XDG roots
     │   ├── user-dirs.conf              # disables XDG auto-update
     │   ├── user-dirs.dirs              # Strata-backed XDG directories
     │   └── systemd/user/               # user services and timers
@@ -66,7 +66,7 @@ apply. storage repair uses `run_` so missing drives are relinked when they retur
 
 ### `dot_config/`
 
-- `environment.d/90-user.conf` — session PATH and XDG roots.
+- `environment.d/90-user.conf` — session PATH baseline and XDG roots.
 - `user-dirs.conf` — prevents the XDG updater from rewriting user directories.
 - `user-dirs.dirs` — maps Documents, Music, Pictures, and Videos into Strata.
 - `systemd/user/` — user services and timers.
