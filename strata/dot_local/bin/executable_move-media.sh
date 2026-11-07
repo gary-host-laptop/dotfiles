@@ -11,26 +11,28 @@ mkdir -p "$INBOX" "$SCREENSHOTS" "$IMAGES" "$SCREENSHOTS_DST"
 # move to dest, keeping both files on name collision (base (1).ext style)
 move_file() {
     local src="$1" dest="$2"
-    local name base ext n
+    local name base ext n dst
 
     name=$(basename "$src")
 
     if [ ! -e "$dest/$name" ]; then
-        mv "$src" "$dest/" || { echo "mv failed: $src -> $dest/" >&2; return 1; }
-        return 0
-    fi
-
-    if [[ "$name" == *.* ]]; then
-        base="${name%.*}"; ext=".${name##*.}"
+        dst="$dest/$name"
     else
-        base="$name"; ext=""
+        if [[ "$name" == *.* ]]; then
+            base="${name%.*}"; ext=".${name##*.}"
+        else
+            base="$name"; ext=""
+        fi
+
+        n=1
+        while [ -e "$dest/$base ($n)$ext" ]; do
+            n=$((n + 1))
+        done
+        dst="$dest/$base ($n)$ext"
     fi
 
-    n=1
-    while [ -e "$dest/$base ($n)$ext" ]; do
-        n=$((n + 1))
-    done
-    mv "$src" "$dest/$base ($n)$ext" || { echo "mv failed: $src -> $dest/$base ($n)$ext" >&2; return 1; }
+    mv "$src" "$dst" || { echo "mv failed: $src -> $dst" >&2; return 1; }
+    chcon --reference="$dest" "$dst" || { echo "chcon failed: $dst" >&2; return 1; }
     return 0
 }
 
